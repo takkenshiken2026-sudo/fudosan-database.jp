@@ -83,12 +83,25 @@ table td {
   height: 320px;
 }
 
+.chart-card--compact {
+  height: 220px;
+}
+
 @media (min-width: 768px) {
   .chart-card {
     height: 300px;
   }
   .chart-card--tall {
     height: 340px;
+  }
+  .chart-card--compact {
+    height: 240px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .chart-card--compact {
+    height: 220px;
   }
 }
 
