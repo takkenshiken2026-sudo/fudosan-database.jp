@@ -15,6 +15,7 @@ from app.api.schemas import (
     PurchaseInsights,
 )
 from app.db import TradeTransaction
+from app.reinfolib.purchase_insights_cache import get_cached
 from app.utils.building_year import AGE_BUCKET_ORDER, building_age_bucket, parse_building_year
 
 INSIGHT_YEARS = 5
@@ -63,6 +64,10 @@ def get_purchase_insights(
     land_price_avg: Optional[float] = None,
     years: int = INSIGHT_YEARS,
 ) -> PurchaseInsights:
+    cached = get_cached(municipality_code)
+    if cached is not None:
+        return cached
+
     max_year = latest_year or db.scalar(
         select(func.max(TradeTransaction.trade_year)).where(
             TradeTransaction.municipality_code == municipality_code
@@ -75,8 +80,9 @@ def get_purchase_insights(
     period = _period_label(min_year, int(max_year))
     reference_year = int(max_year)
 
-    market_summary = _market_summary(db, municipality_code, min_year)
-    price_bracket_stats = _price_bracket_stats(db, municipality_code, min_year)
+    market_summary, price_bracket_stats = _market_and_bracket_stats(
+        db, municipality_code, min_year
+    )
     floor_plan_stats = _floor_plan_stats(db, municipality_code, min_year)
     age_bucket_stats = _age_bucket_stats(db, municipality_code, min_year, reference_year)
     structure_stats = _structure_stats(db, municipality_code, min_year)
@@ -104,11 +110,7 @@ def get_purchase_insights(
     )
 
 
-def _mansion_filter():
-    return TradeTransaction.property_type.like("%マンション%")
-
-
-def _market_summary(db: Session, code: str, min_year: int) -> Optional[MarketSummary]:
+def _mansion_prices(db: Session, code: str, min_year: int) -> list[float]:
     rows = db.execute(
         select(TradeTransaction.trade_price).where(
             TradeTransaction.municipality_code == code,
@@ -119,10 +121,17 @@ def _market_summary(db: Session, code: str, min_year: int) -> Optional[MarketSum
             _mansion_filter(),
         )
     ).all()
-    prices = sorted(float(row[0]) for row in rows)
+    return [float(row[0]) for row in rows]
+
+
+def _market_and_bracket_stats(
+    db: Session, code: str, min_year: int
+) -> tuple[Optional[MarketSummary], list[InsightBucket]]:
+    prices = sorted(_mansion_prices(db, code, min_year))
     if len(prices) < MIN_BUCKET_COUNT:
-        return None
-    return MarketSummary(
+        return None, []
+
+    market = MarketSummary(
         property_label="中古マンション",
         sample_count=len(prices),
         median_price=_percentile(prices, 0.5),
@@ -132,23 +141,7 @@ def _market_summary(db: Session, code: str, min_year: int) -> Optional[MarketSum
         max_price=prices[-1],
     )
 
-
-def _price_bracket_stats(db: Session, code: str, min_year: int) -> list[InsightBucket]:
-    rows = db.execute(
-        select(TradeTransaction.trade_price).where(
-            TradeTransaction.municipality_code == code,
-            TradeTransaction.price_classification == "01",
-            TradeTransaction.trade_year >= min_year,
-            TradeTransaction.trade_price.isnot(None),
-            TradeTransaction.trade_price > 0,
-            _mansion_filter(),
-        )
-    ).all()
-    prices = [float(row[0]) for row in rows]
-    if not prices:
-        return []
-
-    result: list[InsightBucket] = []
+    brackets: list[InsightBucket] = []
     for low, high, label in PRICE_BRACKETS:
         if high is None:
             bucket = [p for p in prices if p >= low]
@@ -156,14 +149,18 @@ def _price_bracket_stats(db: Session, code: str, min_year: int) -> list[InsightB
             bucket = [p for p in prices if low <= p < high]
         if len(bucket) < MIN_BUCKET_COUNT:
             continue
-        result.append(
+        brackets.append(
             InsightBucket(
                 label=label,
                 transaction_count=len(bucket),
                 trade_price_avg=_avg(bucket),
             )
         )
-    return result
+    return market, brackets
+
+
+def _mansion_filter():
+    return TradeTransaction.property_type.like("%マンション%")
 
 
 def _structure_stats(db: Session, code: str, min_year: int) -> list[InsightBucket]:
@@ -406,23 +403,26 @@ def _district_stats(db: Session, code: str, min_year: int) -> list[InsightBucket
 
 
 def _price_class_comparison(db: Session, code: str, min_year: int) -> Optional[PriceClassComparison]:
-    rows = db.execute(
-        text(
-            """
-            SELECT price_classification,
-                   COUNT(*) AS cnt,
-                   AVG(trade_price) AS avg_price
-            FROM trade_transactions
-            WHERE municipality_code = :code
-              AND trade_year >= :min_year
-              AND price_classification IN ('01', '02')
-              AND trade_price IS NOT NULL AND trade_price > 0
-            GROUP BY price_classification
-            """
-        ),
-        {"code": code, "min_year": min_year},
-    ).all()
-    by_class = {row[0]: (int(row[1]), float(row[2])) for row in rows}
+    by_class: dict[str, tuple[int, float]] = {}
+    for price_class in ("01", "02"):
+        row = db.execute(
+            text(
+                """
+                SELECT COUNT(*) AS cnt,
+                       AVG(trade_price) AS avg_price
+                FROM trade_transactions
+                WHERE municipality_code = :code
+                  AND trade_year >= :min_year
+                  AND price_classification = :price_class
+                  AND trade_price IS NOT NULL AND trade_price > 0
+                """
+            ),
+            {"code": code, "min_year": min_year, "price_class": price_class},
+        ).one()
+        cnt = int(row[0] or 0)
+        if cnt > 0 and row[1] is not None:
+            by_class[price_class] = (cnt, float(row[1]))
+
     trade = by_class.get("01")
     contract = by_class.get("02")
     if not trade or not contract or contract[0] < MIN_BUCKET_COUNT:

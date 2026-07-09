@@ -5,11 +5,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SITE_URL="${SITE_URL:-https://fudosan-database.jp}"
 WORK="/tmp/fudosan-gh-pages-$$"
+JOBS="${JOBS:-4}"
+PREWARM_JOBS="${PREWARM_JOBS:-4}"
 
 cd "$ROOT"
 
-echo "=== 静的サイトビルド ==="
-python3 tools/build_public_site.py "$@"
+echo "=== 購入参考データの事前計算 ==="
+python3 tools/prewarm_purchase_insights.py --jobs "$PREWARM_JOBS"
+
+echo "=== 静的サイトビルド (${JOBS} workers) ==="
+python3 tools/build_public_site.py --jobs "$JOBS" "$@"
 
 echo "=== gh-pages へ push ==="
 rm -rf "$WORK"

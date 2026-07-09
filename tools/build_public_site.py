@@ -18,6 +18,7 @@ SITE_URL = os.environ.get("SITE_URL", "https://fudosan-database.jp").rstrip("/")
 
 def _configure_env(db_path: Path | None) -> None:
     os.environ["SITE_URL"] = SITE_URL
+    os.environ["PURCHASE_INSIGHTS_USE_CACHE"] = "1"
     if db_path and db_path.exists():
         os.environ["DATABASE_URL"] = f"sqlite:///{db_path.resolve()}"
     else:
@@ -133,7 +134,23 @@ Sitemap: {SITE_URL}/sitemap.xml
     )
 
 
-def build(*, full: bool = False, db_path: Path | None = None) -> None:
+def _render_paths_chunk(paths: list[str], env: dict[str, str]) -> list[tuple[str, str]]:
+    for key, value in env.items():
+        os.environ[key] = value
+    sys.path.insert(0, str(BACKEND))
+    from starlette.testclient import TestClient
+    from app.main import app
+
+    client = TestClient(app, base_url=env["SITE_URL"])
+    out: list[tuple[str, str]] = []
+    for path in paths:
+        response = client.get(path, follow_redirects=True)
+        if response.status_code == 200:
+            out.append((path, response.text))
+    return out
+
+
+def build(*, full: bool = False, db_path: Path | None = None, jobs: int = 1) -> None:
     _configure_env(db_path)
     sys.path.insert(0, str(BACKEND))
 
@@ -146,29 +163,59 @@ def build(*, full: bool = False, db_path: Path | None = None) -> None:
     (OUT / ".nojekyll").touch()
     shutil.copytree(STATIC_SRC, OUT / "static")
 
-    from starlette.testclient import TestClient
-    from app.main import app
-
-    client = TestClient(app, base_url=SITE_URL)
     paths = _collect_paths(full=full)
     total = len(paths)
-    print(f"Rendering {total} pages (full={full})...")
+    workers = max(1, jobs)
+    print(f"Rendering {total} pages (full={full}, jobs={workers})...")
+
+    env = {
+        "SITE_URL": SITE_URL,
+        "DATABASE_URL": os.environ["DATABASE_URL"],
+        "PURCHASE_INSIGHTS_USE_CACHE": "1",
+    }
+    chunk_size = max(1, (total + workers * 8 - 1) // (workers * 8))
+    chunks = [paths[i : i + chunk_size] for i in range(0, total, chunk_size)]
 
     ok = 0
     t0 = time.time()
-    for i, path in enumerate(paths, 1):
-        response = client.get(path, follow_redirects=True)
-        if response.status_code != 200:
-            print(f"  skip {path} ({response.status_code})")
-            continue
-        target = _path_to_file(path)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(response.text, encoding="utf-8")
-        ok += 1
-        if i % 100 == 0 or i == total:
-            elapsed = time.time() - t0
-            rate = i / elapsed if elapsed else 0
-            print(f"  {i}/{total} ({ok} ok, {rate:.1f} pages/s)")
+    processed = 0
+
+    if workers == 1:
+        from starlette.testclient import TestClient
+        from app.main import app
+
+        client = TestClient(app, base_url=SITE_URL)
+        for i, path in enumerate(paths, 1):
+            response = client.get(path, follow_redirects=True)
+            if response.status_code != 200:
+                print(f"  skip {path} ({response.status_code})")
+                continue
+            target = _path_to_file(path)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(response.text, encoding="utf-8")
+            ok += 1
+            if i % 100 == 0 or i == total:
+                elapsed = time.time() - t0
+                rate = i / elapsed if elapsed else 0
+                print(f"  {i}/{total} ({ok} ok, {rate:.1f} pages/s)")
+    else:
+        from concurrent.futures import ProcessPoolExecutor, as_completed
+
+        with ProcessPoolExecutor(max_workers=workers) as pool:
+            futures = {
+                pool.submit(_render_paths_chunk, chunk, env): len(chunk)
+                for chunk in chunks
+            }
+            for fut in as_completed(futures):
+                for path, html in fut.result():
+                    target = _path_to_file(path)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text(html, encoding="utf-8")
+                    ok += 1
+                processed += futures[fut]
+                elapsed = time.time() - t0
+                rate = processed / elapsed if elapsed else 0
+                print(f"  {processed}/{total} ({ok} ok, {rate:.1f} pages/s)")
 
     sitemap_count = _write_sitemap()
     _write_robots()
@@ -184,9 +231,10 @@ def build(*, full: bool = False, db_path: Path | None = None) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build static site for GitHub Pages")
     parser.add_argument("--full", action="store_true", help="Render all sitemap URLs")
+    parser.add_argument("--jobs", type=int, default=4, help="Parallel render workers")
     parser.add_argument("--db", type=Path, default=ROOT / "data" / "reinfolib.db")
     args = parser.parse_args()
-    build(full=args.full, db_path=args.db)
+    build(full=args.full, db_path=args.db, jobs=args.jobs)
 
 
 if __name__ == "__main__":
