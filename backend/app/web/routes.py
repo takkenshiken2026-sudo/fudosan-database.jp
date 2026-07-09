@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.api import services
+from app.config import settings
 from app.db import get_db
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
@@ -55,6 +56,7 @@ templates.env.globals.update(
         "format_news_datetime": format_news_datetime,
         "format_passengers_daily": format_passengers_daily,
         "quarter_label": quarter_label,
+        "google_site_verification": settings.google_site_verification,
     }
 )
 
@@ -79,10 +81,18 @@ def robots_txt(request: Request) -> str:
     return f"""User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /report/preview
+Disallow: /report/
 
 Sitemap: {base}/sitemap.xml
 """
+
+
+@router.get("/google{token}.html", response_class=PlainTextResponse)
+def google_verification_file(token: str) -> str:
+    filename = f"google{token}.html"
+    if not settings.google_site_verification_file or filename != settings.google_site_verification_file:
+        raise HTTPException(status_code=404, detail="Not found")
+    return f"google-site-verification: {filename}"
 
 
 @router.get("/sitemap.xml")

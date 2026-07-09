@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db import Municipality, MunicipalityPageMeta, Prefecture
+from app.db import Municipality, MunicipalityPageMeta, Prefecture, StationPassenger
 from app.web.seo import absolute_url, format_lastmod, render_sitemap_xml
 
 
@@ -23,6 +23,9 @@ def build_sitemap_entries(db: Session, base: str) -> list[tuple[str, Optional[st
     for pref in prefectures:
         entries.append(
             (absolute_url(base, f"/price/{pref.slug}"), None, "weekly", "0.9")
+        )
+        entries.append(
+            (absolute_url(base, f"/news/area/{pref.slug}"), None, "hourly", "0.7")
         )
 
     rows = db.execute(
@@ -47,6 +50,25 @@ def build_sitemap_entries(db: Session, base: str) -> list[tuple[str, Optional[st
                 "weekly",
                 "0.8",
             )
+        )
+        entries.append(
+            (
+                absolute_url(base, f"/news/area/{pref_slug}/{muni_slug}"),
+                format_lastmod(updated_at),
+                "hourly",
+                "0.6",
+            )
+        )
+
+    station_ids = db.scalars(
+        select(StationPassenger.id)
+        .where(StationPassenger.latest_passengers.isnot(None))
+        .where(StationPassenger.latest_passengers > 0)
+        .order_by(StationPassenger.id)
+    ).all()
+    for station_id in station_ids:
+        entries.append(
+            (absolute_url(base, f"/station/{station_id}"), None, "monthly", "0.5")
         )
 
     return entries

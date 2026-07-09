@@ -90,3 +90,61 @@ bash scripts/sync_stations_parallel.sh
 ## ライセンス・データ出典
 
 取引価格・地価公示データは国土交通省不動産情報ライブラリに基づきます。利用条件は同サイトの利用規約に従ってください。
+
+## Google Search Console（GSC）登録手順
+
+本番公開後（`https://fudosan-database.jp` が応答している状態）に以下を実施してください。
+
+### 1. 所有権の確認
+
+[Google Search Console](https://search.google.com/search-console) でプロパティ `https://fudosan-database.jp` を追加し、確認方法を選びます。
+
+**HTMLタグ方式（推奨）**
+
+1. GSC が表示する `content="..."` の値をコピー
+2. `.env`（本番は Fly secrets）に設定:
+
+```env
+GOOGLE_SITE_VERIFICATION=（contentの値のみ）
+```
+
+3. 再デプロイ後、トップページの `<head>` に meta タグが出力されます
+
+```bash
+flyctl secrets set GOOGLE_SITE_VERIFICATION=xxx -a fudosan-database-jp
+flyctl deploy -a fudosan-database-jp
+```
+
+**HTMLファイル方式**
+
+```env
+GOOGLE_SITE_VERIFICATION_FILE=google1234abcd.html
+```
+
+GSC 指定のファイル名と一致すると `https://fudosan-database.jp/google1234abcd.html` で確認できます。
+
+### 2. サイトマップの送信
+
+GSC の「サイトマップ」に以下を登録:
+
+```
+https://fudosan-database.jp/sitemap.xml
+```
+
+含まれる URL（約 1 万ページ規模）:
+
+| 種別 | 例 |
+|------|-----|
+| 都道府県相場 | `/price/tokyo` |
+| 市区町村相場 | `/price/tokyo/shibuya` |
+| 地域ニュース | `/news/area/tokyo` |
+| 駅乗降客数 | `/station/123` |
+| 静的ページ | `/`, `/rankings`, `/news` |
+
+### 3. 確認チェックリスト
+
+- [ ] `SITE_URL=https://fudosan-database.jp` が本番で設定されている
+- [ ] `https://fudosan-database.jp/robots.txt` に Sitemap 行がある
+- [ ] `https://fudosan-database.jp/sitemap.xml` が XML で開ける
+- [ ] GSC で所有権確認が完了している
+- [ ] サイトマップを送信済み

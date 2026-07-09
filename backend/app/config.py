@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     site_url: str = ""
     site_name: str = "不動産相場ナビ"
     news_cache_ttl_seconds: int = 1800
+    # Google Search Console（HTMLタグ方式の content 値）
+    google_site_verification: str = ""
+    # HTMLファイル方式（例: google1234abcd.html）
+    google_site_verification_file: str = ""
 
 
 settings = Settings()
