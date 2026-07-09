@@ -122,6 +122,7 @@ def build(*, full: bool = False, db_path: Path | None = None) -> None:
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
+    (OUT / ".nojekyll").touch()
     shutil.copytree(STATIC_SRC, OUT / "static")
 
     from starlette.testclient import TestClient
