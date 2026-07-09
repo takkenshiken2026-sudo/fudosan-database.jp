@@ -70,9 +70,9 @@ def _collect_paths(full: bool) -> list[str]:
             "/search",
         }
         for path in paths:
-            if path.startswith("/price/") and path.count("/") == 2:
+            if path.startswith("/price/"):
                 core.add(path)
-            if path.startswith("/news/area/") and path.count("/") == 3:
+            elif path.startswith("/news/area/") and path.count("/") == 3:
                 core.add(path)
         return sorted(core)
     finally:
