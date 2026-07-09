@@ -104,6 +104,23 @@ python -m app.sync_cli sync-transactions --prefecture 13 --from-year 2005 --to-y
 bash scripts/sync_stations_parallel.sh
 ```
 
+### e-Stat 政府統計（人口・世帯・空き家・所得など）
+
+国交省reinfolibに無い統計を e-Stat API（無料appId）で取得し `estat_stat_values` に格納します。
+
+```bash
+cd backend
+# 1) 目的の統計表IDを検索（statsDataId を確認）
+python -m app.sync_cli estat-search --search "国勢調査 男女別人口 市区町村"
+
+# 2) 統計表を取得してDB格納（市区町村のみ・全ページ）
+python -m app.sync_cli sync-estat --stats-data-id <statsDataId> --dataset population --municipality-only
+```
+
+- `.env` に `ESTAT_APP_ID`（[e-Stat](https://www.e-stat.go.jp/api/) で無料取得）が必要。
+- ネットワーク制限環境（Claude Code on the web 等）では `api.e-stat.go.jp` を egress 許可リストに追加すること。
+- 年を変えた表を追加取得すれば `period_year` により時系列（人口推移）になります。
+
 ## 主要 URL
 
 | パス | 内容 |

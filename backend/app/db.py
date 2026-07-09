@@ -209,6 +209,61 @@ class MunicipalityPageMeta(Base):
     municipality: Mapped["Municipality"] = relationship(back_populates="page_meta")
 
 
+class EstatStatValue(Base):
+    """e-Stat getStatsData の正規化レコード（生値・時系列そのまま保持）。
+
+    dataset は論理グルーピング（例: population / migration / vacancy / income）。
+    area_code は e-Stat の地域コード（市区町村は JIS 5桁と一致し municipalities.code に対応）。
+    stat_key は表章項目＋分類（cat）の組み合わせを解決した系列ラベル。
+    period_year を持つので、年を変えて積むだけで時系列になる。
+    """
+
+    __tablename__ = "estat_stat_values"
+    __table_args__ = (
+        UniqueConstraint(
+            "stats_data_id",
+            "area_code",
+            "cat_key",
+            "period_code",
+            name="uq_estat_stat_value_cell",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    stats_data_id: Mapped[str] = mapped_column(String(20), index=True)
+    dataset: Mapped[str] = mapped_column(String(30), index=True)
+    area_code: Mapped[str] = mapped_column(String(6), index=True)
+    area_name: Mapped[Optional[str]] = mapped_column(String(80))
+    cat_key: Mapped[str] = mapped_column(String(160), default="", index=True)
+    stat_label: Mapped[Optional[str]] = mapped_column(String(200))
+    period_code: Mapped[str] = mapped_column(String(20), default="")
+    period_year: Mapped[Optional[int]] = mapped_column(Integer, index=True)
+    value: Mapped[Optional[float]] = mapped_column(Float)
+    unit: Mapped[Optional[str]] = mapped_column(String(20))
+    raw_json: Mapped[Optional[str]] = mapped_column(Text)
+    synced_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class MunicipalityDemographics(Base):
+    """市区町村ページ描画用の人口・住宅指標スナップショット（rebuild で材料化）。"""
+
+    __tablename__ = "municipality_demographics"
+
+    municipality_code: Mapped[str] = mapped_column(
+        ForeignKey("municipalities.code"), primary_key=True
+    )
+    population: Mapped[Optional[int]] = mapped_column(Integer)
+    population_prev: Mapped[Optional[int]] = mapped_column(Integer)
+    households: Mapped[Optional[int]] = mapped_column(Integer)
+    net_migration: Mapped[Optional[int]] = mapped_column(Integer)
+    net_migration_rate: Mapped[Optional[float]] = mapped_column(Float)
+    vacancy_rate: Mapped[Optional[float]] = mapped_column(Float)
+    aging_rate: Mapped[Optional[float]] = mapped_column(Float)
+    taxable_income_per_capita: Mapped[Optional[int]] = mapped_column(Integer)
+    latest_year: Mapped[Optional[int]] = mapped_column(Integer)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
 class SyncCheckpoint(Base):
     __tablename__ = "sync_checkpoints"
     __table_args__ = (

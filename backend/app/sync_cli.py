@@ -6,6 +6,7 @@ from sqlalchemy import func, select
 
 from app.config import settings
 from app.db import (
+    EstatStatValue,
     LandPricePoint,
     Municipality,
     MunicipalityPageMeta,
@@ -16,6 +17,9 @@ from app.db import (
     TradeTransaction,
     init_db,
 )
+from app.estat.client import EstatClient
+from app.estat.parse import _as_list
+from app.estat.sync import KNOWN_TABLES, sync_estat_table
 from app.reinfolib.client import ReinfolibClient
 from app.reinfolib.land_price_sync import sync_land_prices
 from app.reinfolib.station_sync import sync_station_passengers
@@ -46,6 +50,7 @@ def print_status(db) -> None:
             "transactions": db.scalar(select(func.count(TradeTransaction.id))),
             "land_price_points": db.scalar(select(func.count(LandPricePoint.id))),
             "station_passengers": db.scalar(select(func.count(StationPassenger.id))),
+            "estat_stat_values": db.scalar(select(func.count(EstatStatValue.id))),
             "sync_checkpoints_done": db.scalar(
                 select(func.count(SyncCheckpoint.id)).where(
                     SyncCheckpoint.status.in_(("done", "empty"))
@@ -103,6 +108,34 @@ def main() -> None:
     stations.add_argument("--sleep", type=float, default=settings.sync_sleep_seconds)
     stations.add_argument("--workers", type=int, default=1, help="タイル取得の並列数（I/O）")
     stations.add_argument("--force", action="store_true", help="完了済みも再取得")
+
+    estat_search = sub.add_parser(
+        "estat-search", help="e-Stat 統計表を検索（statsDataId確認）"
+    )
+    estat_search.add_argument("--search", help="検索語（例: 国勢調査 人口 市区町村）")
+    estat_search.add_argument("--stats-code", help="政府統計コード（例: 00200521 国勢調査）")
+    estat_search.add_argument("--limit", type=int, default=20)
+    estat_search.add_argument("--app-id", default=settings.estat_app_id)
+
+    estat = sub.add_parser("sync-estat", help="e-Stat 統計表を取得しDB格納")
+    estat.add_argument("--stats-data-id", help="取得する統計表ID（getStatsDataのstatsDataId）")
+    estat.add_argument(
+        "--table",
+        choices=sorted(KNOWN_TABLES),
+        help="登録済みテーブル名（KNOWN_TABLES）",
+    )
+    estat.add_argument("--dataset", help="論理データセット名（例: population）")
+    estat.add_argument(
+        "--municipality-only",
+        action="store_true",
+        help="市区町村（5桁・XX000/00000除外）のみ格納",
+    )
+    estat.add_argument("--max-pages", type=int, help="取得ページ数上限（省略時は全件）")
+    estat.add_argument("--cd-cat01", dest="cdCat01", help="分類cat01で絞り込み")
+    estat.add_argument("--cd-time", dest="cdTime", help="時間軸で絞り込み")
+    estat.add_argument("--cd-area", dest="cdArea", help="地域コードで絞り込み")
+    estat.add_argument("--app-id", default=settings.estat_app_id)
+    estat.add_argument("--sleep", type=float, default=settings.sync_sleep_seconds)
 
     plan = sub.add_parser("plan", help="API呼び出し見積もり")
     plan.add_argument("--prefecture", help="都道府県コード")
@@ -192,6 +225,59 @@ def main() -> None:
                 1,
             )
             print(estimate)
+            return
+
+        if args.command == "estat-search":
+            if not args.app_id:
+                raise SystemExit("ESTAT_APP_ID を .env に設定してください")
+            client = EstatClient(app_id=args.app_id)
+            payload = client.get_stats_list(
+                search_word=args.search,
+                stats_code=args.stats_code,
+                limit=args.limit,
+            )
+            datalist = payload.get("GET_STATS_LIST", {}).get("DATALIST_INF", {})
+            tables = _as_list(datalist.get("TABLE_INF"))
+            if not tables:
+                result = payload.get("GET_STATS_LIST", {}).get("RESULT", {})
+                print(f"該当なし（STATUS={result.get('STATUS')}: {result.get('ERROR_MSG')}）")
+                return
+            for t in tables:
+                stat_name = (t.get("STAT_NAME") or {}).get("$", "")
+                title = t.get("TITLE")
+                title = title.get("$", "") if isinstance(title, dict) else (title or "")
+                area = (t.get("SURVEY_DATE") or "")
+                print(f"[{t.get('@id')}] {stat_name} / {title} (調査: {area})")
+            return
+
+        if args.command == "sync-estat":
+            if not args.app_id:
+                raise SystemExit("ESTAT_APP_ID を .env に設定してください")
+            stats_data_id = args.stats_data_id
+            dataset = args.dataset
+            if args.table:
+                spec = KNOWN_TABLES[args.table]
+                stats_data_id = stats_data_id or spec["stats_data_id"]
+                dataset = dataset or args.table
+            if not stats_data_id:
+                raise SystemExit("--stats-data-id または --table を指定してください")
+            if not dataset:
+                dataset = stats_data_id
+            client = EstatClient(app_id=args.app_id, sleep_seconds=args.sleep)
+            stats = sync_estat_table(
+                db,
+                client,
+                stats_data_id=stats_data_id,
+                dataset=dataset,
+                municipality_only=args.municipality_only,
+                max_pages=args.max_pages,
+                filters={
+                    "cdCat01": args.cdCat01,
+                    "cdTime": args.cdTime,
+                    "cdArea": args.cdArea,
+                },
+            )
+            print(stats)
             return
 
         api_key = getattr(args, "api_key", None)
