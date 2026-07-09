@@ -1,8 +1,6 @@
 name: Deploy GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       full_build:
@@ -43,6 +41,11 @@ jobs:
           GOOGLE_SITE_VERIFICATION_FILE: ${{ secrets.GOOGLE_SITE_VERIFICATION_FILE }}
           GOOGLE_SITE_VERIFICATION_HTML: ${{ secrets.GOOGLE_SITE_VERIFICATION_HTML }}
         run: |
+          if [ ! -f data/reinfolib.db ]; then
+            echo "data/reinfolib.db がありません。CIではデプロイできません。" >&2
+            echo "ローカルで bash scripts/deploy-gh-pages.sh を実行してください。" >&2
+            exit 1
+          fi
           ARGS=""
           if [ "${{ github.event.inputs.full_build }}" = "true" ]; then
             ARGS="--full"
