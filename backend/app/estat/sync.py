@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.db import EstatStatValue, SyncCheckpoint
 from app.estat.client import EstatClient
-from app.estat.parse import iter_values, next_key, result_status
+from app.estat.parse import iter_table_list, iter_values, next_key, result_status
 
 # 取得候補の統計表。statsDataId は e-Stat 側で更新されるため、実行前に
 # `estat-search` （getStatsList）で最新IDを確認してから使うこと（要検証）。
@@ -24,6 +24,29 @@ KNOWN_TABLES: dict[str, dict[str, str]] = {
 }
 
 _PAGE_LIMIT = 100_000  # e-Stat の1リクエスト最大取得数
+
+# 調査コード（statsCode）は安定。--survey 名で指定できるようにする。
+# title_match は市区町村レベルの該当表を絞り込むためのタイトル語（スペース区切りAND）。
+KNOWN_SURVEYS: dict[str, dict[str, str]] = {
+    "census": {
+        "stats_code": "00200521",
+        "dataset": "population",
+        "title_match": "男女別人口 市区町村",
+        "note": "国勢調査 男女別人口・世帯（市区町村）",
+    },
+    "migration": {
+        "stats_code": "00200523",
+        "dataset": "migration",
+        "title_match": "市区町村",
+        "note": "住民基本台帳人口移動報告（転入・転出・転入超過）",
+    },
+    "housing": {
+        "stats_code": "00200522",
+        "dataset": "vacancy",
+        "title_match": "市区町村",
+        "note": "住宅・土地統計調査（空き家・持ち家・家賃）",
+    },
+}
 
 
 def _is_municipality_area(code: str) -> bool:
@@ -148,6 +171,82 @@ def sync_estat_table(
         "fetched": fetched,
         "pages": page,
     }
+
+
+def discover_tables(
+    client: EstatClient,
+    *,
+    stats_code: str,
+    title_match: Optional[str] = None,
+    limit: int = 100,
+) -> list[dict[str, str]]:
+    """調査コードから統計表を検索し、タイトル語で絞り込んだ一覧を返す。"""
+    payload = client.get_stats_list(stats_code=stats_code, limit=limit)
+    st, msg = result_status(payload)
+    if st not in (0, None):
+        raise RuntimeError(f"getStatsList STATUS={st}: {msg}")
+    tables = list(iter_table_list(payload))
+    if title_match:
+        needles = [n for n in title_match.split() if n]
+        tables = [
+            t for t in tables if all(n in t["search_text"] for n in needles)
+        ]
+    return tables
+
+
+def sync_estat_survey(
+    db: Session,
+    client: EstatClient,
+    *,
+    stats_code: str,
+    dataset: str,
+    title_match: Optional[str] = None,
+    municipality_only: bool = False,
+    max_tables: Optional[int] = None,
+    max_pages: Optional[int] = None,
+    list_limit: int = 100,
+) -> dict[str, Any]:
+    """調査コードで該当する統計表を自動発見し、各表を取得してDB格納する。
+
+    statsDataId を手で調べる必要をなくす turnkey な一括取り込み。
+    """
+    tables = discover_tables(
+        client, stats_code=stats_code, title_match=title_match, limit=list_limit
+    )
+    if max_tables is not None:
+        tables = tables[:max_tables]
+
+    totals: dict[str, Any] = {
+        "stats_code": stats_code,
+        "matched_tables": len(tables),
+        "tables": [],
+        "inserted": 0,
+        "updated": 0,
+        "skipped": 0,
+        "fetched": 0,
+        "errors": 0,
+    }
+    for t in tables:
+        try:
+            result = sync_estat_table(
+                db,
+                client,
+                stats_data_id=t["id"],
+                dataset=dataset,
+                municipality_only=municipality_only,
+                max_pages=max_pages,
+            )
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            totals["errors"] += 1
+            totals["tables"].append({"id": t["id"], "title": t["title"], "error": str(exc)})
+            continue
+        for key in ("inserted", "updated", "skipped", "fetched"):
+            totals[key] += result.get(key, 0)
+        totals["tables"].append(
+            {"id": t["id"], "title": t["title"], **{k: result.get(k, 0) for k in ("inserted", "updated", "fetched")}}
+        )
+    return totals
 
 
 def _upsert_checkpoint(

@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from app.estat.parse import (  # noqa: E402
     build_class_lookup,
+    iter_table_list,
     iter_values,
     next_key,
     parse_value,
@@ -140,6 +141,52 @@ def main() -> None:
     check("single value no-comma", single_rows[0]["value"] == 1973395.0)
     check("next_key parsed", next_key(SINGLE) == 101)
     check("next_key none on SAMPLE", next_key(SAMPLE) is None)
+
+    # getStatsList のテーブル一覧解析（sync-estat-survey の発見に使用）
+    stats_list = {
+        "GET_STATS_LIST": {
+            "RESULT": {"STATUS": 0},
+            "DATALIST_INF": {
+                "TABLE_INF": [
+                    {
+                        "@id": "0003448233",
+                        "STAT_NAME": {"@code": "00200521", "$": "国勢調査"},
+                        "STATISTICS_NAME": "令和2年国勢調査",
+                        "TITLE": {"@no": "1", "$": "男女別人口－全国，都道府県，市区町村"},
+                        "SURVEY_DATE": "202010",
+                    },
+                    {
+                        "@id": "0003448299",
+                        "STAT_NAME": {"@code": "00200521", "$": "国勢調査"},
+                        "STATISTICS_NAME": "令和2年国勢調査",
+                        "TITLE": "産業別就業者数－全国",
+                        "SURVEY_DATE": "202010",
+                    },
+                ]
+            },
+        }
+    }
+    tl = list(iter_table_list(stats_list))
+    check("table list count", len(tl) == 2)
+    check("table id extracted", tl[0]["id"] == "0003448233")
+    check("title from dict", "男女別人口" in tl[0]["title"])
+    check("title from str", "産業別就業者数" in tl[1]["title"])
+    check(
+        "search_text AND-match works",
+        all(n in tl[0]["search_text"] for n in "男女別人口 市区町村".split()),
+    )
+    check(
+        "second table excluded by market match",
+        not all(n in tl[1]["search_text"] for n in "男女別人口 市区町村".split()),
+    )
+
+    # 単数TABLE_INFの正規化
+    single_list = {
+        "GET_STATS_LIST": {
+            "DATALIST_INF": {"TABLE_INF": {"@id": "X1", "TITLE": "単一表"}}
+        }
+    }
+    check("single TABLE_INF normalized", len(list(iter_table_list(single_list))) == 1)
 
     # スカラ関数
     check("parse_year short", parse_year("2023100000") == 2023)

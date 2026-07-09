@@ -65,6 +65,37 @@ def build_class_lookup(payload: dict[str, Any]) -> dict[str, dict[str, str]]:
     return lookup
 
 
+def _text_of(value: Any) -> str:
+    """e-Stat のフィールドは str か {'$': ...} のどちらもあり得るので文字列化する。"""
+    if value is None:
+        return ""
+    if isinstance(value, dict):
+        return str(value.get("$", ""))
+    return str(value)
+
+
+def iter_table_list(payload: dict[str, Any]) -> Iterator[dict[str, str]]:
+    """getStatsList の TABLE_INF から {id, title, search_text} を1件ずつ返す。
+
+    search_text は STATISTICS_NAME / TITLE / STAT_NAME を連結した検索用テキスト。
+    """
+    datalist = payload.get("GET_STATS_LIST", {}).get("DATALIST_INF", {})
+    for t in _as_list(datalist.get("TABLE_INF")):
+        if not isinstance(t, dict):
+            continue
+        stat_name = _text_of(t.get("STAT_NAME"))
+        statistics_name = _text_of(t.get("STATISTICS_NAME"))
+        title = _text_of(t.get("TITLE"))
+        survey_date = _text_of(t.get("SURVEY_DATE"))
+        yield {
+            "id": str(t.get("@id", "")),
+            "stat_name": stat_name,
+            "title": title or statistics_name,
+            "survey_date": survey_date,
+            "search_text": f"{stat_name} {statistics_name} {title}",
+        }
+
+
 def parse_year(time_code: Optional[str]) -> Optional[int]:
     """e-Stat の時間軸コード（例 '2020000000', '2023100000'）先頭4桁を年として取り出す。"""
     if not time_code:
