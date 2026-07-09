@@ -2,6 +2,11 @@
 {% from "macros.html" import section_title, report_cta, ranking_rows, prefecture_rows, hero_news_item %}
 {% block description %}全国47都道府県・1,920市区町村の不動産取引価格データを検索。地域別の取引件数・平均価格を無料で閲覧。{% endblock %}
 
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="/static/charts.js" defer></script>
+{% endblock %}
+
 {% block content %}
 <section class="hero-section relative overflow-hidden">
   <div class="max-w-6xl mx-auto px-4 py-14 md:py-20 relative z-10">
@@ -75,9 +80,9 @@
 {# Quick actions #}
 <section class="max-w-6xl mx-auto px-4 -mt-6 relative z-10">
   <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-    <a href="/market" class="home-action-card">
+    <a href="#market-overview" class="home-action-card">
       <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-      <span class="font-semibold text-sm">取引価格</span>
+      <span class="font-semibold text-sm">全国の推移</span>
     </a>
     <a href="#rankings" class="home-action-card">
       <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
@@ -93,6 +98,35 @@
     </a>
   </div>
 </section>
+
+{# National charts #}
+{% if chart_data.yearly_stats or chart_data.land_price_yearly %}
+<section id="market-overview" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+    {{ section_title('全国の取引・地価動向', '国土交通省データに基づく年次推移') }}
+    <a href="/market" class="text-sm text-brand-600 font-medium hover:underline shrink-0">年次データ（表）を見る →</a>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    {% if chart_data.yearly_stats %}
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-volume"></canvas></div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-price"></canvas></div>
+    </div>
+    {% endif %}
+    {% if chart_data.land_price_yearly %}
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-land-price"></canvas></div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-land-points"></canvas></div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
 
 {# Prefecture rankings #}
 <section class="bg-slate-100 border-y border-slate-200">
@@ -246,4 +280,12 @@
   </div>
   {{ report_cta() }}
 </section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof initHomeCharts === "function") {
+      initHomeCharts({{ chart_data | tojson | safe }});
+    }
+  });
+</script>
 {% endblock %}

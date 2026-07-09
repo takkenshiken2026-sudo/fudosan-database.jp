@@ -19,6 +19,9 @@ python3 tools/build_public_site.py --jobs "$JOBS" "$@"
 echo "=== gh-pages へ push ==="
 rm -rf "$WORK"
 cp -a "$ROOT/public_site" "$WORK"
+if [[ ! -f "$WORK/CNAME" ]]; then
+  echo "fudosan-database.jp" > "$WORK/CNAME"
+fi
 cd "$WORK"
 git init -q
 git checkout -q -b gh-pages

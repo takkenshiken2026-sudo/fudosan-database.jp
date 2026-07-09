@@ -14,6 +14,7 @@ OUT = ROOT / "public_site"
 BACKEND = ROOT / "backend"
 STATIC_SRC = BACKEND / "app" / "web" / "static"
 SITE_URL = os.environ.get("SITE_URL", "https://fudosan-database.jp").rstrip("/")
+CNAME_DOMAIN = os.environ.get("GITHUB_PAGES_CNAME", "fudosan-database.jp").strip()
 
 
 def _configure_env(db_path: Path | None) -> None:
@@ -122,6 +123,11 @@ def _write_sitemap() -> int:
         db.close()
 
 
+def _write_cname() -> None:
+    if CNAME_DOMAIN and "." in CNAME_DOMAIN:
+        (OUT / "CNAME").write_text(f"{CNAME_DOMAIN}\n", encoding="utf-8")
+
+
 def _write_robots() -> None:
     (OUT / "robots.txt").write_text(
         f"""User-agent: *
@@ -221,6 +227,7 @@ def build(*, full: bool = False, db_path: Path | None = None, jobs: int = 1) -> 
 
     sitemap_count = _write_sitemap()
     _write_robots()
+    _write_cname()
     _write_google_verification_html()
 
     # GitHub Pages: 存在しないパスはトップへ（段階的ビルド時のフォールバック）
