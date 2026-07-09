@@ -21,7 +21,36 @@ python -m app.sync_cli seed-prefectures
 bash scripts/run_ui.sh       # http://127.0.0.1:8001/
 ```
 
-## Fly.io デプロイ
+## Fly.io デプロイ（オプション）
+
+動的 API や大規模 DB をそのまま使う場合は Fly.io も利用できます（課金登録が必要）。
+
+```bash
+bash scripts/setup-fly-production.sh
+```
+
+## GitHub Pages デプロイ（本番）
+
+ドメイン `fudosan-database.jp` は GitHub Pages で配信します。`main` への push で自動ビルド・デプロイされます。
+
+```bash
+# ローカルで全ページ生成（約2〜3時間、DB必須）
+python3 tools/build_public_site.py --full
+
+# クイックビルド（都道府県＋主要ページのみ、CI と同じ）
+python3 tools/build_public_site.py
+```
+
+### GSC 用 GitHub Secrets
+
+リポジトリ Settings → Secrets → Actions に登録:
+
+| Secret | 内容 |
+|--------|------|
+| `GOOGLE_SITE_VERIFICATION` | HTMLタグ方式の content 値 |
+| `GOOGLE_SITE_VERIFICATION_FILE` または `GOOGLE_SITE_VERIFICATION_HTML` | ファイル名（例: `google1234.html`） |
+
+## Fly.io デプロイ（レガシー手順）
 
 ### 1. 初回セットアップ
 
@@ -102,17 +131,16 @@ bash scripts/sync_stations_parallel.sh
 **HTMLタグ方式（推奨）**
 
 1. GSC が表示する `content="..."` の値をコピー
-2. `.env`（本番は Fly secrets）に設定:
+2. GitHub Secrets（`GOOGLE_SITE_VERIFICATION`）または `.env` に設定:
 
 ```env
 GOOGLE_SITE_VERIFICATION=（contentの値のみ）
 ```
 
-3. 再デプロイ後、トップページの `<head>` に meta タグが出力されます
+GitHub Actions デプロイでは Secrets が自動でビルドに渡されます。
 
 ```bash
-flyctl secrets set GOOGLE_SITE_VERIFICATION=xxx -a fudosan-database-jp
-flyctl deploy -a fudosan-database-jp
+gh secret set GOOGLE_SITE_VERIFICATION --repo takkenshiken2026-sudo/fudosan-database.jp
 ```
 
 **HTMLファイル方式**
