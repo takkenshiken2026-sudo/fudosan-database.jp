@@ -93,10 +93,27 @@ def _write_sitemap() -> int:
             xml = committed.read_text(encoding="utf-8")
             (OUT / "sitemap.xml").write_text(xml, encoding="utf-8")
             return xml.count("<url>")
-        xml = render_sitemap_xml(entries)
-        (OUT / "sitemap.xml").write_text(xml, encoding="utf-8")
-        committed.parent.mkdir(exist_ok=True)
-        committed.write_text(xml, encoding="utf-8")
+
+        chunk_size = 2000
+        sitemap_dir = OUT / "sitemaps"
+        sitemap_dir.mkdir(parents=True, exist_ok=True)
+        sitemap_urls: list[str] = []
+        for i in range(0, len(entries), chunk_size):
+            chunk = entries[i : i + chunk_size]
+            name = f"sitemap-{i // chunk_size + 1}.xml"
+            (sitemap_dir / name).write_text(render_sitemap_xml(chunk), encoding="utf-8")
+            sitemap_urls.append(f"{SITE_URL}/sitemaps/{name}")
+
+        index_lines = [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ]
+        for url in sitemap_urls:
+            index_lines.append("  <sitemap>")
+            index_lines.append(f"    <loc>{url}</loc>")
+            index_lines.append("  </sitemap>")
+        index_lines.append("</sitemapindex>")
+        (OUT / "sitemap.xml").write_text("\n".join(index_lines), encoding="utf-8")
         return len(entries)
     finally:
         db.close()
