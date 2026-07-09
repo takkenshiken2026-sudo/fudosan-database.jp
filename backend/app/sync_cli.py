@@ -18,8 +18,14 @@ from app.db import (
     init_db,
 )
 from app.estat.client import EstatClient
-from app.estat.parse import _as_list
-from app.estat.sync import KNOWN_TABLES, sync_estat_table
+from app.estat.parse import iter_table_list
+from app.estat.sync import (
+    KNOWN_SURVEYS,
+    KNOWN_TABLES,
+    discover_tables,
+    sync_estat_survey,
+    sync_estat_table,
+)
 from app.reinfolib.client import ReinfolibClient
 from app.reinfolib.land_price_sync import sync_land_prices
 from app.reinfolib.station_sync import sync_station_passengers
@@ -116,6 +122,31 @@ def main() -> None:
     estat_search.add_argument("--stats-code", help="政府統計コード（例: 00200521 国勢調査）")
     estat_search.add_argument("--limit", type=int, default=20)
     estat_search.add_argument("--app-id", default=settings.estat_app_id)
+
+    estat_survey = sub.add_parser(
+        "sync-estat-survey",
+        help="調査コードで統計表を自動発見し一括取得（turnkey）",
+    )
+    estat_survey.add_argument(
+        "--survey",
+        choices=sorted(KNOWN_SURVEYS),
+        help="登録済み調査（census/migration/housing）",
+    )
+    estat_survey.add_argument("--stats-code", help="政府統計コード（例: 00200521）")
+    estat_survey.add_argument("--title-match", help="タイトル絞り込み語（スペース区切りAND）")
+    estat_survey.add_argument("--dataset", help="論理データセット名")
+    estat_survey.add_argument("--municipality-only", action="store_true", default=True)
+    estat_survey.add_argument(
+        "--all-areas",
+        dest="municipality_only",
+        action="store_false",
+        help="都道府県・全国も格納",
+    )
+    estat_survey.add_argument("--max-tables", type=int, help="取得する表数の上限")
+    estat_survey.add_argument("--max-pages", type=int, help="各表のページ数上限")
+    estat_survey.add_argument("--list-only", action="store_true", help="発見した表の一覧のみ表示")
+    estat_survey.add_argument("--app-id", default=settings.estat_app_id)
+    estat_survey.add_argument("--sleep", type=float, default=settings.sync_sleep_seconds)
 
     estat = sub.add_parser("sync-estat", help="e-Stat 統計表を取得しDB格納")
     estat.add_argument("--stats-data-id", help="取得する統計表ID（getStatsDataのstatsDataId）")
@@ -236,18 +267,50 @@ def main() -> None:
                 stats_code=args.stats_code,
                 limit=args.limit,
             )
-            datalist = payload.get("GET_STATS_LIST", {}).get("DATALIST_INF", {})
-            tables = _as_list(datalist.get("TABLE_INF"))
+            tables = list(iter_table_list(payload))
             if not tables:
                 result = payload.get("GET_STATS_LIST", {}).get("RESULT", {})
                 print(f"該当なし（STATUS={result.get('STATUS')}: {result.get('ERROR_MSG')}）")
                 return
             for t in tables:
-                stat_name = (t.get("STAT_NAME") or {}).get("$", "")
-                title = t.get("TITLE")
-                title = title.get("$", "") if isinstance(title, dict) else (title or "")
-                area = (t.get("SURVEY_DATE") or "")
-                print(f"[{t.get('@id')}] {stat_name} / {title} (調査: {area})")
+                print(f"[{t['id']}] {t['stat_name']} / {t['title']} (調査: {t['survey_date']})")
+            return
+
+        if args.command == "sync-estat-survey":
+            if not args.app_id:
+                raise SystemExit("ESTAT_APP_ID を .env に設定してください")
+            stats_code = args.stats_code
+            dataset = args.dataset
+            title_match = args.title_match
+            if args.survey:
+                spec = KNOWN_SURVEYS[args.survey]
+                stats_code = stats_code or spec["stats_code"]
+                dataset = dataset or spec["dataset"]
+                title_match = title_match if title_match is not None else spec.get("title_match")
+            if not stats_code:
+                raise SystemExit("--survey または --stats-code を指定してください")
+            if not dataset:
+                dataset = stats_code
+            client = EstatClient(app_id=args.app_id, sleep_seconds=args.sleep)
+            if args.list_only:
+                found = discover_tables(
+                    client, stats_code=stats_code, title_match=title_match, limit=100
+                )
+                print(f"発見: {len(found)} 表")
+                for t in found:
+                    print(f"  [{t['id']}] {t['title']} (調査: {t['survey_date']})")
+                return
+            stats = sync_estat_survey(
+                db,
+                client,
+                stats_code=stats_code,
+                dataset=dataset,
+                title_match=title_match,
+                municipality_only=args.municipality_only,
+                max_tables=args.max_tables,
+                max_pages=args.max_pages,
+            )
+            print(stats)
             return
 
         if args.command == "sync-estat":
