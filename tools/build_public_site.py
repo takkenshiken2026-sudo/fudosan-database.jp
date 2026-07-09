@@ -19,6 +19,7 @@ SITE_URL = os.environ.get("SITE_URL", "https://fudosan-database.jp").rstrip("/")
 def _configure_env(db_path: Path | None) -> None:
     os.environ["SITE_URL"] = SITE_URL
     os.environ["PURCHASE_INSIGHTS_USE_CACHE"] = "1"
+    os.environ["STATIC_BUILD"] = "1"
     if db_path and db_path.exists():
         os.environ["DATABASE_URL"] = f"sqlite:///{db_path.resolve()}"
     else:
@@ -172,6 +173,7 @@ def build(*, full: bool = False, db_path: Path | None = None, jobs: int = 1) -> 
         "SITE_URL": SITE_URL,
         "DATABASE_URL": os.environ["DATABASE_URL"],
         "PURCHASE_INSIGHTS_USE_CACHE": "1",
+        "STATIC_BUILD": "1",
     }
     chunk_size = max(1, (total + workers * 8 - 1) // (workers * 8))
     chunks = [paths[i : i + chunk_size] for i in range(0, total, chunk_size)]

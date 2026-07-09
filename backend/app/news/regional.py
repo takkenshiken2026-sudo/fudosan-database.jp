@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 from time import time as time_time
@@ -33,12 +34,16 @@ def _cache_key(prefecture_slug: str, municipality_slug: Optional[str] = None) ->
     return prefecture_slug
 
 
+def _static_build_mode() -> bool:
+    return os.environ.get("STATIC_BUILD", "").strip() in ("1", "true", "yes")
+
+
 def _load_regional_disk() -> dict:
     if not _REGIONAL_CACHE_PATH.exists():
         return {}
     try:
         return json.loads(_REGIONAL_CACHE_PATH.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
+    except (json.JSONDecodeError, OSError, UnicodeDecodeError):
         return {}
 
 
@@ -134,6 +139,24 @@ def _fetch_regional(
     }
 
 
+def _empty_feed(
+    prefecture_name: str,
+    prefecture_slug: str,
+    municipality_name: Optional[str] = None,
+    municipality_slug: Optional[str] = None,
+) -> dict:
+    area = f"{prefecture_name}{municipality_name or ''}"
+    return {
+        "fetched_at": None,
+        "query": _build_query(prefecture_name, municipality_name),
+        "area_label": area,
+        "prefecture_slug": prefecture_slug,
+        "municipality_slug": municipality_slug,
+        "items": [],
+        "categories": [],
+    }
+
+
 def get_regional_news(
     prefecture_name: str,
     prefecture_slug: str,
@@ -146,6 +169,14 @@ def get_regional_news(
     key = _cache_key(prefecture_slug, municipality_slug)
     now = time_time()
     ttl = _cache_ttl()
+
+    if _static_build_mode():
+        disk = _load_regional_disk()
+        if key in disk:
+            return disk[key]
+        return _empty_feed(
+            prefecture_name, prefecture_slug, municipality_name, municipality_slug
+        )
 
     if not force_refresh and key in _REGIONAL_MEMORY:
         ts, payload = _REGIONAL_MEMORY[key]
