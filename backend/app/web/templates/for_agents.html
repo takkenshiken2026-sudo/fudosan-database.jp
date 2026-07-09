@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block description %}不動産仲介店向け。住所入力で周辺取引事例・地価公示をまとめた顧客向けレポートを自動生成。{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-br from-ink-900 via-brand-900 to-brand-700 text-white">
+  <div class="max-w-6xl mx-auto px-4 py-16">
+    <p class="text-brand-200 text-sm font-medium mb-3">B2B SaaS</p>
+    <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4">取引事例レポートを自動生成</h1>
+    <p class="text-slate-200 text-lg max-w-2xl">売主・買主・査定の各シーンに対応。国土交通省データに基づく信頼性の高いレポートを、数分でPDF出力。</p>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-12">
+  <div class="grid md:grid-cols-3 gap-6 mb-12">
+    <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="text-brand-600 font-bold text-lg mb-2">01</div>
+      <h3 class="font-bold mb-2">住所を入力</h3>
+      <p class="text-sm text-slate-600">物件所在地または周辺エリアを指定。市区町村・地区を自動判定。</p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="text-brand-600 font-bold text-lg mb-2">02</div>
+      <h3 class="font-bold mb-2">データを自動収集</h3>
+      <p class="text-sm text-slate-600">周辺の取引事例・地価公示・用途地域をDBから即時取得。</p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="text-brand-600 font-bold text-lg mb-2">03</div>
+      <h3 class="font-bold mb-2">PDFをダウンロード</h3>
+      <p class="text-sm text-slate-600">店舗ロゴ入りテンプレートで顧客にそのまま提出可能。</p>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm max-w-xl mx-auto text-center">
+    <h2 class="text-xl font-bold mb-2">早期アクセス受付中</h2>
+    <p class="text-slate-600 text-sm mb-6">正式リリース前のベータ版にご参加いただけます。</p>
+    <form id="beta-form" class="flex flex-col sm:flex-row gap-3">
+      <input type="email" id="beta-email" placeholder="メールアドレス" required
+             class="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+      <button type="submit" class="rounded-lg bg-brand-600 px-6 py-3 text-white font-medium hover:bg-brand-700 transition">
+        登録する
+      </button>
+    </form>
+    <p id="beta-msg" class="mt-3 text-sm text-emerald-600 hidden"></p>
+  </div>
+</section>
+
+<section class="bg-slate-100 border-y border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <h2 class="text-xl font-bold mb-6 text-center">料金プラン</h2>
+    <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      <div class="rounded-xl bg-white border border-slate-200 p-6">
+        <h3 class="font-bold text-lg">スタンダード</h3>
+        <p class="text-3xl font-bold text-brand-700 mt-2">¥3,980<span class="text-sm font-normal text-slate-500">/月</span></p>
+        <ul class="mt-4 space-y-2 text-sm text-slate-600">
+          <li>・月30レポートまで</li>
+          <li>・基本テンプレート</li>
+          <li>・店舗名表示</li>
+        </ul>
+      </div>
+      <div class="rounded-xl bg-white border-2 border-brand-500 p-6 shadow-md">
+        <h3 class="font-bold text-lg">プロ</h3>
+        <p class="text-3xl font-bold text-brand-700 mt-2">¥9,800<span class="text-sm font-normal text-slate-500">/月</span></p>
+        <ul class="mt-4 space-y-2 text-sm text-slate-600">
+          <li>・レポート無制限</li>
+          <li>・ロゴ入りPDF</li>
+          <li>・売主/買主/査定テンプレ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  document.getElementById("beta-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("beta-email").value;
+    const msg = document.getElementById("beta-msg");
+    const res = await fetch("/api/beta-signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (msg) {
+      msg.textContent = data.message || "登録しました";
+      msg.classList.remove("hidden");
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,127 @@
+{# Breadcrumb navigation #}
+{% macro breadcrumb(items) %}
+<nav class="text-sm text-slate-500 mb-4 flex flex-wrap items-center gap-1" aria-label="パンくず">
+  {% for label, href in items %}
+    {% if not loop.last %}
+      <a href="{{ href }}" class="hover:text-brand-600 transition">{{ label }}</a>
+      <span class="text-slate-300">/</span>
+    {% else %}
+      <span class="text-ink-900 font-medium">{{ label }}</span>
+    {% endif %}
+  {% endfor %}
+</nav>
+{% endmacro %}
+
+{# KPI stat card #}
+{% macro stat_card(label, value, sub='') %}
+<div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+  <div class="text-sm text-slate-500">{{ label }}</div>
+  <div class="mt-1 text-2xl font-bold text-brand-700 tabular-nums">{{ value }}</div>
+  {% if sub %}<div class="mt-1 text-xs text-slate-400">{{ sub }}</div>{% endif %}
+</div>
+{% endmacro %}
+
+{# Section heading #}
+{% macro section_title(title, desc='') %}
+<div class="mb-6">
+  <h2 class="text-lg font-bold text-ink-900">{{ title }}</h2>
+  {% if desc %}<p class="mt-1 text-sm text-slate-500">{{ desc }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{# Area link chip #}
+{% macro area_link(pref_slug, muni_slug, name, meta='') %}
+<a href="/price/{{ pref_slug }}/{{ muni_slug }}"
+   class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-brand-400 hover:bg-brand-50/50 transition group">
+  <span class="font-medium text-ink-900 group-hover:text-brand-700">{{ name }}</span>
+  {% if meta %}<span class="text-xs text-slate-500">{{ meta }}</span>{% endif %}
+</a>
+{% endmacro %}
+
+{# Ranking table rows (compact) #}
+{% macro ranking_rows(items, show_pref=true) %}
+<tbody class="divide-y divide-slate-100">
+  {% for item in items %}
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ item.prefecture_slug }}/{{ item.slug }}'">
+    <td class="px-4 py-3">
+      <span class="rank-badge {{ 'rank-' ~ item.rank if item.rank <= 3 else 'rank-n' }}">{{ item.rank }}</span>
+    </td>
+    <td class="px-4 py-3">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">{{ item.name_ja }}</span>
+      {% if show_pref %}<span class="block text-xs text-slate-400 sm:hidden">{{ item.prefecture_name }}</span>{% endif %}
+    </td>
+    {% if show_pref %}
+    <td class="px-4 py-3 text-slate-500 hidden sm:table-cell">{{ item.prefecture_name }}</td>
+    {% endif %}
+    <td class="px-4 py-3 text-right tabular-nums">{{ format_count(item.total_transactions) }}</td>
+    <td class="px-4 py-3 text-right tabular-nums font-medium text-brand-700">{{ format_man_yen(item.recent_avg_price) }}</td>
+    <td class="px-4 py-3 text-right hidden md:table-cell">
+      <span class="text-xs text-brand-600 opacity-0 group-hover:opacity-100 transition">詳細 →</span>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+{% endmacro %}
+
+{# Prefecture table rows #}
+{% macro prefecture_rows(items, rank_start=1) %}
+<tbody class="divide-y divide-slate-100">
+  {% for pref in items %}
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ pref.slug }}'">
+    <td class="px-4 py-3">
+      {% set r = rank_start + loop.index0 %}
+      <span class="rank-badge {{ 'rank-' ~ r if r <= 3 else 'rank-n' }}">{{ r }}</span>
+    </td>
+    <td class="px-4 py-3 font-medium group-hover:text-brand-700">{{ pref.name_ja }}</td>
+    <td class="px-4 py-3 text-right tabular-nums">{{ format_count(pref.municipality_count) }}</td>
+    <td class="px-4 py-3 text-right tabular-nums font-medium">{{ format_count(pref.total_transactions) }}</td>
+    <td class="px-4 py-3 text-right tabular-nums text-brand-700">{{ format_man_yen(pref.avg_price) }}</td>
+    <td class="px-4 py-3 text-right hidden md:table-cell">
+      <span class="text-xs text-brand-600 opacity-0 group-hover:opacity-100 transition">一覧 →</span>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+{% endmacro %}
+
+{# News category badge #}
+{% macro news_badge(category_id, label, color='brand') %}
+<span class="news-badge news-badge--{{ color }}">{{ label }}</span>
+{% endmacro %}
+
+{# News article link #}
+{% macro news_item(item, show_category=true) %}
+<a href="{{ item.link }}" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      {% if show_category %}
+      {{ news_badge(item.category_id, item.category_label, item.category_color) }}
+      {% endif %}
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">{{ item.title }}</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        {% if item.source %}<span>{{ item.source }}</span>{% endif %}
+        {% if item.published_at %}<time datetime="{{ item.published_at }}">{{ format_news_datetime(item.published_at) }}</time>{% endif %}
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+{% endmacro %}
+
+{# CTA banner for B2B #}
+{% macro report_cta(area_name='') %}
+<div class="rounded-2xl bg-gradient-to-r from-brand-600 to-brand-700 p-6 md:p-8 text-white">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <p class="text-brand-200 text-xs font-medium uppercase tracking-wide mb-1">仲介店向け</p>
+      <h2 class="text-lg font-bold">{% if area_name %}{{ area_name }}の{% endif %}顧客向けレポートを作成</h2>
+      <p class="mt-1 text-brand-100 text-sm">周辺取引・地価公示をまとめたPDFレポートを自動生成</p>
+    </div>
+    <a href="/report/new{% if area_name %}?area={{ area_name }}{% endif %}"
+       class="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-6 py-3 text-brand-700 font-semibold hover:bg-brand-50 transition shadow-lg">
+      レポートを作成 →
+    </a>
+  </div>
+</div>
+{% endmacro %}

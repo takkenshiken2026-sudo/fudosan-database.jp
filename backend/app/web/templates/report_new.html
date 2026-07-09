@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb, section_title %}
+{% block description %}不動産仲介店向け。エリアを指定して取引事例レポートを自動生成。{% endblock %}
+
+{% block content %}
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-3xl mx-auto px-4 py-10">
+    {{ breadcrumb([('トップ', '/'), ('レポート作成', '')]) }}
+    <h1 class="text-2xl md:text-3xl font-bold">取引事例レポートを作成</h1>
+    <p class="mt-2 text-slate-600">対象エリアを選ぶと、取引統計・事例・地価公示をまとめたレポートをプレビュー・PDF出力できます。</p>
+  </div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 py-10">
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
+    <form id="report-form" action="/report/preview" method="get">
+      <input type="hidden" name="prefecture_slug" value="">
+      <input type="hidden" name="municipality_slug" value="">
+
+      <label class="block text-sm font-medium text-slate-700 mb-2" for="report-search">対象エリア（市区町村）</label>
+      <div class="relative mb-4">
+        <input type="text" id="report-search" placeholder="例: 渋谷区、横浜市西区"
+               value="{{ default_area }}"
+               autocomplete="off"
+               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-100">
+        <div id="report-results" class="mt-1 rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm"></div>
+      </div>
+
+      <div id="report-selected" class="hidden mb-6 rounded-lg bg-brand-50 border border-brand-200 px-4 py-3 text-sm">
+        <span class="text-brand-700">選択中: </span>
+        <span id="report-selected-label" class="font-medium text-brand-900"></span>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2" for="report-type">レポート種別</label>
+          <select id="report-type" name="report_type" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm bg-white">
+            <option value="seller">売主向け（周辺取引事例）</option>
+            <option value="buyer">買主向け（エリア相場説明）</option>
+            <option value="appraisal">査定用（価格根拠資料）</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2" for="period-years">データ期間</label>
+          <select id="period-years" name="period_years" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm bg-white">
+            <option value="1">直近1年 + 年次推移</option>
+            <option value="2" selected>直近2年 + 年次推移</option>
+            <option value="3">直近3年 + 年次推移</option>
+            <option value="5">直近5年 + 年次推移</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit"
+              class="w-full rounded-xl bg-brand-600 py-3.5 text-white font-semibold hover:bg-brand-700 transition shadow-sm disabled:opacity-50"
+              id="report-submit" disabled>
+        レポートをプレビュー
+      </button>
+    </form>
+  </div>
+
+  <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-slate-600">
+    <div class="rounded-xl bg-slate-100 p-4 flex flex-col items-center gap-2 text-center">
+      <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      <span>四半期・年次の価格推移</span>
+    </div>
+    <div class="rounded-xl bg-slate-100 p-4 flex flex-col items-center gap-2 text-center">
+      <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>物件種別の内訳</span>
+    </div>
+    <div class="rounded-xl bg-slate-100 p-4 flex flex-col items-center gap-2 text-center">
+      <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <span>地価公示サマリー</span>
+    </div>
+    <div class="rounded-xl bg-slate-100 p-4 flex flex-col items-center gap-2 text-center">
+      <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <span>PDFダウンロード</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById("report-form");
+  const submitBtn = document.getElementById("report-submit");
+  function checkReady() {
+    const pref = form.querySelector('[name="prefecture_slug"]').value;
+    const muni = form.querySelector('[name="municipality_slug"]').value;
+    submitBtn.disabled = !(pref && muni);
+  }
+  document.getElementById("report-results")?.addEventListener("click", () => setTimeout(checkReady, 50));
+</script>
+{% endblock %}

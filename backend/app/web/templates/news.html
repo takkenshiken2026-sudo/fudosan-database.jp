@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb, section_title, news_item, news_badge %}
+{% block description %}地価公示・不動産取引・住宅市場・政策など、カテゴリ別の最新ニュース。{% endblock %}
+
+{% block content %}
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    {{ breadcrumb([('トップ', '/'), ('ニュース', '')]) }}
+    <h1 class="text-2xl md:text-3xl font-bold">不動産・地価ニュース</h1>
+    <p class="mt-2 text-slate-600">Googleニュースから地価・不動産関連の記事をカテゴリ別に収集しています。</p>
+    {% if feed.fetched_at %}
+    <p class="mt-1 text-xs text-slate-400">最終更新: {{ format_news_datetime(feed.fetched_at) }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-6">
+  <nav class="flex flex-wrap gap-2 mb-8" aria-label="ニュースカテゴリ">
+    <a href="/news"
+       class="news-cat-pill {{ 'news-cat-pill--active' if not active_category else '' }}">
+      すべて
+    </a>
+    {% for cat in feed.categories %}
+    <a href="/news?category={{ cat.id }}"
+       class="news-cat-pill {{ 'news-cat-pill--active' if active_category == cat.id else '' }}">
+      {{ cat.label }}
+    </a>
+    {% endfor %}
+  </nav>
+
+  {% if feed.error %}
+  <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 mb-6">
+    {{ feed.error }}
+  </div>
+  {% endif %}
+
+  {% if active_category %}
+    {% for cat in feed.categories if cat.id == active_category %}
+    <div class="mb-6">
+      <h2 class="text-lg font-bold">{{ cat.label }}</h2>
+      <p class="text-sm text-slate-500 mt-1">{{ cat.description }}</p>
+    </div>
+    {% if cat['items'] %}
+    <div class="grid md:grid-cols-2 gap-4">
+      {% for item in cat['items'] %}
+      {{ news_item(item, show_category=false) }}
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-slate-500 text-sm">このカテゴリの記事はまだありません。</p>
+    {% endif %}
+    {% endfor %}
+  {% else %}
+    {# Latest headlines #}
+    {% if feed.latest %}
+    <div class="mb-12">
+      {{ section_title('最新ヘッドライン', '全カテゴリから新しい順') }}
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for item in feed.latest[:9] %}
+        {{ news_item(item) }}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# By category #}
+    {% for cat in feed.categories %}
+    <section class="mb-12" id="cat-{{ cat.id }}">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            {{ news_badge(cat.id, cat.label, cat.color) }}
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">{{ cat.description }}</p>
+        </div>
+        <a href="/news?category={{ cat.id }}" class="text-sm text-brand-600 font-medium hover:underline shrink-0">
+          すべて見る →
+        </a>
+      </div>
+      {% if cat['items'] %}
+      <div class="grid md:grid-cols-2 gap-4">
+        {% for item in cat['items'][:6] %}
+        {{ news_item(item, show_category=false) }}
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-slate-500 text-sm">記事を取得できませんでした。</p>
+      {% endif %}
+    </section>
+    {% endfor %}
+  {% endif %}
+
+  {# Regional news by prefecture #}
+  {% if prefectures %}
+  <section class="mb-12 border-t border-slate-200 pt-10">
+    {{ section_title('都道府県別ニュース', 'エリアごとの不動産・地価関連記事') }}
+    <div class="flex flex-wrap gap-2">
+      {% for p in prefectures %}
+      <a href="/news/area/{{ p.slug }}"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        {{ p.name_ja }}
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <p class="text-xs text-slate-400 mt-10 border-t border-slate-200 pt-6">
+    記事は Google ニュースのRSSを通じて提供されています。各記事の著作権は配信元メディアに帰属します。
+  </p>
+</section>
+{% endblock %}

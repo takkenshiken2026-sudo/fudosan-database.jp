@@ -1,0 +1,298 @@
+body {
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+table th,
+table td {
+  vertical-align: middle;
+}
+
+/* Search dropdown */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+  z-index: 60;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+.search-result-item:hover {
+  background: #f0f9ff;
+}
+
+.search-result-active,
+.search-result-item.search-result-active {
+  background: #e0f2fe;
+}
+
+/* Tab navigation */
+.tab-active {
+  color: #0284c7;
+  border-bottom: 2px solid #0284c7;
+  font-weight: 600;
+}
+
+.tab-inactive {
+  color: #64748b;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-inactive:hover {
+  color: #334155;
+}
+
+/* Charts */
+.chart-card {
+  position: relative;
+  height: 280px;
+}
+
+.chart-card--tall {
+  height: 320px;
+}
+
+@media (min-width: 768px) {
+  .chart-card {
+    height: 300px;
+  }
+  .chart-card--tall {
+    height: 340px;
+  }
+}
+
+/* Ranking medal */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.rank-1 { background: #fef3c7; color: #b45309; }
+.rank-2 { background: #f1f5f9; color: #475569; }
+.rank-3 { background: #ffedd5; color: #c2410c; }
+.rank-n { background: #f8fafc; color: #94a3b8; }
+
+/* Report preview print */
+@media print {
+  header, footer, .no-print { display: none !important; }
+  body { background: white; }
+  .report-page { box-shadow: none !important; border: none !important; }
+}
+
+/* Sticky subnav */
+.subnav-sticky {
+  position: sticky;
+  top: 57px;
+  z-index: 40;
+  background: rgba(248, 250, 252, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+/* Hero section — CSS fallback (Tailwind CDN が色を生成しない場合も表示) */
+.hero-section {
+  background: linear-gradient(135deg, #075985 0%, #0284c7 45%, #0ea5e9 100%);
+  color: #fff;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.15), transparent 60%);
+  pointer-events: none;
+}
+
+/* Feature card hover */
+.feature-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.12);
+}
+
+/* Area chips (hero popular areas) */
+.area-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  transition: background 0.15s;
+}
+
+.area-chip:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Home page action cards */
+.home-action-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.home-action-card:hover {
+  transform: translateY(-2px);
+  border-color: #38bdf8;
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.12);
+}
+
+.compare-teaser {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.compare-teaser:hover {
+  border-color: #38bdf8;
+  background: #f0f9ff;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+}
+
+.compare-teaser--cta {
+  border-style: dashed;
+  background: #fff;
+}
+
+/* News */
+.news-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.news-badge--brand { background: #e0f2fe; color: #0369a1; }
+.news-badge--emerald { background: #d1fae5; color: #047857; }
+.news-badge--violet { background: #ede9fe; color: #6d28d9; }
+.news-badge--amber { background: #fef3c7; color: #b45309; }
+.news-badge--rose { background: #ffe4e6; color: #be123c; }
+.news-badge--land_price { background: #d1fae5; color: #047857; }
+.news-badge--market { background: #e0f2fe; color: #0369a1; }
+.news-badge--housing { background: #ede9fe; color: #6d28d9; }
+.news-badge--policy { background: #fef3c7; color: #b45309; }
+.news-badge--development { background: #ffe4e6; color: #be123c; }
+
+.news-cat-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.news-cat-pill:hover {
+  border-color: #38bdf8;
+  color: #0284c7;
+}
+
+.news-cat-pill--active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #fff;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Mobile bottom navigation */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid #e2e8f0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 10px;
+  color: #64748b;
+  transition: color 0.15s;
+}
+
+.mobile-nav-item.mobile-nav-active {
+  color: #0284c7;
+  font-weight: 600;
+}
+
+/* Sortable table */
+.sortable-table th[data-sort] {
+  user-select: none;
+}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb, section_title, news_item, news_badge %}
+{% block description %}{{ feed.area_label }}の不動産・地価ニュース。{% endblock %}
+
+{% block content %}
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    {% if municipality %}
+    {{ breadcrumb([
+      ('トップ', '/'),
+      ('ニュース', '/news'),
+      (prefecture.name_ja, '/news/area/' ~ prefecture.slug),
+      (municipality.name_ja, '')
+    ]) }}
+    <h1 class="text-2xl md:text-3xl font-bold">{{ prefecture.name_ja }}{{ municipality.name_ja }}の不動産ニュース</h1>
+    <p class="mt-2 text-slate-600">
+      <a href="/price/{{ prefecture.slug }}/{{ municipality.slug }}" class="text-brand-600 hover:underline">
+        取引価格データを見る →
+      </a>
+    </p>
+    {% else %}
+    {{ breadcrumb([
+      ('トップ', '/'),
+      ('ニュース', '/news'),
+      (prefecture.name_ja, '')
+    ]) }}
+    <h1 class="text-2xl md:text-3xl font-bold">{{ prefecture.name_ja }}の不動産ニュース</h1>
+    <p class="mt-2 text-slate-600">
+      <a href="/price/{{ prefecture.slug }}" class="text-brand-600 hover:underline">
+        {{ prefecture.name_ja }}の取引価格一覧 →
+      </a>
+    </p>
+    {% endif %}
+    {% if feed.fetched_at %}
+    <p class="mt-1 text-xs text-slate-400">最終更新: {{ format_news_datetime(feed.fetched_at) }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-8">
+  {% if feed.error %}
+  <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 mb-6">
+    {{ feed.error }}
+  </div>
+  {% endif %}
+
+  {% if feed['items'] %}
+  <div class="grid lg:grid-cols-[1fr_280px] gap-8">
+    <div>
+      {% if feed['categories'] | length > 1 %}
+      <nav class="flex flex-wrap gap-2 mb-6" aria-label="カテゴリ">
+        {% for cat in feed['categories'] %}
+        <span class="news-cat-pill text-xs">{{ cat.label }} ({{ cat['items'] | length }})</span>
+        {% endfor %}
+      </nav>
+      {% endif %}
+
+      <div class="grid md:grid-cols-2 gap-4">
+        {% for item in feed['items'] %}
+        {{ news_item(item) }}
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="space-y-6">
+      {% if not municipality %}
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="font-bold text-sm text-slate-600 mb-3">市区町村を選ぶ</h2>
+        <p class="text-xs text-slate-500 mb-3">取引データページから市区町村別ニュースへも移動できます。</p>
+        <a href="/price/{{ prefecture.slug }}" class="text-sm text-brand-600 font-medium hover:underline">
+          {{ prefecture.name_ja }}の市区町村一覧 →
+        </a>
+      </div>
+      {% endif %}
+
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="font-bold text-sm text-slate-600 mb-3">他の都道府県</h2>
+        <div class="flex flex-wrap gap-1.5 max-h-64 overflow-y-auto">
+          {% for p in prefectures %}
+          <a href="/news/area/{{ p.slug }}"
+             class="text-xs px-2 py-1 rounded-md {{ 'bg-brand-100 text-brand-700 font-medium' if p.slug == prefecture.slug else 'bg-slate-100 text-slate-600 hover:bg-brand-50' }}">
+            {{ p.name_ja }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+        <h2 class="font-bold text-sm text-slate-600 mb-2">全国ニュース</h2>
+        <p class="text-xs text-slate-500 mb-3">地価公示・政策などカテゴリ別の全国ニュースもご覧ください。</p>
+        <a href="/news" class="text-sm text-brand-600 font-medium hover:underline">全国ニュースへ →</a>
+      </div>
+    </aside>
+  </div>
+  {% else %}
+  <p class="text-slate-500 text-sm">このエリアの記事を取得できませんでした。しばらくしてから再度お試しください。</p>
+  <a href="/news" class="inline-block mt-4 text-sm text-brand-600 font-medium hover:underline">全国ニュースを見る →</a>
+  {% endif %}
+
+  <p class="text-xs text-slate-400 mt-10 border-t border-slate-200 pt-6">
+    検索クエリ: {{ feed.query }} · 記事は Google ニュースのRSSを通じて提供されています。
+  </p>
+</section>
+{% endblock %}

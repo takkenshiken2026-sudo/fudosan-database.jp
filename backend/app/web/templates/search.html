@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb, area_link %}
+
+{% block content %}
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-3xl mx-auto px-4 py-10">
+    {{ breadcrumb([('トップ', '/'), ('検索', '/search')]) }}
+    <h1 class="text-2xl font-bold">
+      {% if query %}「{{ query }}」の検索結果{% else %}市区町村を検索{% endif %}
+    </h1>
+    <p class="mt-2 text-slate-600">
+      {% if query %}{{ results | length }}件の市区町村が見つかりました{% else %}市区町村名を入力して相場データを探せます{% endif %}
+    </p>
+
+    <form action="/search" method="get" class="mt-6" role="search">
+      <label for="search-page-input" class="sr-only">市区町村名</label>
+      <div class="flex gap-2">
+        <input type="search" id="search-page-input" name="q" value="{{ query }}"
+               placeholder="例: 渋谷区、横浜市"
+               class="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100">
+        <button type="submit" class="rounded-xl bg-brand-600 px-6 py-3 text-white font-medium hover:bg-brand-700 transition">
+          検索
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="max-w-3xl mx-auto px-4 py-8">
+  {% if query and results %}
+  <h2 class="text-sm font-bold text-slate-500 mb-3">市区町村（{{ results | length }}件）</h2>
+  <ol class="space-y-2 list-none mb-10">
+    {% for item in results %}
+    <li>
+      {{ area_link(item.prefecture_slug, item.slug, item.prefecture_name ~ item.name_ja, format_count(item.total_transactions) ~ '件 · ' ~ format_man_yen(item.recent_avg_price)) }}
+    </li>
+    {% endfor %}
+  </ol>
+  {% endif %}
+
+  {% if query and stations %}
+  <h2 class="text-sm font-bold text-slate-500 mb-3">鉄道駅（{{ stations | length }}件）</h2>
+  <ol class="space-y-2 list-none mb-10">
+    {% for s in stations %}
+    <li>
+      <a href="/station/{{ s.id }}"
+         class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-brand-400 hover:bg-brand-50/50 transition">
+        <span>
+          <span class="font-medium">{{ s.station_name }}駅</span>
+          <span class="text-xs text-slate-500 ml-2">{{ s.line_name }}</span>
+        </span>
+        <span class="text-xs text-emerald-700 tabular-nums">
+          {% if s.latest_passengers %}{{ format_passengers_daily(s.latest_passengers) }}{% else %}—{% endif %}
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+  {% endif %}
+
+  {% if query and districts %}
+  <h2 class="text-sm font-bold text-slate-500 mb-3">地区（{{ districts | length }}件）</h2>
+  <ol class="space-y-2 list-none">
+    {% for d in districts %}
+    <li>
+      <a href="/price/{{ d.prefecture_slug }}/{{ d.municipality_slug }}"
+         class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-brand-400 hover:bg-brand-50/50 transition">
+        <span>
+          <span class="font-medium">{{ d.name }}</span>
+          <span class="text-xs text-slate-500 ml-2">{{ d.municipality_name }}</span>
+        </span>
+        <span class="text-xs text-slate-400">{{ format_count(d.transaction_count) }}件</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+  {% elif query and not results and not districts and not stations %}
+  <p class="text-slate-500 text-sm">該当する市区町村・地区・駅がありません。別のキーワードでお試しください。</p>
+  {% elif not query %}
+  <p class="text-slate-500 text-sm">人気エリア: 
+    <a href="/search?q=渋谷" class="text-brand-600 hover:underline">渋谷区</a>、
+    <a href="/search?q=横浜" class="text-brand-600 hover:underline">横浜市</a>、
+    <a href="/search?q=大阪" class="text-brand-600 hover:underline">大阪市</a>
+  </p>
+  {% endif %}
+</section>
+{% endblock %}

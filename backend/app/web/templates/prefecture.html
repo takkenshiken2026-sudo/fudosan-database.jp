@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb, section_title, news_item %}
+{% block description %}{{ prefecture.name_ja }}の市区町村別不動産取引価格・取引件数一覧。{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="/static/charts.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    {{ breadcrumb([('トップ', '/'), (prefecture.name_ja, '')]) }}
+    <h1 class="text-2xl md:text-3xl font-bold">{{ prefecture.name_ja }}の不動産取引価格</h1>
+    <p class="mt-2 text-slate-600">{{ municipalities | length }}市区町村 · 取引データを掲載</p>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-8">
+  {% if chart_data.yearly_stats or chart_data.top_municipalities %}
+  {{ section_title(prefecture.name_ja ~ 'の推移・ランキング') }}
+  <div class="grid lg:grid-cols-2 gap-6 mb-10">
+    {% if chart_data.yearly_stats %}
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="chart-card"><canvas id="chart-pref-yearly-count"></canvas></div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="chart-card"><canvas id="chart-pref-yearly-price"></canvas></div>
+    </div>
+    {% endif %}
+    {% if chart_data.top_municipalities %}
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+      <div class="chart-card chart-card--tall"><canvas id="chart-pref-top-cities"></canvas></div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if chart_data.land_price_yearly %}
+  {{ section_title(prefecture.name_ja ~ 'の地価公示動向', '地価公示地点の年次推移（円/㎡）') }}
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="chart-card"><canvas id="chart-pref-land-price"></canvas></div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="chart-card"><canvas id="chart-pref-land-points"></canvas></div>
+    </div>
+  </div>
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-10">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-600">
+        <tr>
+          <th class="px-4 py-3 text-left font-medium">調査年</th>
+          <th class="px-4 py-3 text-right font-medium">公示地点数</th>
+          <th class="px-4 py-3 text-right font-medium">平均地価</th>
+          <th class="px-4 py-3 text-right font-medium hidden sm:table-cell">前年比</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for y in chart_data.land_price_yearly | reverse %}
+        <tr class="hover:bg-slate-50">
+          <td class="px-4 py-3 font-medium">{{ y.survey_year }}年</td>
+          <td class="px-4 py-3 text-right tabular-nums">{{ format_count(y.point_count) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums text-emerald-700 font-medium">{{ format_yen_per_sqm(y.avg_unit_price) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums hidden sm:table-cell">
+            {% if y.yoy_avg_price_pct is not none %}
+              <span class="{% if y.yoy_avg_price_pct >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">{{ "%+.1f"|format(y.yoy_avg_price_pct) }}%</span>
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% if chart_data.top_stations %}
+  {{ section_title(prefecture.name_ja ~ 'の主要駅', '乗降客数ランキング（最新年度）') }}
+  <div class="grid lg:grid-cols-2 gap-6 mb-10">
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="chart-card chart-card--tall"><canvas id="chart-pref-top-stations"></canvas></div>
+    </div>
+    <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-slate-600">
+          <tr>
+            <th class="px-4 py-3 text-left">駅名</th>
+            <th class="px-4 py-3 text-left hidden sm:table-cell">路線</th>
+            <th class="px-4 py-3 text-right">乗降客数</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for s in chart_data.top_stations %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-4 py-3">
+              <a href="/station/{{ s.id }}" class="font-medium text-brand-700 hover:underline">{{ s.station_name }}駅</a>
+            </td>
+            <td class="px-4 py-3 text-slate-500 hidden sm:table-cell">{{ s.line_name }}</td>
+            <td class="px-4 py-3 text-right tabular-nums text-emerald-700">
+              {% if s.latest_passengers %}{{ format_passengers_daily(s.latest_passengers) }}{% else %}—{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if regional_news and regional_news['items'] %}
+  {{ section_title(prefecture.name_ja ~ 'の不動産ニュース') }}
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+    {% for item in regional_news['items'][:6] %}
+    {{ news_item(item) }}
+    {% endfor %}
+  </div>
+  <div class="mb-10">
+    <a href="/news/area/{{ prefecture.slug }}" class="text-sm text-brand-600 font-medium hover:underline">
+      {{ prefecture.name_ja }}のニュースをもっと見る →
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+    {{ section_title('市区町村一覧') }}
+    <input type="search" id="muni-filter" placeholder="市区町村名で絞り込み…"
+           class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm w-full sm:w-64 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100">
+  </div>
+
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <table class="w-full text-sm sortable-table" id="muni-table">
+      <thead class="bg-slate-50 text-left text-slate-600">
+        <tr>
+          <th class="px-4 py-3 font-medium cursor-pointer hover:text-brand-600 select-none" data-sort="name" data-type="text">
+            市区町村 <span class="sort-indicator text-xs text-slate-300">↕</span>
+          </th>
+          <th class="px-4 py-3 font-medium text-right cursor-pointer hover:text-brand-600 select-none" data-sort="count" data-type="number" data-default="desc">
+            累計件数 <span class="sort-indicator text-xs text-brand-500">↓</span>
+          </th>
+          <th class="px-4 py-3 font-medium text-right cursor-pointer hover:text-brand-600 select-none" data-sort="price" data-type="number">
+            平均取引価格 <span class="sort-indicator text-xs text-slate-300">↕</span>
+          </th>
+          <th class="px-4 py-3 font-medium text-right hidden sm:table-cell">最新データ</th>
+          <th class="px-4 py-3 w-24"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for m in municipalities %}
+        <tr class="hover:bg-brand-50/40 transition" data-name="{{ m.name_ja }}"
+            data-count="{{ m.total_transactions }}" data-price="{{ m.recent_avg_price or 0 }}">
+          <td class="px-4 py-3">
+            <a href="/price/{{ prefecture.slug }}/{{ m.slug }}" class="font-medium text-brand-700 hover:underline">
+              {{ m.name_ja }}
+            </a>
+          </td>
+          <td class="px-4 py-3 text-right tabular-nums">{{ format_count(m.total_transactions) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums">{{ format_man_yen(m.recent_avg_price) }}</td>
+          <td class="px-4 py-3 text-right text-slate-500 hidden sm:table-cell">
+            {% if m.latest_year %}{{ m.latest_year }} Q{{ m.latest_quarter }}{% else %}—{% endif %}
+          </td>
+          <td class="px-4 py-3 text-right">
+            <a href="/report/preview?prefecture_slug={{ prefecture.slug }}&municipality_slug={{ m.slug }}"
+               class="text-xs text-brand-600 hover:underline whitespace-nowrap">レポート</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    initPrefectureCharts({{ chart_data | tojson | safe }});
+  });
+</script>
+{% endblock %}

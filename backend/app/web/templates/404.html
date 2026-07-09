@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-2xl mx-auto px-4 py-20 text-center">
+  <p class="text-6xl font-bold text-brand-200 mb-4" aria-hidden="true">404</p>
+  <h1 class="text-2xl font-bold mb-3">ページが見つかりません</h1>
+  <p class="text-slate-600 mb-8 leading-relaxed">
+    お探しのページは移動または削除された可能性があります。<br>
+    市区町村名で検索するか、トップページからお探しください。
+  </p>
+
+  <form action="/search" method="get" class="max-w-md mx-auto mb-8 relative" role="search">
+    <label for="404-search" class="sr-only">市区町村を検索</label>
+    <input type="search" id="404-search" name="q" placeholder="市区町村を検索（例: 渋谷区）"
+           class="w-full rounded-full border border-slate-200 bg-white px-5 py-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100">
+  </form>
+
+  <div class="flex flex-wrap justify-center gap-3">
+    <a href="/" class="rounded-full bg-brand-600 px-6 py-2.5 text-white font-medium hover:bg-brand-700 transition">トップへ</a>
+    <a href="/rankings" class="rounded-full border border-slate-200 bg-white px-6 py-2.5 text-slate-700 hover:bg-slate-50 transition">ランキング</a>
+    <a href="/compare" class="rounded-full border border-slate-200 bg-white px-6 py-2.5 text-slate-700 hover:bg-slate-50 transition">エリア比較</a>
+  </div>
+</section>
+{% endblock %}
