@@ -28,6 +28,7 @@ from app.web.seo import (
     seo_compare,
     seo_for_agents,
     seo_home,
+    seo_market,
     seo_municipality,
     seo_news,
     seo_not_found,
@@ -120,6 +121,17 @@ def home(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
         chart_data=chart_data.model_dump(),
         popular_areas=services.POPULAR_AREAS,
         news=news,
+    )
+
+
+@router.get("/market", response_class=HTMLResponse)
+def market_page(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
+    chart_data = services.get_home_chart_data(db)
+    return _render(
+        request,
+        "market.html",
+        seo_market(_base(request)),
+        chart_data=chart_data.model_dump(),
     )
 
 

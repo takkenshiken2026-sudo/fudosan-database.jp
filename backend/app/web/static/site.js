@@ -335,7 +335,9 @@
           <td class="px-4 py-3 text-right tabular-nums font-medium">${fmtMan(tx.trade_price)}</td>
           <td class="px-4 py-3 text-right tabular-nums">${fmtSqm(tx.unit_price)}</td>
           <td class="px-4 py-3 text-right tabular-nums">${tx.area ? tx.area.toFixed(1) + "㎡" : "—"}</td>
+          <td class="px-4 py-3 hidden md:table-cell">${tx.floor_plan || "—"}</td>
           <td class="px-4 py-3 hidden lg:table-cell">${tx.building_year || "—"}</td>
+          <td class="px-4 py-3 hidden xl:table-cell">${tx.renovation || "—"}</td>
           <td class="px-4 py-3 hidden lg:table-cell">${tx.city_planning || "—"}</td>
         </tr>`
         )

@@ -89,6 +89,23 @@
 <span class="news-badge news-badge--{{ color }}">{{ label }}</span>
 {% endmacro %}
 
+{# News article link (compact, for hero dark background) #}
+{% macro hero_news_item(item) %}
+<a href="{{ item.link }}" target="_blank" rel="noopener noreferrer"
+   class="hero-news-item group block">
+  <div class="flex items-start gap-2">
+    <div class="min-w-0 flex-1">
+      <h3 class="text-sm font-medium text-white group-hover:text-brand-100 line-clamp-2 leading-snug">{{ item.title }}</h3>
+      <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-brand-100/70">
+        {% if item.source %}<span>{{ item.source }}</span>{% endif %}
+        {% if item.published_at %}<time datetime="{{ item.published_at }}">{{ format_news_datetime(item.published_at) }}</time>{% endif %}
+      </div>
+    </div>
+    <svg class="w-3.5 h-3.5 text-white/40 group-hover:text-white/80 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+{% endmacro %}
+
 {# News article link #}
 {% macro news_item(item, show_category=true) %}
 <a href="{{ item.link }}" target="_blank" rel="noopener noreferrer"

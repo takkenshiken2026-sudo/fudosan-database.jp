@@ -122,6 +122,24 @@ def seo_home(base: str) -> SeoMeta:
     return finalize_seo(seo, base)
 
 
+def seo_market(base: str) -> SeoMeta:
+    path = "/market"
+    url = absolute_url(base, path)
+    seo = SeoMeta(
+        page_title=f"全国の取引価格・地価動向 | {SITE_NAME}",
+        meta_description=(
+            "全国の不動産取引価格・取引件数・地価公示の年次推移をグラフと表で確認。"
+            "国土交通省 不動産情報ライブラリのデータに基づく全国動向。"
+        ),
+        canonical_path=path,
+        breadcrumbs=[
+            (SITE_NAME, base),
+            ("全国の取引価格", url),
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
 def seo_prefecture(base: str, name: str, slug: str, muni_count: int) -> SeoMeta:
     path = f"/price/{slug}"
     url = absolute_url(base, path)

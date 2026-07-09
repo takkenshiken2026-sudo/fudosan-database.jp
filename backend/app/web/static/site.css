@@ -152,6 +152,73 @@ table td {
   pointer-events: none;
 }
 
+.hero-layout {
+  display: grid;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .hero-layout {
+    grid-template-columns: 1fr 340px;
+    gap: 2.5rem;
+  }
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-copy {
+  max-width: 36rem;
+}
+
+.hero-panel {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.hero-news-panel {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+.hero-news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hero-news-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: opacity 0.15s;
+}
+
+.hero-news-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.hero-news-item:hover {
+  opacity: 0.9;
+}
+
+@media (min-width: 1024px) {
+  .hero-panel,
+  .hero-news-panel {
+    padding: 1.5rem;
+  }
+}
+
 /* Feature card hover */
 .feature-card {
   transition: transform 0.2s, box-shadow 0.2s;

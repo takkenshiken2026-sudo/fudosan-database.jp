@@ -107,6 +107,55 @@ class TransactionItem(BaseModel):
     structure: Optional[str] = None
     city_planning: Optional[str] = None
     floor_plan: Optional[str] = None
+    renovation: Optional[str] = None
+
+
+class InsightBucket(BaseModel):
+    label: str
+    transaction_count: int
+    trade_price_avg: Optional[float] = None
+    unit_price_avg: Optional[float] = None
+
+
+class PriceClassComparison(BaseModel):
+    trade_count: int
+    trade_price_avg: Optional[float] = None
+    contract_count: int
+    contract_price_avg: Optional[float] = None
+    discount_pct: Optional[float] = None
+
+
+class LandTradeGap(BaseModel):
+    trade_unit_price_avg: Optional[float] = None
+    land_price_avg: Optional[float] = None
+    gap_pct: Optional[float] = None
+    sample_count: int = 0
+
+
+class MarketSummary(BaseModel):
+    property_label: str = "中古マンション"
+    sample_count: int = 0
+    median_price: Optional[float] = None
+    p25_price: Optional[float] = None
+    p75_price: Optional[float] = None
+    min_price: Optional[float] = None
+    max_price: Optional[float] = None
+
+
+class PurchaseInsights(BaseModel):
+    period_label: str = ""
+    sample_years: int = 5
+    market_summary: Optional[MarketSummary] = None
+    price_bracket_stats: list[InsightBucket] = []
+    floor_plan_stats: list[InsightBucket] = []
+    age_bucket_stats: list[InsightBucket] = []
+    structure_stats: list[InsightBucket] = []
+    renovation_stats: list[InsightBucket] = []
+    region_stats: list[InsightBucket] = []
+    city_planning_stats: list[InsightBucket] = []
+    district_hotspots: list[InsightBucket] = []
+    price_comparison: Optional[PriceClassComparison] = None
+    land_trade_gap: Optional[LandTradeGap] = None
 
 
 class TransactionPage(BaseModel):
@@ -194,6 +243,7 @@ class MunicipalityDetail(BaseModel):
     related_municipalities: list[MunicipalitySummary] = []
     yoy_price_change_pct: Optional[float] = None
     stats_updated_at: Optional[datetime] = None
+    purchase_insights: Optional[PurchaseInsights] = None
 
 
 class CompareSide(BaseModel):

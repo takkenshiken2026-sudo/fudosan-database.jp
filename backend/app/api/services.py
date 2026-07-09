@@ -40,6 +40,7 @@ from app.db import (
     StationPassenger,
     TradeTransaction,
 )
+from app.reinfolib.purchase_insights import get_purchase_insights, renovation_from_raw
 from app.reinfolib.station_passengers import (
     haversine_m,
     normalize_station_name,
@@ -442,6 +443,7 @@ def _tx_to_item(tx: TradeTransaction) -> TransactionItem:
         structure=tx.structure,
         city_planning=tx.city_planning,
         floor_plan=tx.floor_plan,
+        renovation=renovation_from_raw(tx.raw_json),
     )
 
 
@@ -704,6 +706,16 @@ def get_municipality_detail(
     def to_stat(row: MunicipalityTradeStat) -> StatBucket:
         return _to_stat(row)
 
+    land_summary = get_land_price_summary(db, municipality.code)
+    purchase_insights = get_purchase_insights(
+        db,
+        municipality.code,
+        latest_year=latest_year,
+        land_price_avg=float(land_summary.avg_unit_price)
+        if land_summary and land_summary.avg_unit_price
+        else None,
+    )
+
     return MunicipalityDetail(
         code=municipality.code,
         name_ja=municipality.name_ja,
@@ -721,10 +733,11 @@ def get_municipality_detail(
         property_stats=[to_stat(row) for row in property_stats],
         recent_transactions=transactions,
         stats_updated_at=meta.stats_updated_at if meta else None,
-        land_prices=get_land_price_summary(db, municipality.code),
+        land_prices=land_summary,
         land_price_yearly=get_land_price_yearly_stats(db, municipality.code),
         related_municipalities=related,
         yoy_price_change_pct=yoy,
+        purchase_insights=purchase_insights,
     )
 
 

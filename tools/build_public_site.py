@@ -63,6 +63,7 @@ def _collect_paths(full: bool) -> list[str]:
 
         core = {
             "/",
+            "/market",
             "/rankings",
             "/news",
             "/compare",
@@ -137,8 +138,11 @@ def build(*, full: bool = False, db_path: Path | None = None) -> None:
     sys.path.insert(0, str(BACKEND))
 
     if OUT.exists():
-        shutil.rmtree(OUT)
-    OUT.mkdir(parents=True)
+        shutil.rmtree(OUT, ignore_errors=True)
+        time.sleep(0.5)
+        if OUT.exists():
+            shutil.rmtree(OUT, ignore_errors=True)
+    OUT.mkdir(parents=True, exist_ok=True)
     (OUT / ".nojekyll").touch()
     shutil.copytree(STATIC_SRC, OUT / "static")
 

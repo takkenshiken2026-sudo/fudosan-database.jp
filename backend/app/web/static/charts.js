@@ -799,4 +799,110 @@
       });
     }
   };
+
+  window.initPurchaseInsightCharts = function (data) {
+    const pi = data.purchase_insights;
+    if (!pi) return;
+
+    if (pi.price_bracket_stats && pi.price_bracket_stats.length) {
+      const rows = pi.price_bracket_stats;
+      createChart("chart-insight-bracket", {
+        type: "bar",
+        data: {
+          labels: rows.map((r) => r.label),
+          datasets: [
+            {
+              label: "取引件数",
+              data: rows.map((r) => r.transaction_count),
+              backgroundColor: "rgba(16, 185, 129, 0.7)",
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          ...baseOptions("件"),
+          plugins: {
+            ...baseOptions().plugins,
+            title: { display: true, text: "価格帯別 取引件数", font: { size: 13, weight: "600" } },
+          },
+        },
+      });
+    }
+
+    if (pi.floor_plan_stats && pi.floor_plan_stats.length) {
+      const rows = pi.floor_plan_stats;
+      createChart("chart-insight-floorplan", {
+        type: "bar",
+        data: {
+          labels: rows.map((r) => r.label),
+          datasets: [
+            {
+              label: "平均取引価格（万円）",
+              data: rows.map((r) => toManYen(r.trade_price_avg)),
+              backgroundColor: "rgba(2, 132, 199, 0.7)",
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          ...baseOptions("万円"),
+          plugins: {
+            ...baseOptions().plugins,
+            title: { display: true, text: "間取り別 平均価格", font: { size: 13, weight: "600" } },
+          },
+        },
+      });
+    }
+
+    if (pi.age_bucket_stats && pi.age_bucket_stats.length) {
+      const rows = pi.age_bucket_stats;
+      createChart("chart-insight-age", {
+        type: "bar",
+        data: {
+          labels: rows.map((r) => r.label),
+          datasets: [
+            {
+              label: "平均取引価格（万円）",
+              data: rows.map((r) => toManYen(r.trade_price_avg)),
+              backgroundColor: "rgba(245, 158, 11, 0.75)",
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          ...baseOptions("万円"),
+          plugins: {
+            ...baseOptions().plugins,
+            title: { display: true, text: "築年数別 平均価格", font: { size: 13, weight: "600" } },
+          },
+        },
+      });
+    }
+
+    if (pi.district_hotspots && pi.district_hotspots.length) {
+      const rows = pi.district_hotspots.slice(0, 8);
+      createChart("chart-insight-district", {
+        type: "bar",
+        data: {
+          labels: rows.map((r) => r.label),
+          datasets: [
+            {
+              label: "平均取引価格（万円）",
+              data: rows.map((r) => toManYen(r.trade_price_avg)),
+              backgroundColor: "rgba(99, 102, 241, 0.75)",
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          ...baseOptions("万円"),
+          plugins: {
+            ...baseOptions().plugins,
+            title: { display: true, text: "地区別 平均価格", font: { size: 13, weight: "600" } },
+          },
+        },
+      });
+    }
+  };
 })();
