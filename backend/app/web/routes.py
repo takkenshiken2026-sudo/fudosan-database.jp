@@ -27,6 +27,7 @@ from app.web.formatters import (
 from app.web.seo import (
     seo_compare,
     seo_for_agents,
+    seo_gap,
     seo_home,
     seo_market,
     seo_municipality,
@@ -393,6 +394,8 @@ def municipality_page(
             url=f"/price/{prefecture.slug}/{municipality.slug}",
             status_code=301,
         )
+    from app.listings.service import has_listing_data
+
     detail = services.get_municipality_detail(db, prefecture, municipality)
     regional_news = get_regional_news(
         detail.prefecture_name,
@@ -417,9 +420,57 @@ def municipality_page(
         ),
         detail=detail,
         regional_news=regional_news,
+        has_gap=has_listing_data(db, municipality.code),
         stations=services.list_stations_for_municipality(
             db, municipality.code, prefecture.code, limit=12
         ),
+    )
+
+
+@router.get(
+    "/gap/{prefecture_slug}/{municipality_slug}",
+    response_class=HTMLResponse,
+)
+def gap_page(
+    request: Request,
+    prefecture_slug: str,
+    municipality_slug: str,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    from app.listings.service import get_municipality_listing_gap
+
+    prefecture, municipality = services.resolve_municipality(
+        db, prefecture_slug, municipality_slug
+    )
+    if not prefecture or not municipality:
+        raise HTTPException(status_code=404, detail="市区町村が見つかりません")
+    if municipality.slug != municipality_slug and municipality_slug == municipality.code:
+        return RedirectResponse(
+            url=f"/gap/{prefecture.slug}/{municipality.slug}",
+            status_code=301,
+        )
+    gap = get_municipality_listing_gap(db, prefecture, municipality)
+    if gap is None:
+        # 募集データ未登録の市区町村は成約相場ページへ誘導
+        return RedirectResponse(
+            url=f"/price/{prefecture.slug}/{municipality.slug}",
+            status_code=302,
+        )
+    headline = gap.headline
+    return _render(
+        request,
+        "gap.html",
+        seo_gap(
+            _base(request),
+            prefecture.name_ja,
+            prefecture.slug,
+            municipality.name_ja,
+            municipality.slug,
+            headline_gap_pct=headline.gap_pct if headline else None,
+            headline_discount_pct=headline.implied_discount_pct if headline else None,
+            updated_at=gap.updated_at,
+        ),
+        gap=gap,
     )
 
 

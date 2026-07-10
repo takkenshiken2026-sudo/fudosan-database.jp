@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Optional
 
 from sqlalchemy import (
+    Boolean,
+    Date,
     DateTime,
     Float,
     ForeignKey,
@@ -139,6 +141,81 @@ class MunicipalityTradeStat(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     municipality: Mapped["Municipality"] = relationship(back_populates="trade_stats")
+
+
+class ListingSnapshot(Base):
+    """募集（売出し）価格の観測記録。
+
+    成約価格（TradeTransaction）が「過去に成立した価格」であるのに対し、
+    これは「現在売り出されている価格」を定点観測して蓄積するテーブル。
+    データは無料APIには存在せず、提携フィード・オープンデータ・手動登録など
+    合法な経路から CSV でインポートする（ポータルの無断スクレイピングはしない）。
+    source 列に取得元を必ず記録し、出所を追跡できるようにする。
+    """
+
+    __tablename__ = "listing_snapshots"
+    __table_args__ = (
+        UniqueConstraint(
+            "source",
+            "external_id",
+            "observed_date",
+            name="uq_listing_snapshot_obs",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    source: Mapped[str] = mapped_column(String(40), index=True)
+    external_id: Mapped[str] = mapped_column(String(120), index=True)
+    municipality_code: Mapped[str] = mapped_column(
+        ForeignKey("municipalities.code"), index=True
+    )
+    property_type: Mapped[Optional[str]] = mapped_column(String(40), index=True)
+    district_name: Mapped[Optional[str]] = mapped_column(String(80))
+    observed_date: Mapped[datetime] = mapped_column(Date, index=True)
+    observed_year: Mapped[int] = mapped_column(Integer, index=True)
+    observed_quarter: Mapped[int] = mapped_column(Integer, index=True)
+    listing_price: Mapped[Optional[int]] = mapped_column(Integer)
+    area: Mapped[Optional[float]] = mapped_column(Float)
+    unit_price: Mapped[Optional[int]] = mapped_column(Integer)
+    building_year: Mapped[Optional[str]] = mapped_column(String(20))
+    floor_plan: Mapped[Optional[str]] = mapped_column(String(20))
+    first_listed_date: Mapped[Optional[datetime]] = mapped_column(Date)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    raw_json: Mapped[Optional[str]] = mapped_column(Text)
+    synced_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class MunicipalityListingStat(Base):
+    """募集価格の市区町村×観測四半期×物件種別の集計。
+
+    MunicipalityTradeStat（成約集計）と対になり、募集×成約の乖離率を算出する。
+    """
+
+    __tablename__ = "municipality_listing_stats"
+    __table_args__ = (
+        UniqueConstraint(
+            "municipality_code",
+            "observed_year",
+            "observed_quarter",
+            "property_type",
+            name="uq_municipality_listing_stats_bucket",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    municipality_code: Mapped[str] = mapped_column(
+        ForeignKey("municipalities.code"), index=True
+    )
+    observed_year: Mapped[int] = mapped_column(Integer, index=True)
+    observed_quarter: Mapped[int] = mapped_column(Integer, index=True)
+    property_type: Mapped[str] = mapped_column(String(40), default="", index=True)
+    listing_count: Mapped[int] = mapped_column(Integer, default=0)
+    listing_price_avg: Mapped[Optional[float]] = mapped_column(Float)
+    listing_price_min: Mapped[Optional[int]] = mapped_column(Integer)
+    listing_price_max: Mapped[Optional[int]] = mapped_column(Integer)
+    unit_price_avg: Mapped[Optional[float]] = mapped_column(Float)
+    area_avg: Mapped[Optional[float]] = mapped_column(Float)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
 class LandPricePoint(Base):

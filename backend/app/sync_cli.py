@@ -7,7 +7,9 @@ from sqlalchemy import func, select
 from app.config import settings
 from app.db import (
     LandPricePoint,
+    ListingSnapshot,
     Municipality,
+    MunicipalityListingStat,
     MunicipalityPageMeta,
     Prefecture,
     SessionLocal,
@@ -16,6 +18,7 @@ from app.db import (
     TradeTransaction,
     init_db,
 )
+from app.listings.ingest import import_listings_csv, rebuild_listing_stats
 from app.reinfolib.client import ReinfolibClient
 from app.reinfolib.land_price_sync import sync_land_prices
 from app.reinfolib.station_sync import sync_station_passengers
@@ -46,6 +49,8 @@ def print_status(db) -> None:
             "transactions": db.scalar(select(func.count(TradeTransaction.id))),
             "land_price_points": db.scalar(select(func.count(LandPricePoint.id))),
             "station_passengers": db.scalar(select(func.count(StationPassenger.id))),
+            "listing_snapshots": db.scalar(select(func.count(ListingSnapshot.id))),
+            "listing_stats": db.scalar(select(func.count(MunicipalityListingStat.id))),
             "sync_checkpoints_done": db.scalar(
                 select(func.count(SyncCheckpoint.id)).where(
                     SyncCheckpoint.status.in_(("done", "empty"))
@@ -126,6 +131,24 @@ def main() -> None:
 
     rebuild = sub.add_parser("rebuild-stats", help="集計テーブル再計算")
     rebuild.add_argument("--city", help="市区町村コード（省略時は全市区町村）")
+
+    import_listings = sub.add_parser(
+        "import-listings",
+        help="募集価格CSVの取込（提携・オープンデータ・手動。スクレイピング不可）",
+    )
+    import_listings.add_argument("--csv", required=True, help="取込むCSVファイルパス")
+    import_listings.add_argument(
+        "--no-rebuild",
+        action="store_true",
+        help="取込後の集計再計算をスキップ",
+    )
+
+    rebuild_listings = sub.add_parser(
+        "rebuild-listing-stats", help="募集価格の集計テーブル再計算"
+    )
+    rebuild_listings.add_argument(
+        "--city", help="市区町村コード（省略時は全市区町村）"
+    )
 
     retry = sub.add_parser("retry-failed", help="failed チェックポイントを再同期")
     retry.add_argument(
@@ -259,6 +282,15 @@ def main() -> None:
             stat_result = rebuild_trade_stats(db, args.city)
             meta_result = rebuild_page_meta(db, args.city)
             print({**stat_result, **meta_result})
+
+        elif args.command == "import-listings":
+            result = import_listings_csv(db, args.csv)
+            if not args.no_rebuild:
+                result.update(rebuild_listing_stats(db))
+            print(result)
+
+        elif args.command == "rebuild-listing-stats":
+            print(rebuild_listing_stats(db, args.city))
 
         elif args.command == "retry-failed":
             failed_rows = db.scalars(

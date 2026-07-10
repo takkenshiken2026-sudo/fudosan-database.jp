@@ -248,6 +248,58 @@ def seo_municipality(
     return finalize_seo(seo, base)
 
 
+def seo_gap(
+    base: str,
+    pref_name: str,
+    pref_slug: str,
+    name: str,
+    muni_slug: str,
+    *,
+    headline_gap_pct: Optional[float] = None,
+    headline_discount_pct: Optional[float] = None,
+    updated_at: Optional[datetime] = None,
+) -> SeoMeta:
+    path = f"/gap/{pref_slug}/{muni_slug}"
+    url = absolute_url(base, path)
+    pref_url = absolute_url(base, f"/price/{pref_slug}")
+    price_url = absolute_url(base, f"/price/{pref_slug}/{muni_slug}")
+    gap_text = ""
+    if headline_discount_pct is not None:
+        gap_text = f"募集価格に対する想定値引き率は約{headline_discount_pct:.1f}%。"
+    seo = SeoMeta(
+        page_title=f"{pref_name}{name}の募集価格 vs 成約価格ギャップ | {SITE_NAME}",
+        meta_description=(
+            f"{pref_name}{name}の中古マンション等について、現在の募集（売出し）価格と"
+            f"国土交通省の成約価格を比較。{gap_text}"
+            "指値の目安・売り出し価格設定の参考になる乖離率を掲載。"
+        ),
+        canonical_path=path,
+        og_type="article",
+        breadcrumbs=[
+            (SITE_NAME, base),
+            (pref_name, pref_url),
+            (name, price_url),
+            ("募集×成約ギャップ", url),
+        ],
+        extra_graph=[
+            {
+                "@type": "WebPage",
+                "@id": f"{url}#webpage",
+                "url": url,
+                "name": f"{pref_name}{name}の募集価格 vs 成約価格ギャップ",
+                "isPartOf": {"@id": f"{base}/#website"},
+                "inLanguage": "ja-JP",
+                **(
+                    {"dateModified": updated_at.strftime("%Y-%m-%d")}
+                    if updated_at
+                    else {}
+                ),
+            }
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
 def seo_rankings(
     base: str, sort: str, items: Optional[list] = None
 ) -> SeoMeta:
