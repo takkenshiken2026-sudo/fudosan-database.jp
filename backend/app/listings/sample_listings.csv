@@ -1,9 +1,0 @@
-source,external_id,municipality_code,property_type,district_name,observed_date,listing_price,area,building_year,floor_plan,first_listed_date,is_active
-sample,SMPL-0001,13113,中古マンション等,恵比寿,2026-06-15,89800000,62.5,2015年,2LDK,2026-04-01,true
-sample,SMPL-0002,13113,中古マンション等,神南,2026-06-15,74800000,55.0,2008年,2LDK,2026-05-10,true
-sample,SMPL-0003,13113,中古マンション等,広尾,2026-06-15,128000000,80.2,2019年,3LDK,2026-03-20,true
-sample,SMPL-0004,13113,中古マンション等,笹塚,2026-06-15,52800000,48.3,2003年,1LDK,2026-05-28,true
-sample,SMPL-0005,13113,中古マンション等,代々木,2026-06-15,98000000,70.1,2012年,3LDK,2026-06-01,true
-sample,SMPL-0006,13113,宅地(土地),恵比寿,2026-06-15,158000000,95.0,,,2026-04-15,true
-sample,SMPL-0007,13113,宅地(土地),初台,2026-06-15,92000000,66.0,,,2026-05-05,true
-sample,SMPL-0008,13113,宅地(土地),幡ヶ谷,2026-06-15,78000000,58.5,,,2026-05-22,true

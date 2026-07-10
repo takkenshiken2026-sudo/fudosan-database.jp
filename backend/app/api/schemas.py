@@ -246,38 +246,6 @@ class MunicipalityDetail(BaseModel):
     purchase_insights: Optional[PurchaseInsights] = None
 
 
-class ListingGapBucket(BaseModel):
-    """物件種別ごとの募集×成約ギャップ。"""
-
-    property_type: str
-    listing_count: int = 0
-    listing_price_avg: Optional[float] = None
-    listing_unit_price_avg: Optional[float] = None
-    trade_count: int = 0
-    trade_price_avg: Optional[float] = None
-    trade_unit_price_avg: Optional[float] = None
-    # 募集価格が成約価格より何%高いか（単価ベース優先、なければ総額ベース）
-    gap_pct: Optional[float] = None
-    # 募集からの想定値引き率＝(募集-成約)/募集×100
-    implied_discount_pct: Optional[float] = None
-    basis: str = ""  # "unit"（㎡単価）か "total"（総額）か
-
-
-class MunicipalityListingGap(BaseModel):
-    code: str
-    name_ja: str
-    slug: str
-    prefecture_name: str
-    prefecture_slug: str
-    listing_period_label: str = ""
-    trade_period_label: str = ""
-    observed_date: Optional[str] = None
-    total_listings: int = 0
-    headline: Optional[ListingGapBucket] = None
-    buckets: list[ListingGapBucket] = []
-    updated_at: Optional[datetime] = None
-
-
 class CompareSide(BaseModel):
     code: str
     name_ja: str

@@ -61,26 +61,6 @@ def build_sitemap_entries(db: Session, base: str) -> list[tuple[str, Optional[st
             )
         )
 
-    from app.listings.service import municipality_codes_with_listings
-
-    gap_codes = set(municipality_codes_with_listings(db))
-    if gap_codes:
-        gap_rows = db.execute(
-            select(Municipality.code, Municipality.slug, Prefecture.slug)
-            .join(Prefecture, Prefecture.code == Municipality.prefecture_code)
-            .where(Municipality.code.in_(gap_codes))
-            .order_by(Municipality.code)
-        ).all()
-        for muni_code, muni_slug, pref_slug in gap_rows:
-            entries.append(
-                (
-                    absolute_url(base, f"/gap/{pref_slug}/{muni_slug}"),
-                    None,
-                    "weekly",
-                    "0.7",
-                )
-            )
-
     station_ids = db.scalars(
         select(StationPassenger.id)
         .where(StationPassenger.latest_passengers.isnot(None))
