@@ -24,13 +24,13 @@
 </section>
 
 <section class="max-w-6xl mx-auto px-4 py-8">
-  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
     <table class="w-full text-sm">
       <thead class="bg-slate-50 text-left text-slate-600">
         <tr>
           <th class="px-4 py-3 w-14 font-medium">順位</th>
           <th class="px-4 py-3 font-medium">市区町村</th>
-          <th class="px-4 py-3 font-medium">都道府県</th>
+          <th class="px-4 py-3 font-medium hidden sm:table-cell">都道府県</th>
           <th class="px-4 py-3 text-right font-medium">累計件数</th>
           <th class="px-4 py-3 text-right font-medium">平均価格</th>
         </tr>
@@ -46,7 +46,7 @@
               {{ item.name_ja }}
             </a>
           </td>
-          <td class="px-4 py-3 text-slate-500">{{ item.prefecture_name }}</td>
+          <td class="px-4 py-3 text-slate-500 hidden sm:table-cell">{{ item.prefecture_name }}</td>
           <td class="px-4 py-3 text-right tabular-nums font-medium">{{ format_count(item.total_transactions) }}</td>
           <td class="px-4 py-3 text-right tabular-nums">{{ format_man_yen(item.recent_avg_price) }}</td>
         </tr>

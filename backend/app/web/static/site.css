@@ -376,3 +376,40 @@ table td {
 .sortable-table th[data-sort] {
   user-select: none;
 }
+
+/* ===== モバイルの見やすさ・使いやすさ ===== */
+
+/* データ表は横スクロールで列が切れないように（全ページ共通の保険）。
+   overflow-hidden の囲みに直接 table がある場合のみ横スクロールを許可する。 */
+.overflow-hidden:has(> table) {
+  overflow-x: auto;
+}
+.overflow-x-auto,
+.overflow-hidden:has(> table) {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 横スクロールできる表に、スクロール可能なことを示す軽いヒント（右端のグラデ） */
+@media (max-width: 767px) {
+  .overflow-x-auto,
+  .overflow-hidden:has(> table) {
+    background-image: linear-gradient(to left, rgba(15, 23, 42, 0.06), transparent 24px);
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-position: right center;
+  }
+}
+
+/* 下部固定ナビにフッター末尾が隠れないように余白を確保（モバイル） */
+@media (max-width: 767px) {
+  footer {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0));
+  }
+}
+
+/* iOS で 100vw 由来の横あふれが出ても本文が破綻しないよう画像・メディアを抑制 */
+img,
+canvas,
+svg {
+  max-width: 100%;
+}
