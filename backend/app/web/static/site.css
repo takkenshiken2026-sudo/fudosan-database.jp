@@ -413,3 +413,28 @@ canvas,
 svg {
   max-width: 100%;
 }
+
+/* モバイルの可読性向上（全ページ共通）。
+   Tailwind CDN の実行時注入クラスに確実に勝つため、範囲を絞って !important を使う。 */
+@media (max-width: 639px) {
+  /* 極小フォントの下限を 12px に引き上げ */
+  .text-\[11px\],
+  .text-\[10px\] {
+    font-size: 12px !important;
+  }
+  /* 薄すぎる文字色のコントラスト改善（slate-400 → slate-500 相当） */
+  .text-slate-400 {
+    color: #64748b !important;
+  }
+  /* 本文・段落の行間を広げて日本語を読みやすく */
+  p {
+    line-height: 1.75;
+  }
+  /* タップしやすいチップ・ピル */
+  .area-chip {
+    padding: 6px 14px;
+  }
+  .news-cat-pill {
+    padding: 8px 16px;
+  }
+}
