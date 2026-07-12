@@ -32,18 +32,18 @@
             <div id="hero-search-results" class="search-dropdown hidden text-ink-900"></div>
           </form>
 
-          <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-5">
-            <div class="rounded-xl bg-white/10 backdrop-blur px-2 sm:px-4 py-2.5 sm:py-3 border border-white/20 text-center sm:text-left min-w-0">
-              <div class="text-brand-100 text-[11px] sm:text-xs">累計取引データ</div>
-              <div class="text-sm sm:text-2xl font-bold tabular-nums truncate">{{ format_count(highlights.total_transactions) }}<span class="text-[11px] sm:text-sm font-normal ml-0.5">件</span></div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-5">
+            <div class="flex items-center justify-between gap-2 sm:block rounded-xl bg-white/10 backdrop-blur px-3.5 py-2.5 sm:py-3 border border-white/20 sm:text-left min-w-0">
+              <div class="text-brand-100 text-xs sm:mb-0.5 shrink-0">累計取引データ</div>
+              <div class="text-lg sm:text-2xl font-bold tabular-nums text-right sm:text-left">{{ format_count(highlights.total_transactions) }}<span class="text-xs sm:text-sm font-normal ml-0.5">件</span></div>
             </div>
-            <div class="rounded-xl bg-white/10 backdrop-blur px-2 sm:px-4 py-2.5 sm:py-3 border border-white/20 text-center sm:text-left min-w-0">
-              <div class="text-brand-100 text-[11px] sm:text-xs">市区町村</div>
-              <div class="text-sm sm:text-2xl font-bold tabular-nums truncate">{{ format_count(highlights.municipality_count) }}</div>
+            <div class="flex items-center justify-between gap-2 sm:block rounded-xl bg-white/10 backdrop-blur px-3.5 py-2.5 sm:py-3 border border-white/20 sm:text-left min-w-0">
+              <div class="text-brand-100 text-xs sm:mb-0.5 shrink-0">市区町村</div>
+              <div class="text-lg sm:text-2xl font-bold tabular-nums text-right sm:text-left">{{ format_count(highlights.municipality_count) }}</div>
             </div>
-            <div class="rounded-xl bg-white/10 backdrop-blur px-2 sm:px-4 py-2.5 sm:py-3 border border-white/20 text-center sm:text-left min-w-0">
-              <div class="text-brand-100 text-[11px] sm:text-xs">データ期間</div>
-              <div class="text-sm sm:text-2xl font-bold truncate">2005〜2025</div>
+            <div class="flex items-center justify-between gap-2 sm:block rounded-xl bg-white/10 backdrop-blur px-3.5 py-2.5 sm:py-3 border border-white/20 sm:text-left min-w-0">
+              <div class="text-brand-100 text-xs sm:mb-0.5 shrink-0">データ期間</div>
+              <div class="text-lg sm:text-2xl font-bold text-right sm:text-left">2005〜2025</div>
             </div>
           </div>
 
