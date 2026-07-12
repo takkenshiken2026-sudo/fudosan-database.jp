@@ -438,3 +438,60 @@ svg {
     padding: 8px 16px;
   }
 }
+
+/* 取引事例テーブル(#tx-table)をスマホでは「1取引=カード」に変換。
+   従来は min-w-[800px] で横スクロールが必要で、最重要の取引価格が画面外に
+   隠れていた。カード化＋ラベル付与で、価格を主役に一目で読めるようにする。
+   デスクトップ(>=768px)は従来の表のまま。 */
+@media (max-width: 767px) {
+  #tx-table {
+    min-width: 0 !important;
+  }
+  #tx-table thead {
+    display: none;
+  }
+  #tx-table tbody,
+  #tx-table tr,
+  #tx-table td {
+    display: block;
+    width: auto;
+  }
+  /* 間取り以降（7列目以降）はカードでは省略しシンプルに */
+  #tx-table td:nth-child(n + 7) {
+    display: none;
+  }
+  #tx-table tr {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin: 10px;
+    background: #fff;
+  }
+  #tx-table td {
+    display: flex;
+    gap: 0.6em;
+    align-items: baseline;
+    text-align: left !important;
+    padding: 3px 0 !important;
+    border: 0 !important;
+    white-space: normal !important;
+  }
+  #tx-table td::before {
+    flex: 0 0 auto;
+    min-width: 5em;
+    color: #64748b;
+    font-size: 12px;
+  }
+  #tx-table td:nth-child(1)::before { content: "期間"; }
+  #tx-table td:nth-child(2)::before { content: "種別"; }
+  #tx-table td:nth-child(3)::before { content: "地区"; }
+  #tx-table td:nth-child(4)::before { content: "取引価格"; }
+  #tx-table td:nth-child(5)::before { content: "㎡単価"; }
+  #tx-table td:nth-child(6)::before { content: "面積"; }
+  /* 取引価格を主役に */
+  #tx-table td:nth-child(4) {
+    font-weight: 700;
+    color: #0369a1;
+    font-size: 1.05rem;
+  }
+}
