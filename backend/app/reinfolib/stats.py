@@ -13,7 +13,15 @@ def rebuild_trade_stats(db: Session, municipality_code: str | None = None) -> di
     if municipality_code:
         filters.append(TradeTransaction.municipality_code == municipality_code)
 
-    db.execute(delete(MunicipalityTradeStat).where(*filters) if filters else delete(MunicipalityTradeStat))
+    # 削除は集計対象テーブル(MunicipalityTradeStat)自身の列で絞る。
+    # （filters は TradeTransaction 側の列なので、そのまま使うと
+    #  クロステーブル DELETE になり SQLite が非対応で失敗する）
+    delete_stmt = delete(MunicipalityTradeStat)
+    if municipality_code:
+        delete_stmt = delete_stmt.where(
+            MunicipalityTradeStat.municipality_code == municipality_code
+        )
+    db.execute(delete_stmt, execution_options={"synchronize_session": False})
 
     query = (
         select(
