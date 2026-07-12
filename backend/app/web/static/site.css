@@ -495,3 +495,13 @@ svg {
     font-size: 1.05rem;
   }
 }
+
+/* スマホでは「購入判断のポイント」「価格帯が近いエリア」のカードグリッドを
+   2列にして、縦スクロールを短縮しスキャンしやすくする。
+   対象クラス組合せは市区町村ページ固有（他ページには出現しない）。 */
+@media (max-width: 639px) {
+  .grid.sm\:grid-cols-2.lg\:grid-cols-3.gap-3.mb-10,
+  .grid.sm\:grid-cols-2.lg\:grid-cols-4.gap-3.mb-8 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
