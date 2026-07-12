@@ -67,9 +67,15 @@
   <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm" role="banner">
     <div class="max-w-6xl mx-auto px-4 py-3">
       <div class="flex items-center justify-between gap-3">
-        <a href="/" class="flex items-center gap-2 font-bold text-lg text-brand-700 hover:text-brand-600 shrink-0" aria-label="不動産相場ナビ トップ">
-          <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white text-sm font-bold" aria-hidden="true">相</span>
-          <span class="hidden sm:inline">不動産相場ナビ</span>
+        <a href="/" class="flex items-center gap-2 shrink-0 group" aria-label="不動産相場ナビ トップ">
+          <span class="inline-flex flex-col items-center justify-center leading-none rounded-md border-2 border-brand-600 bg-white px-1.5 py-1 text-brand-700 font-extrabold shrink-0" aria-hidden="true">
+            <span class="text-[11px]">不動産</span>
+            <span class="text-[11px] mt-px">相場ナビ</span>
+          </span>
+          <span class="hidden sm:flex flex-col leading-tight">
+            <span class="font-bold text-base text-ink-900 group-hover:text-brand-700 transition">不動産相場ナビ</span>
+            <span class="text-[10px] text-slate-500 font-normal">全国の不動産取引価格・相場情報</span>
+          </span>
         </a>
 
         <form action="/search" method="get" class="flex-1 max-w-md mx-2 relative" id="global-search-wrap" role="search">
