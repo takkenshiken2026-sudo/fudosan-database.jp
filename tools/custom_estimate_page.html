@@ -210,6 +210,10 @@
     if(!m){empty.classList.add('hidden');return;}
     var keys=['mansion','house','land'].filter(function(k){return m.t[k];});
     if(!keys.length){empty.classList.remove('hidden');return;} empty.classList.add('hidden');
+    // 取引件数が多い種別を先頭（初期選択）にする。地方はマンションが少なく町名が
+    // ほとんど出ないため、その市区町村で最もデータの多い種別を既定にする。
+    var cnt={}; muniDeals().forEach(function(d){cnt[d.t]=(cnt[d.t]||0)+1;});
+    keys.sort(function(a,b){return (cnt[b]||m.t[b].n||0)-(cnt[a]||m.t[a].n||0);});
     keys.forEach(function(k){
       var b=document.createElement('button'); b.type='button'; b.dataset.k=k;
       b.className='px-4 py-2 rounded-full text-sm font-medium transition border';
