@@ -16,6 +16,9 @@ python3 tools/prewarm_purchase_insights.py --jobs "$PREWARM_JOBS"
 echo "=== 静的サイトビルド (${JOBS} workers) ==="
 python3 tools/build_public_site.py --jobs "$JOBS" "$@"
 
+echo "=== 追加ページの上乗せ（相場シミュレーター・都道府県ランキング等） ==="
+python3 tools/build_custom_overlays.py "$ROOT/public_site"
+
 echo "=== gh-pages へ push ==="
 rm -rf "$WORK"
 cp -a "$ROOT/public_site" "$WORK"
