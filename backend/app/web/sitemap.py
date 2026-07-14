@@ -13,6 +13,7 @@ def build_sitemap_entries(db: Session, base: str) -> list[tuple[str, Optional[st
     entries: list[tuple[str, Optional[str], str, str]] = [
         (absolute_url(base, "/"), None, "daily", "1.0"),
         (absolute_url(base, "/market"), None, "weekly", "0.9"),
+        (absolute_url(base, "/satei"), None, "weekly", "0.8"),
         (absolute_url(base, "/rankings"), None, "daily", "0.9"),
         (absolute_url(base, "/news"), None, "hourly", "0.8"),
         (absolute_url(base, "/compare"), None, "weekly", "0.8"),

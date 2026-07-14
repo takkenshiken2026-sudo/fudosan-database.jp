@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+{% block description %}エリアと面積・築年数を入力するだけで、中古マンション・土地・戸建の想定売却価格を無料で即時シミュレーション。国土交通省の実取引データに基づく参考査定。{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-br from-ink-900 via-brand-900 to-brand-700 text-white">
+  <div class="max-w-4xl mx-auto px-4 py-14">
+    <p class="text-brand-200 text-sm font-medium mb-3">無料・登録不要</p>
+    <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4">不動産価格 査定シミュレーション</h1>
+    <p class="text-slate-200 text-base md:text-lg max-w-2xl">
+      エリアと面積・築年数を入力するだけで、<strong class="font-semibold text-white">中古マンション・土地・戸建</strong>の想定価格を即座に試算。
+      国土交通省 不動産情報ライブラリの<strong class="font-semibold text-white">実際の取引価格データ</strong>（㎡単価）を用いた参考査定です。
+    </p>
+    {% if dataset.base_year %}
+    <p class="text-brand-200/90 text-xs mt-3">対象データ：{{ dataset.base_year - 2 }}〜{{ dataset.base_year }}年の取引価格（{{ format_count(dataset.area_count) }}エリア）</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="max-w-4xl mx-auto px-4 py-10">
+  {% if dataset.area_count == 0 %}
+  <div class="rounded-xl border border-amber-200 bg-amber-50 p-6 text-amber-800">
+    現在、査定に利用できる取引データを準備中です。しばらくお待ちください。
+  </div>
+  {% else %}
+
+  <div class="grid lg:grid-cols-5 gap-6">
+    <!-- 入力フォーム -->
+    <div class="lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-bold mb-4">査定条件を入力</h2>
+
+      <!-- 物件種別 -->
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-slate-700 mb-2">物件種別</label>
+        <div id="type-tabs" role="tablist" class="grid grid-cols-3 gap-2">
+          <button type="button" role="tab" data-type="mansion" aria-selected="true"
+                  class="type-tab rounded-lg border px-3 py-2.5 text-sm font-medium transition">中古マンション</button>
+          <button type="button" role="tab" data-type="land" aria-selected="false"
+                  class="type-tab rounded-lg border px-3 py-2.5 text-sm font-medium transition">土地</button>
+          <button type="button" role="tab" data-type="house" aria-selected="false"
+                  class="type-tab rounded-lg border px-3 py-2.5 text-sm font-medium transition">戸建（土地＋建物）</button>
+        </div>
+      </div>
+
+      <!-- エリア -->
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label for="pref-select" class="block text-sm font-medium text-slate-700 mb-2">都道府県</label>
+          <select id="pref-select" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+            <option value="">選択してください</option>
+          </select>
+        </div>
+        <div>
+          <label for="muni-select" class="block text-sm font-medium text-slate-700 mb-2">市区町村</label>
+          <select id="muni-select" disabled class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+            <option value="">都道府県を先に選択</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 面積・築年数 -->
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div data-field="area">
+          <label for="area-input" class="block text-sm font-medium text-slate-700 mb-2"><span id="area-label">専有面積</span>（㎡）</label>
+          <input id="area-input" type="number" inputmode="decimal" min="1" step="0.01" placeholder="例：70"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+        </div>
+        <div data-field="building-area" class="hidden">
+          <label for="building-area-input" class="block text-sm font-medium text-slate-700 mb-2">建物面積（㎡）</label>
+          <input id="building-area-input" type="number" inputmode="decimal" min="1" step="0.01" placeholder="例：100"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+        </div>
+        <div data-field="age">
+          <label for="age-input" class="block text-sm font-medium text-slate-700 mb-2">築年数（年）</label>
+          <input id="age-input" type="number" inputmode="numeric" min="0" max="80" step="1" placeholder="例：15"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200">
+        </div>
+      </div>
+
+      <button id="calc-btn" type="button"
+              class="w-full rounded-lg bg-brand-600 px-6 py-3 text-white font-medium hover:bg-brand-700 transition disabled:bg-slate-300 disabled:cursor-not-allowed">
+        査定額を計算する
+      </button>
+      <p id="form-error" class="mt-3 text-sm text-rose-600 hidden"></p>
+    </div>
+
+    <!-- 結果 -->
+    <div class="lg:col-span-2">
+      <div id="result-empty" class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-slate-500 text-sm h-full flex items-center justify-center">
+        条件を入力して「査定額を計算する」を押してください。
+      </div>
+      <div id="result-card" class="hidden rounded-2xl border border-brand-200 bg-white p-6 shadow-sm">
+        <p class="text-sm text-slate-500 mb-1"><span id="result-area-name"></span>の想定<span id="result-mode-label">価格</span></p>
+        <p class="text-3xl font-bold text-brand-700 mb-1" id="result-price">—</p>
+        <p class="text-sm text-slate-600 mb-4">想定レンジ：<span id="result-range" class="font-medium">—</span></p>
+        <dl class="text-sm space-y-2 border-t border-slate-100 pt-4">
+          <div class="flex justify-between gap-2">
+            <dt class="text-slate-500">基準㎡単価</dt>
+            <dd class="font-medium text-right" id="result-unit">—</dd>
+          </div>
+          <div class="flex justify-between gap-2" id="result-age-row">
+            <dt class="text-slate-500">築年数補正</dt>
+            <dd class="font-medium text-right" id="result-age">—</dd>
+          </div>
+          <div class="flex justify-between gap-2">
+            <dt class="text-slate-500">参考取引件数</dt>
+            <dd class="font-medium text-right" id="result-samples">—</dd>
+          </div>
+        </dl>
+        <a id="result-link" href="#" class="mt-4 inline-flex items-center gap-1 text-sm text-brand-600 font-medium hover:text-brand-700">
+          このエリアの相場詳細を見る
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 算出方法 -->
+  <div class="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-6">
+    <h2 class="text-sm font-bold text-slate-700 mb-3">算出方法について</h2>
+    <ul class="text-sm text-slate-600 space-y-2 leading-relaxed list-disc pl-5">
+      <li><strong>中古マンション</strong>：エリアの平均㎡単価 × 専有面積 × 築年数補正（築25年を基準に、1年あたり約0.9%増減／下限55%・上限125%）。</li>
+      <li><strong>土地</strong>：エリアの平均㎡単価（宅地）× 土地面積。築年数の影響はありません。</li>
+      <li><strong>戸建</strong>：土地評価（土地面積 × 宅地㎡単価）＋ 建物評価（建物面積 × 再調達単価20万円/㎡ × 築年数減価。木造想定で築45年に下限10%）。</li>
+      <li>㎡単価は直近3年の実際の取引価格を取引件数で加重平均した参考値です。想定レンジは中心値の±15%で表示しています。</li>
+    </ul>
+    <p class="text-xs text-slate-400 mt-4">
+      ※ 本シミュレーションは国土交通省 不動産情報ライブラリの公開データに基づく機械的な概算であり、実際の査定額・成約価格を保証するものではありません。
+      個別物件の条件（立地・階数・眺望・リフォーム状況等）は反映されません。売買のご判断は不動産会社等の専門家にご相談ください。
+    </p>
+  </div>
+  {% endif %}
+</section>
+
+<script id="satei-data" type="application/json">{{ dataset | tojson | safe }}</script>
+<script>
+(function () {
+  var el = document.getElementById("satei-data");
+  if (!el) return;
+  var DATA;
+  try { DATA = JSON.parse(el.textContent); } catch (e) { return; }
+  var prefs = DATA.prefectures || [];
+  if (!prefs.length) return;
+
+  // --- constants ---
+  var REF_AGE = 25, AGE_SLOPE = 0.009, AGE_MIN = 0.55, AGE_MAX = 1.25;
+  var BUILD_COST = 200000, HOUSE_LIFE = 45, HOUSE_FLOOR = 0.10;
+  var RANGE = 0.15;
+
+  var state = { type: "mansion" };
+
+  var prefSel = document.getElementById("pref-select");
+  var muniSel = document.getElementById("muni-select");
+  var areaInput = document.getElementById("area-input");
+  var buildingAreaInput = document.getElementById("building-area-input");
+  var ageInput = document.getElementById("age-input");
+  var calcBtn = document.getElementById("calc-btn");
+  var formError = document.getElementById("form-error");
+
+  // --- helpers ---
+  function hasType(area, type) {
+    if (type === "mansion") return area.mansion_unit_price > 0;
+    return area.land_unit_price > 0; // land & house both need land price
+  }
+  function prefHasType(pref, type) {
+    return (pref.areas || []).some(function (a) { return hasType(a, type); });
+  }
+  function formatMan(yen) {
+    if (yen == null || isNaN(yen)) return "—";
+    var man = yen / 10000;
+    if (man >= 10000) {
+      var oku = man / 10000;
+      return (Math.round(oku * 100) / 100).toLocaleString(undefined, { maximumFractionDigits: 2 }) + "億円";
+    }
+    return Math.round(man).toLocaleString() + "万円";
+  }
+  function formatYenPerSqm(v) {
+    if (v == null || isNaN(v)) return "—";
+    return Math.round(v).toLocaleString() + "円/㎡";
+  }
+
+  // --- populate prefectures ---
+  function rebuildPrefOptions() {
+    var current = prefSel.value;
+    prefSel.innerHTML = '<option value="">選択してください</option>';
+    prefs.forEach(function (p) {
+      if (!prefHasType(p, state.type)) return;
+      var opt = document.createElement("option");
+      opt.value = p.slug;
+      opt.textContent = p.name;
+      prefSel.appendChild(opt);
+    });
+    // keep selection if still valid
+    if (current && prefSel.querySelector('option[value="' + CSS.escape(current) + '"]')) {
+      prefSel.value = current;
+    } else {
+      prefSel.value = "";
+    }
+  }
+
+  function currentPref() {
+    return prefs.find(function (p) { return p.slug === prefSel.value; });
+  }
+  function currentArea() {
+    var p = currentPref();
+    if (!p) return null;
+    return (p.areas || []).find(function (a) { return a.slug === muniSel.value; });
+  }
+
+  function rebuildMuniOptions() {
+    var p = currentPref();
+    muniSel.innerHTML = "";
+    if (!p) {
+      muniSel.innerHTML = '<option value="">都道府県を先に選択</option>';
+      muniSel.disabled = true;
+      return;
+    }
+    var areas = (p.areas || []).filter(function (a) { return hasType(a, state.type); });
+    areas.sort(function (a, b) { return a.name.localeCompare(b.name, "ja"); });
+    muniSel.innerHTML = '<option value="">選択してください</option>';
+    areas.forEach(function (a) {
+      var opt = document.createElement("option");
+      opt.value = a.slug;
+      opt.textContent = a.name;
+      muniSel.appendChild(opt);
+    });
+    muniSel.disabled = false;
+  }
+
+  // --- type tabs ---
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".type-tab"));
+  function applyTabStyles() {
+    tabs.forEach(function (t) {
+      var active = t.dataset.type === state.type;
+      t.setAttribute("aria-selected", active ? "true" : "false");
+      t.classList.toggle("border-brand-500", active);
+      t.classList.toggle("bg-brand-50", active);
+      t.classList.toggle("text-brand-700", active);
+      t.classList.toggle("border-slate-300", !active);
+      t.classList.toggle("text-slate-600", !active);
+      t.classList.toggle("hover:bg-slate-50", !active);
+    });
+  }
+  function applyFieldVisibility() {
+    var areaLabel = document.getElementById("area-label");
+    var buildingWrap = document.querySelector('[data-field="building-area"]');
+    var ageWrap = document.querySelector('[data-field="age"]');
+    if (state.type === "mansion") {
+      areaLabel.textContent = "専有面積";
+      buildingWrap.classList.add("hidden");
+      ageWrap.classList.remove("hidden");
+    } else if (state.type === "land") {
+      areaLabel.textContent = "土地面積";
+      buildingWrap.classList.add("hidden");
+      ageWrap.classList.add("hidden");
+    } else { // house
+      areaLabel.textContent = "土地面積";
+      buildingWrap.classList.remove("hidden");
+      ageWrap.classList.remove("hidden");
+    }
+  }
+  function setType(type) {
+    state.type = type;
+    applyTabStyles();
+    applyFieldVisibility();
+    rebuildPrefOptions();
+    rebuildMuniOptions();
+    hideResult();
+  }
+  tabs.forEach(function (t) {
+    t.addEventListener("click", function () { setType(t.dataset.type); });
+  });
+
+  prefSel.addEventListener("change", function () { rebuildMuniOptions(); hideResult(); });
+  muniSel.addEventListener("change", hideResult);
+
+  // --- calculation ---
+  function ageFactorMansion(age) {
+    var f = 1 + (REF_AGE - age) * AGE_SLOPE;
+    return Math.max(AGE_MIN, Math.min(AGE_MAX, f));
+  }
+  function buildDepreciation(age) {
+    return Math.max(HOUSE_FLOOR, Math.min(1, 1 - age / HOUSE_LIFE));
+  }
+
+  function showError(msg) {
+    formError.textContent = msg;
+    formError.classList.remove("hidden");
+  }
+  function clearError() { formError.classList.add("hidden"); }
+
+  function hideResult() {
+    document.getElementById("result-card").classList.add("hidden");
+    document.getElementById("result-empty").classList.remove("hidden");
+  }
+
+  function num(input) {
+    var v = parseFloat(input.value);
+    return isNaN(v) ? null : v;
+  }
+
+  function calculate() {
+    clearError();
+    var area = currentArea();
+    if (!area) { showError("都道府県と市区町村を選択してください。"); return; }
+
+    var landArea = num(areaInput);
+    if (state.type !== "land" && state.type !== "house" && !landArea) {
+      // mansion uses areaInput as 専有面積
+    }
+    var mode, price, unit, samples, ageText = null;
+
+    if (state.type === "mansion") {
+      var senyu = num(areaInput);
+      if (!senyu || senyu <= 0) { showError("専有面積を入力してください。"); return; }
+      var age = num(ageInput);
+      if (age == null) age = REF_AGE;
+      unit = area.mansion_unit_price;
+      samples = area.mansion_samples;
+      var f = ageFactorMansion(age);
+      price = unit * senyu * f;
+      ageText = "築" + Math.round(age) + "年（×" + f.toFixed(2) + "）";
+      mode = "売却価格";
+    } else if (state.type === "land") {
+      var ta = num(areaInput);
+      if (!ta || ta <= 0) { showError("土地面積を入力してください。"); return; }
+      unit = area.land_unit_price;
+      samples = area.land_samples;
+      price = unit * ta;
+      mode = "価格";
+    } else { // house
+      var tArea = num(areaInput);
+      var bArea = num(buildingAreaInput);
+      if (!tArea || tArea <= 0) { showError("土地面積を入力してください。"); return; }
+      if (!bArea || bArea <= 0) { showError("建物面積を入力してください。"); return; }
+      var hAge = num(ageInput);
+      if (hAge == null) hAge = 20;
+      unit = area.land_unit_price;
+      samples = area.land_samples;
+      var depr = buildDepreciation(hAge);
+      var landValue = unit * tArea;
+      var buildValue = bArea * BUILD_COST * depr;
+      price = landValue + buildValue;
+      ageText = "築" + Math.round(hAge) + "年 建物残価" + Math.round(depr * 100) + "%";
+      mode = "売却価格";
+    }
+
+    renderResult(area, price, unit, samples, ageText, mode);
+  }
+
+  function renderResult(area, price, unit, samples, ageText, mode) {
+    document.getElementById("result-empty").classList.add("hidden");
+    var card = document.getElementById("result-card");
+    card.classList.remove("hidden");
+
+    document.getElementById("result-area-name").textContent = (currentPref().name) + area.name;
+    document.getElementById("result-mode-label").textContent = mode;
+    document.getElementById("result-price").textContent = formatMan(price);
+    document.getElementById("result-range").textContent =
+      formatMan(price * (1 - RANGE)) + " 〜 " + formatMan(price * (1 + RANGE));
+    document.getElementById("result-unit").textContent = formatYenPerSqm(unit);
+    document.getElementById("result-samples").textContent = (samples || 0).toLocaleString() + "件";
+
+    var ageRow = document.getElementById("result-age-row");
+    if (ageText) {
+      ageRow.classList.remove("hidden");
+      document.getElementById("result-age").textContent = ageText;
+    } else {
+      ageRow.classList.add("hidden");
+    }
+
+    var link = document.getElementById("result-link");
+    link.href = "/price/" + currentPref().slug + "/" + area.slug;
+
+    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  calcBtn.addEventListener("click", calculate);
+
+  // --- deep link (?type=&pref=&muni=) ---
+  function applyQuery() {
+    var q = new URLSearchParams(window.location.search);
+    var t = q.get("type");
+    if (t === "mansion" || t === "land" || t === "house") setType(t);
+    var pref = q.get("pref");
+    if (pref && prefSel.querySelector('option[value="' + CSS.escape(pref) + '"]')) {
+      prefSel.value = pref;
+      rebuildMuniOptions();
+      var muni = q.get("muni");
+      if (muni && muniSel.querySelector('option[value="' + CSS.escape(muni) + '"]')) {
+        muniSel.value = muni;
+      }
+    }
+  }
+
+  // init
+  setType("mansion");
+  applyQuery();
+})();
+</script>
+{% endblock %}

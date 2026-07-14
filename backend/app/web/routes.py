@@ -37,6 +37,7 @@ from app.web.seo import (
     seo_regional_news,
     seo_report_new,
     seo_report_preview,
+    seo_satei,
     seo_search,
     seo_station,
     site_base_url,
@@ -132,6 +133,17 @@ def market_page(request: Request, db: Session = Depends(get_db)) -> HTMLResponse
         "market.html",
         seo_market(_base(request)),
         chart_data=chart_data.model_dump(),
+    )
+
+
+@router.get("/satei", response_class=HTMLResponse)
+def satei_page(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
+    dataset = services.get_appraisal_dataset(db)
+    return _render(
+        request,
+        "satei.html",
+        seo_satei(_base(request)),
+        dataset=dataset.model_dump(),
     )
 
 
