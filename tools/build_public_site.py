@@ -67,6 +67,7 @@ def _collect_paths(full: bool) -> list[str]:
         core = {
             "/",
             "/market",
+            "/satei",
             "/rankings",
             "/news",
             "/compare",

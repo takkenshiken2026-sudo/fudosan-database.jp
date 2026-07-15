@@ -271,3 +271,24 @@ class ReportContext(BaseModel):
 class CompareView(BaseModel):
     left: CompareSide
     right: CompareSide
+
+
+class AppraisalArea(BaseModel):
+    slug: str
+    name: str
+    mansion_unit_price: Optional[int] = None
+    mansion_samples: int = 0
+    land_unit_price: Optional[int] = None
+    land_samples: int = 0
+
+
+class AppraisalPrefecture(BaseModel):
+    slug: str
+    name: str
+    areas: list[AppraisalArea] = []
+
+
+class AppraisalDataset(BaseModel):
+    prefectures: list[AppraisalPrefecture] = []
+    base_year: Optional[int] = None
+    area_count: int = 0

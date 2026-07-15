@@ -7,6 +7,9 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
 from app.api.schemas import (
+    AppraisalArea,
+    AppraisalDataset,
+    AppraisalPrefecture,
     CompareSide,
     CompareView,
     DistrictSearchResult,
@@ -978,3 +981,121 @@ def get_compare_view(
         left=_municipality_to_compare_side(db, left_pref, left_muni),
         right=_municipality_to_compare_side(db, right_pref, right_muni),
     )
+
+
+_APPRAISAL_CACHE: dict[str, tuple[float, AppraisalDataset]] = {}
+_APPRAISAL_TTL = 3600.0
+
+
+def get_appraisal_dataset(db: Session, *, years: int = 3) -> AppraisalDataset:
+    """市区町村別の㎡単価（中古マンション・土地）を価格査定用にまとめて返す。
+
+    直近 ``years`` 年の取引価格情報（price_classification="01"）を取引件数で
+    加重平均した㎡単価を、種別ごと（中古マンション / 宅地(土地)）に集計する。
+    """
+    cached = _APPRAISAL_CACHE.get("data")
+    if cached and (time_time() - cached[0]) < _APPRAISAL_TTL:
+        return cached[1]
+
+    max_year = db.scalar(
+        select(func.max(MunicipalityTradeStat.trade_year)).where(
+            MunicipalityTradeStat.price_classification == "01"
+        )
+    )
+    if not max_year:
+        dataset = AppraisalDataset()
+        _APPRAISAL_CACHE["data"] = (time_time(), dataset)
+        return dataset
+
+    min_year = max_year - (years - 1)
+    rows = db.execute(
+        select(
+            MunicipalityTradeStat.municipality_code,
+            MunicipalityTradeStat.property_type,
+            func.sum(
+                MunicipalityTradeStat.unit_price_avg
+                * MunicipalityTradeStat.transaction_count
+            ),
+            func.sum(MunicipalityTradeStat.transaction_count),
+        )
+        .where(
+            MunicipalityTradeStat.price_classification == "01",
+            MunicipalityTradeStat.trade_year >= min_year,
+            MunicipalityTradeStat.unit_price_avg.isnot(None),
+            MunicipalityTradeStat.transaction_count > 0,
+        )
+        .group_by(
+            MunicipalityTradeStat.municipality_code,
+            MunicipalityTradeStat.property_type,
+        )
+    ).all()
+
+    # code -> {"mansion": [weighted_sum, count], "land": [...]}
+    acc: dict[str, dict[str, list[float]]] = {}
+    for code, ptype, weighted, count in rows:
+        if not weighted or not count:
+            continue
+        name = ptype or ""
+        if "マンション" in name:
+            key = "mansion"
+        elif name == "宅地(土地)":
+            key = "land"
+        else:
+            continue
+        entry = acc.setdefault(code, {}).setdefault(key, [0.0, 0])
+        entry[0] += float(weighted)
+        entry[1] += int(count)
+
+    if not acc:
+        dataset = AppraisalDataset(base_year=max_year)
+        _APPRAISAL_CACHE["data"] = (time_time(), dataset)
+        return dataset
+
+    muni_rows = db.execute(
+        select(
+            Municipality.code,
+            Municipality.name_ja,
+            Municipality.slug,
+            Prefecture.name_ja,
+            Prefecture.slug,
+        )
+        .join(Prefecture, Prefecture.code == Municipality.prefecture_code)
+        .where(Municipality.code.in_(list(acc.keys())))
+        .order_by(Prefecture.code, Municipality.code)
+    ).all()
+
+    pref_map: dict[str, AppraisalPrefecture] = {}
+    for code, muni_name, muni_slug, pref_name, pref_slug in muni_rows:
+        bucket = acc.get(code)
+        if not bucket:
+            continue
+        mansion = bucket.get("mansion")
+        land = bucket.get("land")
+        mansion_unit = (
+            round(mansion[0] / mansion[1]) if mansion and mansion[1] else None
+        )
+        land_unit = round(land[0] / land[1]) if land and land[1] else None
+        if not mansion_unit and not land_unit:
+            continue
+        pref = pref_map.get(pref_slug)
+        if pref is None:
+            pref = AppraisalPrefecture(slug=pref_slug, name=pref_name, areas=[])
+            pref_map[pref_slug] = pref
+        pref.areas.append(
+            AppraisalArea(
+                slug=muni_slug,
+                name=muni_name,
+                mansion_unit_price=mansion_unit,
+                mansion_samples=int(mansion[1]) if mansion else 0,
+                land_unit_price=land_unit,
+                land_samples=int(land[1]) if land else 0,
+            )
+        )
+
+    prefectures = sorted(pref_map.values(), key=lambda p: p.slug)
+    area_count = sum(len(p.areas) for p in prefectures)
+    dataset = AppraisalDataset(
+        prefectures=prefectures, base_year=max_year, area_count=area_count
+    )
+    _APPRAISAL_CACHE["data"] = (time_time(), dataset)
+    return dataset

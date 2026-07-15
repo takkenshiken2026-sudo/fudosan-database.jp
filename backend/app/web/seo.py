@@ -140,6 +140,24 @@ def seo_market(base: str) -> SeoMeta:
     return finalize_seo(seo, base)
 
 
+def seo_satei(base: str) -> SeoMeta:
+    path = "/satei"
+    url = absolute_url(base, path)
+    seo = SeoMeta(
+        page_title=f"不動産価格の無料査定シミュレーション | {SITE_NAME}",
+        meta_description=(
+            "エリアと面積・築年数を入力するだけで、中古マンション・土地・戸建の想定売却価格を"
+            "無料で即時シミュレーション。国土交通省の実際の取引価格データに基づく参考査定です。"
+        ),
+        canonical_path=path,
+        breadcrumbs=[
+            (SITE_NAME, base),
+            ("価格査定シミュレーション", url),
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
 def seo_prefecture(base: str, name: str, slug: str, muni_count: int) -> SeoMeta:
     path = f"/price/{slug}"
     url = absolute_url(base, path)
