@@ -63,6 +63,31 @@
 </tbody>
 {% endmacro %}
 
+{# Land price change ranking rows (上昇・下落) #}
+{% macro land_change_rows(items) %}
+<tbody class="divide-y divide-slate-100">
+  {% for item in items %}
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ item.prefecture_slug }}/{{ item.slug }}'">
+    <td class="px-4 py-3">
+      <span class="rank-badge {{ 'rank-' ~ item.rank if item.rank <= 3 else 'rank-n' }}">{{ item.rank }}</span>
+    </td>
+    <td class="px-4 py-3">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">{{ item.name_ja }}</span>
+      <span class="block text-xs text-slate-400 sm:hidden">{{ item.prefecture_name }}</span>
+    </td>
+    <td class="px-4 py-3 text-slate-500 hidden sm:table-cell">{{ item.prefecture_name }}</td>
+    <td class="px-4 py-3 text-right tabular-nums text-slate-600 hidden md:table-cell">{{ format_yen_per_sqm(item.avg_unit_price) }}</td>
+    <td class="px-4 py-3 text-right tabular-nums font-semibold {{ 'text-rose-600' if (item.yoy_change_avg or 0) > 0 else ('text-blue-600' if (item.yoy_change_avg or 0) < 0 else 'text-slate-500') }}">
+      {{ format_percent(item.yoy_change_avg) }}
+    </td>
+  </tr>
+  {% endfor %}
+  {% if not items %}
+  <tr><td colspan="5" class="px-4 py-6 text-center text-sm text-slate-400">データがありません</td></tr>
+  {% endif %}
+</tbody>
+{% endmacro %}
+
 {# Prefecture table rows #}
 {% macro prefecture_rows(items, rank_start=1) %}
 <tbody class="divide-y divide-slate-100">

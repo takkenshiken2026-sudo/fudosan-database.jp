@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import section_title, report_cta, ranking_rows, prefecture_rows, hero_news_item %}
+{% from "macros.html" import section_title, report_cta, ranking_rows, prefecture_rows, land_change_rows, hero_news_item %}
 {% block description %}全国47都道府県・1,920市区町村の不動産取引価格データを検索。地域別の取引件数・平均価格を無料で閲覧。{% endblock %}
 
 {% block head %}
@@ -222,6 +222,57 @@
     </div>
   </div>
 </section>
+
+{# Land price change rankings (上昇・下落) #}
+{% if highlights.land_price_gainers or highlights.land_price_losers %}
+<section id="land-price-ranking" class="bg-slate-100 border-y border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-14">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+      {{ section_title('地価変動率ランキング', ('地価公示 ' ~ highlights.land_price_year ~ '年・市区町村別の前年比（3地点以上）') if highlights.land_price_year else '市区町村別の地価公示 前年比') }}
+      <a href="/rankings" class="text-sm text-brand-600 font-medium hover:underline shrink-0">市区町村ランキングを見る →</a>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="px-4 py-3 border-b border-slate-100 bg-rose-50 flex items-center gap-2">
+          <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          <h3 class="text-sm font-semibold text-rose-900">地価 上昇率トップ10</h3>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+            <tr>
+              <th class="px-4 py-2 w-12">#</th>
+              <th class="px-4 py-2">市区町村</th>
+              <th class="px-4 py-2 hidden sm:table-cell">都道府県</th>
+              <th class="px-4 py-2 text-right hidden md:table-cell">平均地価</th>
+              <th class="px-4 py-2 text-right">前年比</th>
+            </tr>
+          </thead>
+          {{ land_change_rows(highlights.land_price_gainers) }}
+        </table>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="px-4 py-3 border-b border-slate-100 bg-blue-50 flex items-center gap-2">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+          <h3 class="text-sm font-semibold text-blue-900">地価 下落率トップ10</h3>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+            <tr>
+              <th class="px-4 py-2 w-12">#</th>
+              <th class="px-4 py-2">市区町村</th>
+              <th class="px-4 py-2 hidden sm:table-cell">都道府県</th>
+              <th class="px-4 py-2 text-right hidden md:table-cell">平均地価</th>
+              <th class="px-4 py-2 text-right">前年比</th>
+            </tr>
+          </thead>
+          {{ land_change_rows(highlights.land_price_losers) }}
+        </table>
+      </div>
+    </div>
+    <p class="mt-3 text-xs text-slate-500">国土交通省 地価公示データに基づき、各市区町村の調査地点（3地点以上）の前年比変動率を平均した値です。</p>
+  </div>
+</section>
+{% endif %}
 
 {# Compare teasers #}
 <section class="bg-white border-y border-slate-200">

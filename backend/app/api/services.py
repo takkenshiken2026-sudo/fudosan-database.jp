@@ -15,6 +15,7 @@ from app.api.schemas import (
     DistrictSearchResult,
     HomeChartData,
     HomeHighlights,
+    LandPriceChangeItem,
     LandPricePointItem,
     LandPriceSummary,
     LandPriceYearlyStat,
@@ -218,13 +219,90 @@ def get_rankings(
     ]
 
 
+_LAND_CHANGE_MIN_POINTS = 3
+
+
+def get_land_price_change_rankings(
+    db: Session, *, limit: int = 10, min_points: int = _LAND_CHANGE_MIN_POINTS
+) -> tuple[list[LandPriceChangeItem], list[LandPriceChangeItem], Optional[int]]:
+    """市区町村単位の地価変動率ランキング（上昇・下落）を返す。
+
+    最新調査年の地価公示地点について、市区町村ごとに前年比変動率を平均し、
+    上昇率・下落率の大きい市区町村を返す。戻り値は (上昇, 下落, 調査年)。
+    """
+    latest_year = db.scalar(select(func.max(LandPricePoint.survey_year)))
+    if latest_year is None:
+        return [], [], None
+
+    rows = db.execute(
+        select(
+            Municipality.code,
+            Municipality.name_ja,
+            Municipality.slug,
+            Prefecture.name_ja,
+            Prefecture.slug,
+            func.count(LandPricePoint.id).label("point_count"),
+            func.avg(LandPricePoint.unit_price).label("avg_price"),
+            func.avg(LandPricePoint.year_on_year_change_rate).label("yoy_avg"),
+        )
+        .join(Municipality, Municipality.code == LandPricePoint.municipality_code)
+        .join(Prefecture, Prefecture.code == Municipality.prefecture_code)
+        .where(
+            LandPricePoint.survey_year == latest_year,
+            LandPricePoint.year_on_year_change_rate.isnot(None),
+        )
+        .group_by(Municipality.code)
+        .having(func.count(LandPricePoint.id) >= min_points)
+    ).all()
+
+    ranked = [
+        {
+            "code": row[0],
+            "name_ja": row[1],
+            "slug": row[2],
+            "prefecture_name": row[3],
+            "prefecture_slug": row[4],
+            "point_count": int(row[5] or 0),
+            "avg_unit_price": row[6],
+            "yoy_change_avg": row[7],
+        }
+        for row in rows
+        if row[7] is not None
+    ]
+
+    def _to_items(entries: list[dict]) -> list[LandPriceChangeItem]:
+        return [
+            LandPriceChangeItem(
+                rank=i + 1,
+                code=e["code"],
+                name_ja=e["name_ja"],
+                slug=e["slug"],
+                prefecture_name=e["prefecture_name"],
+                prefecture_slug=e["prefecture_slug"],
+                survey_year=latest_year,
+                point_count=e["point_count"],
+                avg_unit_price=e["avg_unit_price"],
+                yoy_change_avg=e["yoy_change_avg"],
+            )
+            for i, e in enumerate(entries)
+        ]
+
+    gainers = sorted(ranked, key=lambda e: e["yoy_change_avg"], reverse=True)[:limit]
+    losers = sorted(ranked, key=lambda e: e["yoy_change_avg"])[:limit]
+    return _to_items(gainers), _to_items(losers), latest_year
+
+
 def get_home_highlights(db: Session) -> HomeHighlights:
     prefectures = list_prefectures(db)
     total_tx = sum(p.total_transactions for p in prefectures)
     muni_count = sum(p.municipality_count for p in prefectures)
+    gainers, losers, land_year = get_land_price_change_rankings(db, limit=10)
     return HomeHighlights(
         top_by_volume=get_rankings(db, sort="volume", limit=10),
         top_by_price=get_rankings(db, sort="price", limit=10),
+        land_price_gainers=gainers,
+        land_price_losers=losers,
+        land_price_year=land_year,
         total_transactions=total_tx,
         municipality_count=muni_count,
     )
