@@ -46,7 +46,9 @@
       <div class="chart-card"><canvas id="chart-pref-land-points"></canvas></div>
     </div>
   </div>
-  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-10">
+  {% set land_rows = chart_data.land_price_yearly | reverse | list %}
+  {% set land_visible = 5 %}
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-10" data-accordion="land-yearly">
     <table class="w-full text-sm">
       <thead class="bg-slate-50 text-slate-600">
         <tr>
@@ -57,7 +59,8 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
-        {% for y in chart_data.land_price_yearly | reverse %}
+        {% for y in land_rows %}
+        {% if loop.index0 == land_visible %}</tbody><tbody class="divide-y divide-slate-100 hidden" data-accordion-body>{% endif %}
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 font-medium">{{ y.survey_year }}年</td>
           <td class="px-4 py-3 text-right tabular-nums">{{ format_count(y.point_count) }}</td>
@@ -70,6 +73,20 @@
         </tr>
         {% endfor %}
       </tbody>
+      {% if land_rows | length > land_visible %}
+      <tfoot>
+        <tr>
+          <td colspan="4" class="p-0">
+            <button type="button" data-accordion-toggle
+                    class="w-full px-4 py-3 text-sm font-medium text-brand-600 hover:bg-brand-50/50 transition flex items-center justify-center gap-1.5 border-t border-slate-100"
+                    aria-expanded="false">
+              <span data-accordion-label>過去の調査年をすべて表示（{{ land_rows | length - land_visible }}年分）</span>
+              <svg class="w-4 h-4 transition-transform" data-accordion-icon fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </td>
+        </tr>
+      </tfoot>
+      {% endif %}
     </table>
   </div>
   {% endif %}

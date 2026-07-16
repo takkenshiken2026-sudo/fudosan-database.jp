@@ -434,4 +434,20 @@
       }
     });
   }
+
+  // --- Collapsible tables (accordion) ---
+  document.querySelectorAll("[data-accordion]").forEach((wrap) => {
+    const toggle = wrap.querySelector("[data-accordion-toggle]");
+    const body = wrap.querySelector("[data-accordion-body]");
+    if (!toggle || !body) return;
+    const label = toggle.querySelector("[data-accordion-label]");
+    const icon = toggle.querySelector("[data-accordion-icon]");
+    const openText = label ? label.textContent : "";
+    toggle.addEventListener("click", () => {
+      const nowOpen = body.classList.toggle("hidden") === false;
+      toggle.setAttribute("aria-expanded", String(nowOpen));
+      if (icon) icon.style.transform = nowOpen ? "rotate(180deg)" : "";
+      if (label) label.textContent = nowOpen ? "閉じる" : openText;
+    });
+  });
 })();
