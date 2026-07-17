@@ -179,12 +179,12 @@ def collect_municipalities(site: Path, *, min_year_n: int = 80) -> list[dict]:
 
 def pref_row(o: dict, rank: int) -> str:
     return f'''  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{o["slug"]}'">
-    <td class="px-2 py-0">
+    <td class="px-3 py-2.5">
       {badge(rank)}
     </td>
-    <td class="px-2 py-0 font-medium group-hover:text-brand-700">{o["name"]}</td>
-    <td class="px-2 py-0 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
-    <td class="px-2 py-0 text-right tabular-nums font-medium">
+    <td class="px-3 py-2.5 font-medium group-hover:text-brand-700">{o["name"]}</td>
+    <td class="px-3 py-2.5 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
+    <td class="px-3 py-2.5 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
   </tr>
@@ -193,16 +193,16 @@ def pref_row(o: dict, rank: int) -> str:
 
 def muni_row(o: dict, rank: int) -> str:
     return f'''  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{o["pref_slug"]}/{o["slug"]}'">
-    <td class="px-2 py-0">
+    <td class="px-3 py-2.5">
       {badge(rank)}
     </td>
-    <td class="px-2 py-0">
+    <td class="px-3 py-2.5">
       <span class="font-medium text-ink-900 group-hover:text-brand-700">{o["name"]}</span>
       <span class="block text-xs text-slate-400 sm:hidden">{o["pref_name"]}</span>
     </td>
-    <td class="px-2 py-0 text-slate-500 hidden sm:table-cell">{o["pref_name"]}</td>
-    <td class="px-2 py-0 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
-    <td class="px-2 py-0 text-right tabular-nums font-medium">
+    <td class="px-3 py-2.5 text-slate-500 hidden sm:table-cell">{o["pref_name"]}</td>
+    <td class="px-3 py-2.5 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
+    <td class="px-3 py-2.5 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
   </tr>
@@ -216,10 +216,10 @@ def pref_card(title: str, rows_html: str) -> str:
           <table class="w-full text-sm rank-table--compact">
             <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
               <tr>
-                <th class="px-2 py-0 w-10">順位</th>
-                <th class="px-2 py-0">都道府県</th>
-                <th class="px-2 py-0 text-right">平均価格</th>
-                <th class="px-2 py-0 text-right">前年比</th>
+                <th class="px-3 py-2.5 w-12">順位</th>
+                <th class="px-3 py-2.5">都道府県</th>
+                <th class="px-3 py-2.5 text-right">平均価格</th>
+                <th class="px-3 py-2.5 text-right">前年比</th>
               </tr>
             </thead>
             
@@ -239,11 +239,11 @@ def muni_card(title: str, rows_html: str) -> str:
         <table class="w-full text-sm rank-table--compact">
           <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
             <tr>
-              <th class="px-2 py-0 w-10">順位</th>
-              <th class="px-2 py-0">市区町村</th>
-              <th class="px-2 py-0 hidden sm:table-cell">都道府県</th>
-              <th class="px-2 py-0 text-right">平均価格</th>
-              <th class="px-2 py-0 text-right">前年比</th>
+              <th class="px-3 py-2.5 w-12">順位</th>
+              <th class="px-3 py-2.5">市区町村</th>
+              <th class="px-3 py-2.5 hidden sm:table-cell">都道府県</th>
+              <th class="px-3 py-2.5 text-right">平均価格</th>
+              <th class="px-3 py-2.5 text-right">前年比</th>
             </tr>
           </thead>
           
@@ -503,23 +503,22 @@ def patch_ranking_tabs(site: Path) -> None:
 
 RANK_TABLE_CSS = """\
 .rank-table--compact {
-  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
 }
 
 .rank-table--compact th,
 .rank-table--compact td {
-  padding: 0 4px !important;
-  line-height: 1.2 !important;
+  padding: 10px 12px !important;
+  line-height: 1.5 !important;
   white-space: nowrap !important;
   vertical-align: middle !important;
 }
 
 .rank-table--compact thead th {
-  padding-top: 2px !important;
-  padding-bottom: 2px !important;
-  font-size: 0.75rem;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  font-size: 0.8125rem;
 }
 
 .rank-table--compact tbody tr {
@@ -531,40 +530,39 @@ RANK_TABLE_CSS = """\
 }
 
 .rank-table--compact .rank-badge--sm {
-  width: 15px !important;
-  height: 15px !important;
-  border-radius: 4px;
-  font-size: 8px !important;
-  line-height: 15px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 6px;
+  font-size: 11px !important;
+  line-height: 22px !important;
 }
 
 .home-rank-grid {
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 @media (min-width: 1280px) {
   .home-rank-grid {
-    gap: 1rem;
+    gap: 1.25rem;
   }
 }
 """
 
 RANK_INLINE_STYLE = """<style id="rank-table-overrides">
 table.rank-table--compact {
-  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
 }
 table.rank-table--compact th,
 table.rank-table--compact td {
-  padding: 0 4px !important;
-  line-height: 1.2 !important;
+  padding: 10px 12px !important;
+  line-height: 1.5 !important;
   white-space: nowrap !important;
   vertical-align: middle !important;
 }
 table.rank-table--compact thead th {
-  padding-top: 2px !important;
-  padding-bottom: 2px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
 }
 table.rank-table--compact tbody tr {
   border-bottom: 1px solid #f1f5f9;
@@ -573,17 +571,17 @@ table.rank-table--compact tbody tr:last-child {
   border-bottom: none;
 }
 table.rank-table--compact .rank-badge--sm {
-  width: 15px !important;
-  height: 15px !important;
-  font-size: 8px !important;
-  line-height: 15px !important;
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 11px !important;
+  line-height: 22px !important;
 }
 .home-rank-grid {
-  gap: 0.75rem !important;
+  gap: 1rem !important;
 }
 @media (min-width: 1280px) {
   .home-rank-grid {
-    gap: 1rem !important;
+    gap: 1.25rem !important;
   }
 }
 </style>"""
@@ -594,16 +592,23 @@ def patch_ranking_table_css(site: Path) -> None:
     css = read(css_path)
     new_block = RANK_TABLE_CSS.strip()
 
-    if "padding: 0 4px !important" in css and "table-layout: fixed" in css:
+    if "padding: 10px 12px !important" in css:
         print("  ranking css: already up to date")
         return
 
     m = re.search(
-        r"\.rank-table--compact th,\s*\n\.rank-table--compact td \{.*?"
-        r"@media \(min-width: 1280px\) \{\s*\n  \.home-rank-grid \{\s*\n    gap: 1\.25rem;\s*\n  \}\s*\n\}",
+        r"/\* Home ranking tables \*/\s*\.rank-table--compact \{.*?"
+        r"@media \(min-width: 1280px\) \{\s*\n  \.home-rank-grid \{\s*\n    gap: [^;]+;\s*\n  \}\s*\n\}",
         css,
         re.S,
     )
+    if not m:
+        m = re.search(
+            r"\.rank-table--compact \{.*?"
+            r"@media \(min-width: 1280px\) \{\s*\n  \.home-rank-grid \{\s*\n    gap: [^;]+;\s*\n  \}\s*\n\}",
+            css,
+            re.S,
+        )
     if m:
         css = css[: m.start()] + new_block + css[m.end() :]
     else:
@@ -614,7 +619,7 @@ def patch_ranking_table_css(site: Path) -> None:
 
 
 def patch_ranking_table_html(site: Path) -> None:
-    """Tailwind py-1.5 を上書きできないため、ランキング表のセルクラスを直接修正。"""
+    """ランキング表のセル余白を調整（Tailwind より後に inline CSS で上書き）。"""
     path = site / "index.html"
     html = read(path)
     if "rank-table--compact" not in html:
@@ -623,12 +628,12 @@ def patch_ranking_table_html(site: Path) -> None:
 
     def fix_table(m: re.Match[str]) -> str:
         block = m.group(0)
-        block = block.replace("px-3 py-1.5", "px-1 py-0")
-        block = block.replace("px-2 py-0", "px-1 py-0")
-        block = block.replace("px-2 py-1", "px-1 py-0")
-        block = block.replace('w-12">順位', 'w-10">順位')
-        block = block.replace('w-12">#', 'w-10">#')
-        block = block.replace('class="divide-y divide-slate-100"', 'class="rank-table-body"')
+        for old in ("px-1 py-0", "px-2 py-0", "px-2 py-1", "px-3 py-1.5", "px-4 py-2"):
+            block = block.replace(old, "px-3 py-2.5")
+        block = block.replace('w-10">順位', 'w-12">順位')
+        block = block.replace('w-10">#', 'w-12">#')
+        if 'class="rank-table-body"' in block:
+            block = block.replace('class="rank-table-body"', 'class="divide-y divide-slate-100"')
         return block
 
     new_html = re.sub(
@@ -641,7 +646,17 @@ def patch_ranking_table_html(site: Path) -> None:
         html = new_html
         changed = True
 
-    if 'id="rank-table-overrides"' not in html:
+    if 'id="rank-table-overrides"' in html:
+        new_html = re.sub(
+            r'<style id="rank-table-overrides">.*?</style>',
+            RANK_INLINE_STYLE,
+            html,
+            flags=re.S,
+        )
+        if new_html != html:
+            html = new_html
+            changed = True
+    else:
         m = re.search(r"</head>", html, re.I)
         if m:
             html = html[: m.start()] + RANK_INLINE_STYLE + "\n" + html[m.start() :]
@@ -649,7 +664,7 @@ def patch_ranking_table_html(site: Path) -> None:
 
     if changed:
         write(path, html)
-        print("  ranking html: tightened cells + inline style")
+        print("  ranking html: spacious cells + inline style")
     else:
         print("  ranking html: already up to date")
 

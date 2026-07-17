@@ -130,23 +130,22 @@ table td {
 }
 
 .rank-table--compact {
-  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
 }
 
 .rank-table--compact th,
 .rank-table--compact td {
-  padding: 0 4px !important;
-  line-height: 1.2 !important;
+  padding: 10px 12px !important;
+  line-height: 1.5 !important;
   white-space: nowrap !important;
   vertical-align: middle !important;
 }
 
 .rank-table--compact thead th {
-  padding-top: 2px !important;
-  padding-bottom: 2px !important;
-  font-size: 0.75rem;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  font-size: 0.8125rem;
 }
 
 .rank-table--compact tbody tr {
@@ -158,11 +157,11 @@ table td {
 }
 
 .rank-table--compact .rank-badge--sm {
-  width: 15px !important;
-  height: 15px !important;
-  border-radius: 4px;
-  font-size: 8px !important;
-  line-height: 15px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 6px;
+  font-size: 11px !important;
+  line-height: 22px !important;
 }
 
 .home-rank-grid {
