@@ -131,11 +131,11 @@ table td {
 
 .rank-table--compact th,
 .rank-table--compact td {
-  padding-top: 0.15rem;
-  padding-bottom: 0.15rem;
+  padding-top: 0.05rem;
+  padding-bottom: 0.05rem;
   padding-left: 0.3rem;
   padding-right: 0.3rem;
-  line-height: 1.2;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
@@ -145,6 +145,14 @@ table td {
 .rank-table--compact td.px-3 {
   padding-left: 0.3rem !important;
   padding-right: 0.3rem !important;
+}
+
+.rank-table--compact th.py-1,
+.rank-table--compact td.py-1,
+.rank-table--compact th.py-1\.5,
+.rank-table--compact td.py-1\.5 {
+  padding-top: 0.05rem !important;
+  padding-bottom: 0.05rem !important;
 }
 
 .rank-table--compact .rank-badge--sm {

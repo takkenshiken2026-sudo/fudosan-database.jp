@@ -509,11 +509,11 @@ def patch_ranking_tabs(site: Path) -> None:
 RANK_TABLE_CSS = """\
 .rank-table--compact th,
 .rank-table--compact td {
-  padding-top: 0.15rem;
-  padding-bottom: 0.15rem;
+  padding-top: 0.05rem;
+  padding-bottom: 0.05rem;
   padding-left: 0.3rem;
   padding-right: 0.3rem;
-  line-height: 1.2;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
@@ -523,6 +523,14 @@ RANK_TABLE_CSS = """\
 .rank-table--compact td.px-3 {
   padding-left: 0.3rem !important;
   padding-right: 0.3rem !important;
+}
+
+.rank-table--compact th.py-1,
+.rank-table--compact td.py-1,
+.rank-table--compact th.py-1\\.5,
+.rank-table--compact td.py-1\\.5 {
+  padding-top: 0.05rem !important;
+  padding-bottom: 0.05rem !important;
 }
 
 .home-rank-grid {
@@ -540,8 +548,22 @@ RANK_TABLE_CSS = """\
 def patch_ranking_table_css(site: Path) -> None:
     css_path = site / "static" / "site.css"
     css = read(css_path)
-    if "home-rank-grid" in css and "white-space: nowrap" in css:
-        print("  ranking css: already present")
+    new_block = RANK_TABLE_CSS.strip()
+
+    if "padding-top: 0.05rem" in css and "th.py-1\\.5" in css:
+        print("  ranking css: already up to date")
+        return
+
+    m = re.search(
+        r"\.rank-table--compact th,\s*\n\.rank-table--compact td \{.*?"
+        r"@media \(min-width: 1280px\) \{\s*\n  \.home-rank-grid \{\s*\n    gap: 1\.25rem;\s*\n  \}\s*\n\}",
+        css,
+        re.S,
+    )
+    if m:
+        css = css[: m.start()] + new_block + css[m.end() :]
+        write(css_path, css)
+        print("  ranking css: updated")
         return
 
     old = """.rank-table--compact th,
@@ -551,9 +573,9 @@ def patch_ranking_table_css(site: Path) -> None:
   line-height: 1.25;
 }"""
     if old in css:
-        css = css.replace(old, RANK_TABLE_CSS.strip())
+        css = css.replace(old, new_block)
     else:
-        css = css.rstrip() + "\n\n/* Home ranking tables */\n" + RANK_TABLE_CSS
+        css = css.rstrip() + "\n\n/* Home ranking tables */\n" + new_block
 
     write(css_path, css)
     print("  ranking css: applied")
