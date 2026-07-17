@@ -502,37 +502,91 @@ def patch_ranking_tabs(site: Path) -> None:
 
 
 RANK_TABLE_CSS = """\
+.rank-table--compact {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
 .rank-table--compact th,
 .rank-table--compact td {
-  padding: 0 0.35rem !important;
-  line-height: 1.15 !important;
-  white-space: nowrap;
-  vertical-align: middle;
+  padding: 0 4px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
 }
 
 .rank-table--compact thead th {
-  padding-top: 0.15rem !important;
-  padding-bottom: 0.15rem !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  font-size: 0.75rem;
+}
+
+.rank-table--compact tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.rank-table--compact tbody tr:last-child {
+  border-bottom: none;
 }
 
 .rank-table--compact .rank-badge--sm {
-  width: 16px;
-  height: 16px;
+  width: 15px !important;
+  height: 15px !important;
   border-radius: 4px;
-  font-size: 9px;
-  line-height: 1;
+  font-size: 8px !important;
+  line-height: 15px !important;
 }
 
 .home-rank-grid {
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 @media (min-width: 1280px) {
   .home-rank-grid {
-    gap: 1.25rem;
+    gap: 1rem;
   }
 }
 """
+
+RANK_INLINE_STYLE = """<style id="rank-table-overrides">
+table.rank-table--compact {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+table.rank-table--compact th,
+table.rank-table--compact td {
+  padding: 0 4px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+table.rank-table--compact thead th {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+table.rank-table--compact tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+}
+table.rank-table--compact tbody tr:last-child {
+  border-bottom: none;
+}
+table.rank-table--compact .rank-badge--sm {
+  width: 15px !important;
+  height: 15px !important;
+  font-size: 8px !important;
+  line-height: 15px !important;
+}
+.home-rank-grid {
+  gap: 0.75rem !important;
+}
+@media (min-width: 1280px) {
+  .home-rank-grid {
+    gap: 1rem !important;
+  }
+}
+</style>"""
 
 
 def patch_ranking_table_css(site: Path) -> None:
@@ -540,7 +594,7 @@ def patch_ranking_table_css(site: Path) -> None:
     css = read(css_path)
     new_block = RANK_TABLE_CSS.strip()
 
-    if "padding: 0 0.35rem !important" in css:
+    if "padding: 0 4px !important" in css and "table-layout: fixed" in css:
         print("  ranking css: already up to date")
         return
 
@@ -563,14 +617,18 @@ def patch_ranking_table_html(site: Path) -> None:
     """Tailwind py-1.5 を上書きできないため、ランキング表のセルクラスを直接修正。"""
     path = site / "index.html"
     html = read(path)
-    if 'rank-table--compact' not in html:
+    if "rank-table--compact" not in html:
         return
+    changed = False
 
     def fix_table(m: re.Match[str]) -> str:
         block = m.group(0)
-        block = block.replace("px-3 py-1.5", "px-2 py-0")
+        block = block.replace("px-3 py-1.5", "px-1 py-0")
+        block = block.replace("px-2 py-0", "px-1 py-0")
+        block = block.replace("px-2 py-1", "px-1 py-0")
         block = block.replace('w-12">順位', 'w-10">順位')
         block = block.replace('w-12">#', 'w-10">#')
+        block = block.replace('class="divide-y divide-slate-100"', 'class="rank-table-body"')
         return block
 
     new_html = re.sub(
@@ -579,23 +637,37 @@ def patch_ranking_table_html(site: Path) -> None:
         html,
         flags=re.S,
     )
-    if new_html == html:
+    if new_html != html:
+        html = new_html
+        changed = True
+
+    if 'id="rank-table-overrides"' not in html:
+        m = re.search(r"</head>", html, re.I)
+        if m:
+            html = html[: m.start()] + RANK_INLINE_STYLE + "\n" + html[m.start() :]
+            changed = True
+
+    if changed:
+        write(path, html)
+        print("  ranking html: tightened cells + inline style")
+    else:
         print("  ranking html: already up to date")
-        return
-    write(path, new_html)
-    print("  ranking html: tightened cell classes")
 
 
-def bump_site_css_version(site: Path) -> None:
-    """Tailwind より後に読み込まれる CSS のキャッシュを更新。"""
+def bump_site_css_version(site: Path, *, index_only: bool = True) -> None:
+    """CSS キャッシュを更新。"""
     n = 0
-    for path in site.rglob("*.html"):
+    version = str(int(__import__("time").time()))
+    paths = [site / "index.html"] if index_only else site.rglob("*.html")
+    for path in paths:
+        if not path.exists():
+            continue
         html = read(path)
         if "/static/site.css?v=" not in html:
             continue
         new_html = re.sub(
             r"/static/site\.css\?v=\d+",
-            f"/static/site.css?v={int(__import__('time').time())}",
+            f"/static/site.css?v={version}",
             html,
             count=1,
         )
@@ -605,14 +677,7 @@ def bump_site_css_version(site: Path) -> None:
     if n:
         print(f"  css cache bust: {n} pages")
     else:
-        # fallback: increment known version
-        for path in site.rglob("*.html"):
-            html = read(path)
-            if "/static/site.css?v=12" in html:
-                write(path, html.replace("/static/site.css?v=12", "/static/site.css?v=13"))
-                n += 1
-        if n:
-            print(f"  css cache bust: {n} pages (v12→v13)")
+        print("  css cache bust: skipped")
 
 
 def patch_ranking_labels(site: Path) -> None:
