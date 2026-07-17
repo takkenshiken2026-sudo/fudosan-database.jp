@@ -435,19 +435,63 @@
     });
   }
 
-  // --- Collapsible tables (accordion) ---
-  document.querySelectorAll("[data-accordion]").forEach((wrap) => {
-    const toggle = wrap.querySelector("[data-accordion-toggle]");
-    const body = wrap.querySelector("[data-accordion-body]");
-    if (!toggle || !body) return;
-    const label = toggle.querySelector("[data-accordion-label]");
-    const icon = toggle.querySelector("[data-accordion-icon]");
-    const openText = label ? label.textContent : "";
-    toggle.addEventListener("click", () => {
-      const nowOpen = body.classList.toggle("hidden") === false;
-      toggle.setAttribute("aria-expanded", String(nowOpen));
-      if (icon) icon.style.transform = nowOpen ? "rotate(180deg)" : "";
-      if (label) label.textContent = nowOpen ? "閉じる" : openText;
+  // --- Collapsible yearly tables (accordion) ---
+  // 「調査年」で始まる年次テーブル（地価公示の推移など）は、最新 VISIBLE 行のみ
+  // 初期表示し、残りをトグルで開閉する。テンプレート側の変更を必要とせず、
+  // 既に生成済みの表にもクライアント側で適用できる。
+  function initYearlyAccordion() {
+    const VISIBLE = 5;
+    document.querySelectorAll("table").forEach((table) => {
+      if (table.dataset.accordionReady) return;
+      const headers = table.querySelectorAll("thead th");
+      if (!headers.length) return;
+      if (headers[0].textContent.trim() !== "調査年") return;
+      const tbody = table.querySelector("tbody");
+      if (!tbody) return;
+      const rows = Array.from(tbody.children).filter((el) => el.tagName === "TR");
+      if (rows.length <= VISIBLE) return;
+
+      table.dataset.accordionReady = "1";
+      const hiddenRows = rows.slice(VISIBLE);
+      // display を直接操作（.hidden クラス／Tailwind の有無に依存しない）
+      hiddenRows.forEach((r) => {
+        r.style.display = "none";
+      });
+
+      const openLabel = "過去の調査年をすべて表示（" + hiddenRows.length + "年分）";
+      const tfoot = document.createElement("tfoot");
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.className = "p-0";
+      td.colSpan = headers.length;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className =
+        "w-full px-4 py-3 text-sm font-medium text-brand-600 hover:bg-brand-50/50 transition flex items-center justify-center gap-1.5 border-t border-slate-100";
+      btn.setAttribute("aria-expanded", "false");
+      btn.innerHTML =
+        '<span>' +
+        openLabel +
+        '</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
+
+      let open = false;
+      btn.addEventListener("click", () => {
+        open = !open;
+        hiddenRows.forEach((r) => {
+          r.style.display = open ? "" : "none";
+        });
+        btn.setAttribute("aria-expanded", String(open));
+        const span = btn.querySelector("span");
+        const icon = btn.querySelector("svg");
+        if (span) span.textContent = open ? "閉じる" : openLabel;
+        if (icon) icon.style.transform = open ? "rotate(180deg)" : "";
+      });
+
+      td.appendChild(btn);
+      tr.appendChild(td);
+      tfoot.appendChild(tr);
+      table.appendChild(tfoot);
     });
-  });
+  }
+  initYearlyAccordion();
 })();
