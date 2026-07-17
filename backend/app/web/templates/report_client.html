@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb %}
+{% block description %}{{ detail.prefecture_name }}{{ detail.name_ja }}の取引事例レポートをPowerPoint / Wordでダウンロード。{% endblock %}
+
+{% block content %}
+<div class="bg-white border-b border-slate-200">
+  <div class="max-w-4xl mx-auto px-4 py-4">
+    {{ breadcrumb([('トップ', '/'), ('レポート作成', '/report/new'), (detail.name_ja, '')]) }}
+    <div class="mt-3 flex flex-wrap items-end gap-4">
+      <div>
+        <label class="block text-xs font-medium text-slate-500 mb-1" for="report-type">レポート種別</label>
+        <select id="report-type" class="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white">
+          <option value="seller">売主向け（周辺取引事例）</option>
+          <option value="buyer">買主向け（エリア相場説明）</option>
+          <option value="appraisal">査定用（価格根拠資料）</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-500 mb-1" for="report-period">データ期間</label>
+        <select id="report-period" class="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white">
+          <option value="1">直近1年 + 年次推移</option>
+          <option value="2" selected>直近2年 + 年次推移</option>
+          <option value="3">直近3年 + 年次推移</option>
+          <option value="5">直近5年 + 年次推移</option>
+        </select>
+      </div>
+      <div class="flex gap-2 ml-auto">
+        <button id="dl-pptx" type="button"
+                class="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white font-medium hover:bg-orange-700 transition disabled:opacity-60">
+          PowerPoint
+        </button>
+        <button id="dl-docx" type="button"
+                class="rounded-lg bg-sky-700 px-4 py-2 text-sm text-white font-medium hover:bg-sky-800 transition disabled:opacity-60">
+          Word
+        </button>
+        <a href="/price/{{ detail.prefecture_slug }}/{{ detail.slug }}"
+           class="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 transition">
+          エリア詳細 →
+        </a>
+      </div>
+    </div>
+    <p class="mt-2 text-xs text-slate-500">種別・期間を選んで PowerPoint / Word をダウンロード。ファイルはブラウザ上で生成され、編集可能な形式で保存されます。</p>
+  </div>
+</div>
+
+<article class="max-w-4xl mx-auto px-4 py-8">
+  <div id="report-preview" class="rounded-2xl border border-slate-200 bg-white shadow-lg overflow-hidden">
+    <div class="p-12 text-center text-slate-400 text-sm">プレビューを生成しています…</div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <a href="/for-agents" class="text-sm text-brand-600 hover:underline">ロゴ入り・無制限出力は仲介店向けプランで →</a>
+  </div>
+</article>
+
+<script type="application/json" id="report-data">{{ payload | tojson | safe }}</script>
+<script src="/static/report-export.js" defer></script>
+{% endblock %}

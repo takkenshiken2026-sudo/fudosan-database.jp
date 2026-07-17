@@ -24,7 +24,6 @@ from app.api.schemas import (
     PrefectureChartData,
     PrefectureSummary,
     RankingItem,
-    ReportContext,
     SearchResult,
     StationDetail,
     StationSummary,
@@ -621,28 +620,91 @@ def search_districts(
     ]
 
 
-REPORT_TYPE_LABELS = {
-    "seller": "売主向け（周辺取引事例）",
-    "buyer": "買主向け（エリア相場説明）",
-    "appraisal": "査定用（価格根拠資料）",
-}
+def build_report_payload(detail: MunicipalityDetail) -> dict:
+    """レポートページに埋め込むデータ（JSON）を組み立てる。
 
-
-def build_report_context(report_type: str = "seller", period_years: int = 2) -> ReportContext:
-    report_type = report_type if report_type in REPORT_TYPE_LABELS else "seller"
-    period_years = period_years if period_years in (1, 2, 3, 5) else 2
-    period_label = {
-        1: "直近1年 + 年次推移",
-        2: "直近2年 + 年次推移",
-        3: "直近3年 + 年次推移",
-        5: "直近5年 + 年次推移",
-    }[period_years]
-    return ReportContext(
-        report_type=report_type,
-        period_years=period_years,
-        report_type_label=REPORT_TYPE_LABELS[report_type],
-        period_label=period_label,
+    PPTX/DOCX の生成はブラウザ側（static/report-export.js）で行うため、種別・
+    期間による絞り込みや文言生成はクライアントに委ね、ここでは素のデータを
+    JSON 化しやすい形（camelCase）で渡す。取引事例は絞り込みに使う年・四半期も
+    含めて最大 50 件まで載せる。
+    """
+    updated = (
+        detail.stats_updated_at.strftime("%Y年%m月%d日")
+        if detail.stats_updated_at
+        else None
     )
+    brackets = (
+        detail.purchase_insights.price_bracket_stats
+        if detail.purchase_insights
+        else []
+    )
+    return {
+        "area": f"{detail.prefecture_name}{detail.name_ja}",
+        "prefectureName": detail.prefecture_name,
+        "name": detail.name_ja,
+        "prefectureSlug": detail.prefecture_slug,
+        "slug": detail.slug,
+        "totalTransactions": detail.total_transactions,
+        "recentAvgPrice": detail.recent_avg_price,
+        "latestYear": detail.latest_year,
+        "latestQuarter": detail.latest_quarter,
+        "yoyPriceChangePct": detail.yoy_price_change_pct,
+        "statsUpdatedAt": updated,
+        "yearlyStats": [
+            {
+                "year": y.trade_year,
+                "count": y.transaction_count,
+                "avg": y.trade_price_avg,
+                "unit": y.unit_price_avg,
+            }
+            for y in detail.yearly_stats
+        ],
+        "propertyStats": [
+            {
+                "type": s.property_type,
+                "count": s.transaction_count,
+                "avg": s.trade_price_avg,
+                "unit": s.unit_price_avg,
+            }
+            for s in detail.property_stats
+        ],
+        "recentTransactions": [
+            {
+                "year": tx.trade_year,
+                "quarter": tx.trade_quarter,
+                "periodLabel": tx.period_label,
+                "type": tx.property_type,
+                "district": tx.district_name,
+                "price": tx.trade_price,
+                "unit": tx.unit_price,
+                "area": tx.area,
+            }
+            for tx in detail.recent_transactions[:50]
+        ],
+        "landPrices": (
+            {
+                "pointCount": detail.land_prices.point_count,
+                "latestYear": detail.land_prices.latest_year,
+                "avgUnitPrice": detail.land_prices.avg_unit_price,
+                "yoyChangeAvg": detail.land_prices.yoy_change_avg,
+            }
+            if detail.land_prices
+            else None
+        ),
+        "landPriceYearly": [
+            {
+                "year": s.survey_year,
+                "pointCount": s.point_count,
+                "avgUnitPrice": s.avg_unit_price,
+                "yoyPct": s.yoy_avg_price_pct,
+            }
+            for s in detail.land_price_yearly
+        ],
+        "priceBrackets": [
+            {"label": b.label, "count": b.transaction_count, "unit": b.unit_price_avg}
+            for b in brackets
+        ],
+    }
 
 
 def _to_stat(row: MunicipalityTradeStat) -> StatBucket:

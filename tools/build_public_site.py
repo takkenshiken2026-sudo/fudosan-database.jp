@@ -61,8 +61,19 @@ def _collect_paths(full: bool) -> list[str]:
             db.commit()
 
         paths = [loc.replace(SITE_URL, "") or "/" for loc, *_ in build_sitemap_entries(db, SITE_URL)]
+
+        # 市区町村レポートページ（/report/{pref}/{muni}）はサイトマップには含めない
+        # （noindex・robots で Disallow）が、静的ファイルは生成してリンク先を成立させる。
+        def report_path(price_path: str) -> str:
+            return price_path.replace("/price/", "/report/", 1)
+
         if full:
-            return paths
+            report_paths = [
+                report_path(p)
+                for p in paths
+                if p.startswith("/price/") and p.count("/") == 3
+            ]
+            return paths + report_paths
 
         core = {
             "/",
@@ -73,10 +84,13 @@ def _collect_paths(full: bool) -> list[str]:
             "/compare",
             "/for-agents",
             "/search",
+            "/report/new",
         }
         for path in paths:
             if path.startswith("/price/"):
                 core.add(path)
+                if path.count("/") == 3:
+                    core.add(report_path(path))
             elif path.startswith("/news/area/") and path.count("/") == 3:
                 core.add(path)
         return sorted(core)

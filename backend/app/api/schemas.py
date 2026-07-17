@@ -277,13 +277,6 @@ class CompareSide(BaseModel):
     land_price_yearly: list[LandPriceYearlyStat] = []
 
 
-class ReportContext(BaseModel):
-    report_type: str = "seller"
-    period_years: int = 2
-    report_type_label: str = "売主向け（周辺取引事例）"
-    period_label: str = "直近2年 + 年次推移"
-
-
 class CompareView(BaseModel):
     left: CompareSide
     right: CompareSide

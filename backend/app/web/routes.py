@@ -14,7 +14,6 @@ from app.config import settings
 from app.db import get_db
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
-from app.web.pdf import html_to_pdf
 from app.web.formatters import (
     format_count,
     format_man_yen,
@@ -36,7 +35,7 @@ from app.web.seo import (
     seo_rankings,
     seo_regional_news,
     seo_report_new,
-    seo_report_preview,
+    seo_report_page,
     seo_satei,
     seo_search,
     seo_station,
@@ -277,13 +276,24 @@ def report_new(request: Request, area: str = "") -> HTMLResponse:
     )
 
 
-@router.get("/report/preview", response_class=HTMLResponse)
+@router.get("/report/preview")
 def report_preview(
-    request: Request,
     prefecture_slug: str,
     municipality_slug: str,
     report_type: str = "seller",
     period_years: int = 2,
+) -> RedirectResponse:
+    # 旧プレビュー URL は市区町村別レポートページへ恒久リダイレクト。
+    return RedirectResponse(
+        url=f"/report/{prefecture_slug}/{municipality_slug}", status_code=301
+    )
+
+
+@router.get("/report/{prefecture_slug}/{municipality_slug}", response_class=HTMLResponse)
+def report_page(
+    request: Request,
+    prefecture_slug: str,
+    municipality_slug: str,
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
     prefecture, municipality = services.resolve_municipality(
@@ -291,57 +301,18 @@ def report_preview(
     )
     if not prefecture or not municipality:
         raise HTTPException(status_code=404, detail="市区町村が見つかりません")
-    if municipality.slug != municipality_slug and municipality_slug == municipality.code:
+    if municipality.slug != municipality_slug:
         return RedirectResponse(
-            url=(
-                f"/report/preview?prefecture_slug={prefecture.slug}"
-                f"&municipality_slug={municipality.slug}"
-                f"&report_type={report_type}&period_years={period_years}"
-            ),
-            status_code=301,
+            url=f"/report/{prefecture.slug}/{municipality.slug}", status_code=301
         )
     detail = services.get_municipality_detail(db, prefecture, municipality)
-    report_ctx = services.build_report_context(report_type, period_years)
+    payload = services.build_report_payload(detail)
     return _render(
         request,
-        "report_preview.html",
-        seo_report_preview(_base(request)),
+        "report_client.html",
+        seo_report_page(_base(request), detail),
         detail=detail,
-        report=report_ctx,
-    )
-
-
-@router.get("/report/pdf")
-def report_pdf(
-    request: Request,
-    prefecture_slug: str,
-    municipality_slug: str,
-    report_type: str = "seller",
-    period_years: int = 2,
-    db: Session = Depends(get_db),
-) -> Response:
-    prefecture, municipality = services.resolve_municipality(
-        db, prefecture_slug, municipality_slug
-    )
-    if not prefecture or not municipality:
-        raise HTTPException(status_code=404, detail="市区町村が見つかりません")
-    detail = services.get_municipality_detail(db, prefecture, municipality)
-    report_ctx = services.build_report_context(report_type, period_years)
-    html = templates.get_template("report_pdf.html").render(
-        detail=detail,
-        report=report_ctx,
-        format_man_yen=format_man_yen,
-        format_count=format_count,
-        format_yen_per_sqm=format_yen_per_sqm,
-        format_percent=format_percent,
-        quarter_label=quarter_label,
-    )
-    pdf_bytes = html_to_pdf(html)
-    filename = f"report-{detail.slug}.pdf"
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        payload=payload,
     )
 
 
