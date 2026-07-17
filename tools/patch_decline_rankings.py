@@ -20,22 +20,17 @@ dec = json.JSONDecoder()
 LIMIT = 10
 FULL_LIMIT = 50
 
-RANK_CARD_LABELS = {
-    "平均価格トップ10": "不動産取引価格の平均",
-    "値上がり率トップ10": "平均取引価格の前年比（上昇順）",
-    "値下がり率トップ10": "平均取引価格の前年比（下落順）",
+RANK_CARD_TITLES = {
+    "平均価格トップ10": "不動産平均取引価格トップ10",
+    "値上がり率トップ10": "不動産取引価格 値上がり率トップ10",
+    "値下がり率トップ10": "不動産取引価格 値下がり率トップ10",
 }
 
 
 def card_header(title: str) -> str:
-    desc = RANK_CARD_LABELS.get(title, "")
-    desc_html = (
-        f'\n          <p class="text-[11px] text-slate-500 leading-snug mt-0.5">{desc}</p>'
-        if desc
-        else ""
-    )
+    display = RANK_CARD_TITLES.get(title, title)
     return f'''        <div class="px-3 py-1.5 border-b border-slate-100 bg-slate-50">
-          <h3 class="text-sm font-semibold text-slate-700 leading-tight">{title}</h3>{desc_html}
+          <h3 class="text-sm font-semibold text-slate-700 leading-tight">{display}</h3>
         </div>'''
 
 
@@ -585,21 +580,34 @@ def patch_ranking_labels(site: Path) -> None:
     path = site / "index.html"
     html = read(path)
     changed = False
+    h3 = '<h3 class="text-sm font-semibold text-slate-700 leading-tight">'
 
-    for title, desc in RANK_CARD_LABELS.items():
-        old = f'<h3 class="text-sm font-semibold text-slate-700">{title}</h3>'
-        new = (
-            f'<h3 class="text-sm font-semibold text-slate-700 leading-tight">{title}</h3>\n'
+    # 旧タイトル + サブタイトル → 一文タイトル
+    legacy_subs = {
+        "平均価格トップ10": "不動産取引価格の平均",
+        "値上がり率トップ10": "平均取引価格の前年比（上昇順）",
+        "値下がり率トップ10": "平均取引価格の前年比（下落順）",
+    }
+    for old_title, desc in legacy_subs.items():
+        block = (
+            f"{h3}{old_title}</h3>\n"
             f'          <p class="text-[11px] text-slate-500 leading-snug mt-0.5">{desc}</p>'
         )
-        if old in html:
-            html = html.replace(old, new)
+        new_title = RANK_CARD_TITLES[old_title]
+        if block in html:
+            html = html.replace(block, f"{h3}{new_title}</h3>")
             changed = True
-        # already patched variant
-        old2 = f'<h3 class="text-sm font-semibold text-slate-700 leading-tight">{title}</h3>'
-        if old2 in html and desc not in html:
-            html = html.replace(old2, new)
-            changed = True
+
+    for old_title, new_title in RANK_CARD_TITLES.items():
+        for cls in (
+            "text-sm font-semibold text-slate-700",
+            "text-sm font-semibold text-slate-700 leading-tight",
+        ):
+            old = f'<h3 class="{cls}">{old_title}</h3>'
+            new = f'<h3 class="text-sm font-semibold text-slate-700 leading-tight">{new_title}</h3>'
+            if old in html:
+                html = html.replace(old, new)
+                changed = True
 
     subs = [
         (
