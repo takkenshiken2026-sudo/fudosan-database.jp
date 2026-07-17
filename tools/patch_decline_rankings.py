@@ -20,6 +20,24 @@ dec = json.JSONDecoder()
 LIMIT = 10
 FULL_LIMIT = 50
 
+RANK_CARD_LABELS = {
+    "平均価格トップ10": "不動産取引価格の平均",
+    "値上がり率トップ10": "平均取引価格の前年比（上昇順）",
+    "値下がり率トップ10": "平均取引価格の前年比（下落順）",
+}
+
+
+def card_header(title: str) -> str:
+    desc = RANK_CARD_LABELS.get(title, "")
+    desc_html = (
+        f'\n          <p class="text-[11px] text-slate-500 leading-snug mt-0.5">{desc}</p>'
+        if desc
+        else ""
+    )
+    return f'''        <div class="px-3 py-1.5 border-b border-slate-100 bg-slate-50">
+          <h3 class="text-sm font-semibold text-slate-700 leading-tight">{title}</h3>{desc_html}
+        </div>'''
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -166,12 +184,12 @@ def collect_municipalities(site: Path, *, min_year_n: int = 80) -> list[dict]:
 
 def pref_row(o: dict, rank: int) -> str:
     return f'''  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{o["slug"]}'">
-    <td class="px-3 py-1.5">
+    <td class="px-2 py-1">
       {badge(rank)}
     </td>
-    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">{o["name"]}</td>
-    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
-    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+    <td class="px-2 py-1 font-medium group-hover:text-brand-700">{o["name"]}</td>
+    <td class="px-2 py-1 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
+    <td class="px-2 py-1 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
   </tr>
@@ -180,16 +198,16 @@ def pref_row(o: dict, rank: int) -> str:
 
 def muni_row(o: dict, rank: int) -> str:
     return f'''  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{o["pref_slug"]}/{o["slug"]}'">
-    <td class="px-3 py-1.5">
+    <td class="px-2 py-1">
       {badge(rank)}
     </td>
-    <td class="px-3 py-1.5">
+    <td class="px-2 py-1">
       <span class="font-medium text-ink-900 group-hover:text-brand-700">{o["name"]}</span>
       <span class="block text-xs text-slate-400 sm:hidden">{o["pref_name"]}</span>
     </td>
-    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">{o["pref_name"]}</td>
-    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
-    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+    <td class="px-2 py-1 text-slate-500 hidden sm:table-cell">{o["pref_name"]}</td>
+    <td class="px-2 py-1 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
+    <td class="px-2 py-1 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
   </tr>
@@ -198,17 +216,15 @@ def muni_row(o: dict, rank: int) -> str:
 
 def pref_card(title: str, rows_html: str) -> str:
     return f'''      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
-          <h3 class="text-sm font-semibold text-slate-700">{title}</h3>
-        </div>
+{card_header(title)}
         <div class="overflow-x-auto">
           <table class="w-full text-sm rank-table--compact">
             <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
               <tr>
-                <th class="px-3 py-1.5 w-12">順位</th>
-                <th class="px-3 py-1.5">都道府県</th>
-                <th class="px-3 py-1.5 text-right">平均価格</th>
-                <th class="px-3 py-1.5 text-right">前年比</th>
+                <th class="px-2 py-1 w-10">順位</th>
+                <th class="px-2 py-1">都道府県</th>
+                <th class="px-2 py-1 text-right">平均価格</th>
+                <th class="px-2 py-1 text-right">前年比</th>
               </tr>
             </thead>
             
@@ -223,18 +239,16 @@ def pref_card(title: str, rows_html: str) -> str:
 
 def muni_card(title: str, rows_html: str) -> str:
     return f'''    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
-        <h3 class="text-sm font-semibold text-slate-700">{title}</h3>
-      </div>
+{card_header(title)}
       <div class="overflow-x-auto">
         <table class="w-full text-sm rank-table--compact">
           <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
             <tr>
-              <th class="px-3 py-1.5 w-12">順位</th>
-              <th class="px-3 py-1.5">市区町村</th>
-              <th class="px-3 py-1.5 hidden sm:table-cell">都道府県</th>
-              <th class="px-3 py-1.5 text-right">平均価格</th>
-              <th class="px-3 py-1.5 text-right">前年比</th>
+              <th class="px-2 py-1 w-10">順位</th>
+              <th class="px-2 py-1">市区町村</th>
+              <th class="px-2 py-1 hidden sm:table-cell">都道府県</th>
+              <th class="px-2 py-1 text-right">平均価格</th>
+              <th class="px-2 py-1 text-right">前年比</th>
             </tr>
           </thead>
           
@@ -492,6 +506,119 @@ def patch_ranking_tabs(site: Path) -> None:
     print(f"  ranking tabs: patched {n} pages")
 
 
+RANK_TABLE_CSS = """\
+.rank-table--compact th,
+.rank-table--compact td {
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.rank-table--compact th.px-2,
+.rank-table--compact td.px-2,
+.rank-table--compact th.px-3,
+.rank-table--compact td.px-3 {
+  padding-left: 0.3rem !important;
+  padding-right: 0.3rem !important;
+}
+
+.home-rank-grid {
+  gap: 1rem;
+}
+
+@media (min-width: 1280px) {
+  .home-rank-grid {
+    gap: 1.25rem;
+  }
+}
+"""
+
+
+def patch_ranking_table_css(site: Path) -> None:
+    css_path = site / "static" / "site.css"
+    css = read(css_path)
+    if "home-rank-grid" in css and "white-space: nowrap" in css:
+        print("  ranking css: already present")
+        return
+
+    old = """.rank-table--compact th,
+.rank-table--compact td {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  line-height: 1.25;
+}"""
+    if old in css:
+        css = css.replace(old, RANK_TABLE_CSS.strip())
+    else:
+        css = css.rstrip() + "\n\n/* Home ranking tables */\n" + RANK_TABLE_CSS
+
+    write(css_path, css)
+    print("  ranking css: applied")
+
+
+def patch_ranking_labels(site: Path) -> None:
+    path = site / "index.html"
+    html = read(path)
+    changed = False
+
+    for title, desc in RANK_CARD_LABELS.items():
+        old = f'<h3 class="text-sm font-semibold text-slate-700">{title}</h3>'
+        new = (
+            f'<h3 class="text-sm font-semibold text-slate-700 leading-tight">{title}</h3>\n'
+            f'          <p class="text-[11px] text-slate-500 leading-snug mt-0.5">{desc}</p>'
+        )
+        if old in html:
+            html = html.replace(old, new)
+            changed = True
+        # already patched variant
+        old2 = f'<h3 class="text-sm font-semibold text-slate-700 leading-tight">{title}</h3>'
+        if old2 in html and desc not in html:
+            html = html.replace(old2, new)
+            changed = True
+
+    subs = [
+        (
+            '<p class="mt-1 text-sm text-slate-500">クリックで市区町村一覧へ</p>',
+            '<p class="mt-1 text-sm text-slate-500">国土交通省の不動産取引価格情報に基づく。クリックで市区町村一覧へ</p>',
+        ),
+        (
+            '<p class="mt-1 text-sm text-slate-500">行をクリックして詳細・グラフを表示</p>',
+            '<p class="mt-1 text-sm text-slate-500">不動産取引価格の平均・前年比ランキング。行をクリックで詳細へ</p>',
+        ),
+    ]
+    for old, new in subs:
+        if old in html:
+            html = html.replace(old, new, 1)
+            changed = True
+
+    if "home-rank-grid" not in html:
+        html = html.replace(
+            "grid lg:grid-cols-2 xl:grid-cols-3 gap-8",
+            "grid lg:grid-cols-2 xl:grid-cols-3 gap-4 home-rank-grid",
+        )
+        html = html.replace(
+            "grid lg:grid-cols-2 gap-8",
+            "grid lg:grid-cols-2 xl:grid-cols-3 gap-4 home-rank-grid",
+        )
+        changed = True
+
+    if 'px-4 py-2 border-b border-slate-100 bg-slate-50' in html:
+        html = html.replace(
+            'px-4 py-2 border-b border-slate-100 bg-slate-50',
+            'px-3 py-1.5 border-b border-slate-100 bg-slate-50',
+        )
+        changed = True
+
+    if changed:
+        write(path, html)
+        print("  ranking labels/UI: applied")
+    else:
+        print("  ranking labels/UI: already present")
+
+
 def main() -> None:
     if len(sys.argv) < 2:
         print("usage: patch_decline_rankings.py <site_dir>")
@@ -509,6 +636,8 @@ def main() -> None:
     build_decline_page(site, munis)
     patch_ranking_tabs(site)
     apply_count_column_strip(site)
+    patch_ranking_table_css(site)
+    patch_ranking_labels(site)
     print("== done ==")
 
 

@@ -122,6 +122,48 @@ table td {
 .rank-3 { background: #ffedd5; color: #c2410c; }
 .rank-n { background: #f8fafc; color: #94a3b8; }
 
+.rank-badge--sm {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.rank-table--compact th,
+.rank-table--compact td {
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.rank-table--compact th.px-2,
+.rank-table--compact td.px-2,
+.rank-table--compact th.px-3,
+.rank-table--compact td.px-3 {
+  padding-left: 0.3rem !important;
+  padding-right: 0.3rem !important;
+}
+
+.rank-table--compact .rank-badge--sm {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  font-size: 10px;
+}
+
+.home-rank-grid {
+  gap: 1rem;
+}
+
+@media (min-width: 1280px) {
+  .home-rank-grid {
+    gap: 1.25rem;
+  }
+}
+
 /* Report preview print */
 @media print {
   header, footer, .no-print { display: none !important; }
