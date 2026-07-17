@@ -131,35 +131,23 @@ table td {
 
 .rank-table--compact th,
 .rank-table--compact td {
-  padding-top: 0.05rem;
-  padding-bottom: 0.05rem;
-  padding-left: 0.3rem;
-  padding-right: 0.3rem;
-  line-height: 1.15;
+  padding: 0 0.35rem !important;
+  line-height: 1.15 !important;
   white-space: nowrap;
+  vertical-align: middle;
 }
 
-.rank-table--compact th.px-2,
-.rank-table--compact td.px-2,
-.rank-table--compact th.px-3,
-.rank-table--compact td.px-3 {
-  padding-left: 0.3rem !important;
-  padding-right: 0.3rem !important;
-}
-
-.rank-table--compact th.py-1,
-.rank-table--compact td.py-1,
-.rank-table--compact th.py-1\.5,
-.rank-table--compact td.py-1\.5 {
-  padding-top: 0.05rem !important;
-  padding-bottom: 0.05rem !important;
+.rank-table--compact thead th {
+  padding-top: 0.15rem !important;
+  padding-bottom: 0.15rem !important;
 }
 
 .rank-table--compact .rank-badge--sm {
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
-  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  font-size: 9px;
+  line-height: 1;
 }
 
 .home-rank-grid {

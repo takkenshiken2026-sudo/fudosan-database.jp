@@ -179,12 +179,12 @@ def collect_municipalities(site: Path, *, min_year_n: int = 80) -> list[dict]:
 
 def pref_row(o: dict, rank: int) -> str:
     return f'''  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{o["slug"]}'">
-    <td class="px-2 py-1">
+    <td class="px-2 py-0">
       {badge(rank)}
     </td>
-    <td class="px-2 py-1 font-medium group-hover:text-brand-700">{o["name"]}</td>
-    <td class="px-2 py-1 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
-    <td class="px-2 py-1 text-right tabular-nums font-medium">
+    <td class="px-2 py-0 font-medium group-hover:text-brand-700">{o["name"]}</td>
+    <td class="px-2 py-0 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
+    <td class="px-2 py-0 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
   </tr>
@@ -193,16 +193,16 @@ def pref_row(o: dict, rank: int) -> str:
 
 def muni_row(o: dict, rank: int) -> str:
     return f'''  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{o["pref_slug"]}/{o["slug"]}'">
-    <td class="px-2 py-1">
+    <td class="px-2 py-0">
       {badge(rank)}
     </td>
-    <td class="px-2 py-1">
+    <td class="px-2 py-0">
       <span class="font-medium text-ink-900 group-hover:text-brand-700">{o["name"]}</span>
       <span class="block text-xs text-slate-400 sm:hidden">{o["pref_name"]}</span>
     </td>
-    <td class="px-2 py-1 text-slate-500 hidden sm:table-cell">{o["pref_name"]}</td>
-    <td class="px-2 py-1 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
-    <td class="px-2 py-1 text-right tabular-nums font-medium">
+    <td class="px-2 py-0 text-slate-500 hidden sm:table-cell">{o["pref_name"]}</td>
+    <td class="px-2 py-0 text-right tabular-nums text-brand-700">{fmt_price(o["avg"])}</td>
+    <td class="px-2 py-0 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
   </tr>
@@ -216,10 +216,10 @@ def pref_card(title: str, rows_html: str) -> str:
           <table class="w-full text-sm rank-table--compact">
             <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
               <tr>
-                <th class="px-2 py-1 w-10">順位</th>
-                <th class="px-2 py-1">都道府県</th>
-                <th class="px-2 py-1 text-right">平均価格</th>
-                <th class="px-2 py-1 text-right">前年比</th>
+                <th class="px-2 py-0 w-10">順位</th>
+                <th class="px-2 py-0">都道府県</th>
+                <th class="px-2 py-0 text-right">平均価格</th>
+                <th class="px-2 py-0 text-right">前年比</th>
               </tr>
             </thead>
             
@@ -239,11 +239,11 @@ def muni_card(title: str, rows_html: str) -> str:
         <table class="w-full text-sm rank-table--compact">
           <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
             <tr>
-              <th class="px-2 py-1 w-10">順位</th>
-              <th class="px-2 py-1">市区町村</th>
-              <th class="px-2 py-1 hidden sm:table-cell">都道府県</th>
-              <th class="px-2 py-1 text-right">平均価格</th>
-              <th class="px-2 py-1 text-right">前年比</th>
+              <th class="px-2 py-0 w-10">順位</th>
+              <th class="px-2 py-0">市区町村</th>
+              <th class="px-2 py-0 hidden sm:table-cell">都道府県</th>
+              <th class="px-2 py-0 text-right">平均価格</th>
+              <th class="px-2 py-0 text-right">前年比</th>
             </tr>
           </thead>
           
@@ -504,28 +504,23 @@ def patch_ranking_tabs(site: Path) -> None:
 RANK_TABLE_CSS = """\
 .rank-table--compact th,
 .rank-table--compact td {
-  padding-top: 0.05rem;
-  padding-bottom: 0.05rem;
-  padding-left: 0.3rem;
-  padding-right: 0.3rem;
-  line-height: 1.15;
+  padding: 0 0.35rem !important;
+  line-height: 1.15 !important;
   white-space: nowrap;
+  vertical-align: middle;
 }
 
-.rank-table--compact th.px-2,
-.rank-table--compact td.px-2,
-.rank-table--compact th.px-3,
-.rank-table--compact td.px-3 {
-  padding-left: 0.3rem !important;
-  padding-right: 0.3rem !important;
+.rank-table--compact thead th {
+  padding-top: 0.15rem !important;
+  padding-bottom: 0.15rem !important;
 }
 
-.rank-table--compact th.py-1,
-.rank-table--compact td.py-1,
-.rank-table--compact th.py-1\\.5,
-.rank-table--compact td.py-1\\.5 {
-  padding-top: 0.05rem !important;
-  padding-bottom: 0.05rem !important;
+.rank-table--compact .rank-badge--sm {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  font-size: 9px;
+  line-height: 1;
 }
 
 .home-rank-grid {
@@ -545,7 +540,7 @@ def patch_ranking_table_css(site: Path) -> None:
     css = read(css_path)
     new_block = RANK_TABLE_CSS.strip()
 
-    if "padding-top: 0.05rem" in css and "th.py-1\\.5" in css:
+    if "padding: 0 0.35rem !important" in css:
         print("  ranking css: already up to date")
         return
 
@@ -557,23 +552,67 @@ def patch_ranking_table_css(site: Path) -> None:
     )
     if m:
         css = css[: m.start()] + new_block + css[m.end() :]
-        write(css_path, css)
-        print("  ranking css: updated")
-        return
-
-    old = """.rank-table--compact th,
-.rank-table--compact td {
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
-  line-height: 1.25;
-}"""
-    if old in css:
-        css = css.replace(old, new_block)
     else:
         css = css.rstrip() + "\n\n/* Home ranking tables */\n" + new_block
 
     write(css_path, css)
-    print("  ranking css: applied")
+    print("  ranking css: updated")
+
+
+def patch_ranking_table_html(site: Path) -> None:
+    """Tailwind py-1.5 を上書きできないため、ランキング表のセルクラスを直接修正。"""
+    path = site / "index.html"
+    html = read(path)
+    if 'rank-table--compact' not in html:
+        return
+
+    def fix_table(m: re.Match[str]) -> str:
+        block = m.group(0)
+        block = block.replace("px-3 py-1.5", "px-2 py-0")
+        block = block.replace('w-12">順位', 'w-10">順位')
+        block = block.replace('w-12">#', 'w-10">#')
+        return block
+
+    new_html = re.sub(
+        r'<table class="w-full text-sm rank-table--compact">.*?</table>',
+        fix_table,
+        html,
+        flags=re.S,
+    )
+    if new_html == html:
+        print("  ranking html: already up to date")
+        return
+    write(path, new_html)
+    print("  ranking html: tightened cell classes")
+
+
+def bump_site_css_version(site: Path) -> None:
+    """Tailwind より後に読み込まれる CSS のキャッシュを更新。"""
+    n = 0
+    for path in site.rglob("*.html"):
+        html = read(path)
+        if "/static/site.css?v=" not in html:
+            continue
+        new_html = re.sub(
+            r"/static/site\.css\?v=\d+",
+            f"/static/site.css?v={int(__import__('time').time())}",
+            html,
+            count=1,
+        )
+        if new_html != html:
+            write(path, new_html)
+            n += 1
+    if n:
+        print(f"  css cache bust: {n} pages")
+    else:
+        # fallback: increment known version
+        for path in site.rglob("*.html"):
+            html = read(path)
+            if "/static/site.css?v=12" in html:
+                write(path, html.replace("/static/site.css?v=12", "/static/site.css?v=13"))
+                n += 1
+        if n:
+            print(f"  css cache bust: {n} pages (v12→v13)")
 
 
 def patch_ranking_labels(site: Path) -> None:
@@ -668,6 +707,8 @@ def main() -> None:
     apply_count_column_strip(site)
     patch_ranking_table_css(site)
     patch_ranking_labels(site)
+    patch_ranking_table_html(site)
+    bump_site_css_version(site)
     print("== done ==")
 
 
