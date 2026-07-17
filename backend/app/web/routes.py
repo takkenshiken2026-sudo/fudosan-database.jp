@@ -14,7 +14,6 @@ from app.config import settings
 from app.db import get_db
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
-from app.web.report_export import build_docx, build_pptx
 from app.web.formatters import (
     format_count,
     format_man_yen,
@@ -36,7 +35,7 @@ from app.web.seo import (
     seo_rankings,
     seo_regional_news,
     seo_report_new,
-    seo_report_preview,
+    seo_report_page,
     seo_satei,
     seo_search,
     seo_station,
@@ -277,13 +276,24 @@ def report_new(request: Request, area: str = "") -> HTMLResponse:
     )
 
 
-@router.get("/report/preview", response_class=HTMLResponse)
+@router.get("/report/preview")
 def report_preview(
-    request: Request,
     prefecture_slug: str,
     municipality_slug: str,
     report_type: str = "seller",
     period_years: int = 2,
+) -> RedirectResponse:
+    # 旧プレビュー URL は市区町村別レポートページへ恒久リダイレクト。
+    return RedirectResponse(
+        url=f"/report/{prefecture_slug}/{municipality_slug}", status_code=301
+    )
+
+
+@router.get("/report/{prefecture_slug}/{municipality_slug}", response_class=HTMLResponse)
+def report_page(
+    request: Request,
+    prefecture_slug: str,
+    municipality_slug: str,
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
     prefecture, municipality = services.resolve_municipality(
@@ -291,86 +301,18 @@ def report_preview(
     )
     if not prefecture or not municipality:
         raise HTTPException(status_code=404, detail="市区町村が見つかりません")
-    if municipality.slug != municipality_slug and municipality_slug == municipality.code:
+    if municipality.slug != municipality_slug:
         return RedirectResponse(
-            url=(
-                f"/report/preview?prefecture_slug={prefecture.slug}"
-                f"&municipality_slug={municipality.slug}"
-                f"&report_type={report_type}&period_years={period_years}"
-            ),
-            status_code=301,
+            url=f"/report/{prefecture.slug}/{municipality.slug}", status_code=301
         )
     detail = services.get_municipality_detail(db, prefecture, municipality)
-    report_ctx = services.build_report_context(detail, report_type, period_years)
+    payload = services.build_report_payload(detail)
     return _render(
         request,
-        "report_preview.html",
-        seo_report_preview(_base(request)),
+        "report_client.html",
+        seo_report_page(_base(request), detail),
         detail=detail,
-        report=report_ctx,
-    )
-
-
-_REPORT_EXPORTS = {
-    "pptx": (
-        build_pptx,
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    ),
-    "docx": (
-        build_docx,
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ),
-}
-
-
-def _report_export(
-    db: Session,
-    prefecture_slug: str,
-    municipality_slug: str,
-    report_type: str,
-    period_years: int,
-    fmt: str,
-) -> Response:
-    builder, media_type = _REPORT_EXPORTS[fmt]
-    prefecture, municipality = services.resolve_municipality(
-        db, prefecture_slug, municipality_slug
-    )
-    if not prefecture or not municipality:
-        raise HTTPException(status_code=404, detail="市区町村が見つかりません")
-    detail = services.get_municipality_detail(db, prefecture, municipality)
-    report_ctx = services.build_report_context(detail, report_type, period_years)
-    content = builder(detail, report_ctx)
-    filename = f"report-{detail.slug}-{report_ctx.report_type}.{fmt}"
-    return Response(
-        content=content,
-        media_type=media_type,
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
-    )
-
-
-@router.get("/report/pptx")
-def report_pptx(
-    prefecture_slug: str,
-    municipality_slug: str,
-    report_type: str = "seller",
-    period_years: int = 2,
-    db: Session = Depends(get_db),
-) -> Response:
-    return _report_export(
-        db, prefecture_slug, municipality_slug, report_type, period_years, "pptx"
-    )
-
-
-@router.get("/report/docx")
-def report_docx(
-    prefecture_slug: str,
-    municipality_slug: str,
-    report_type: str = "seller",
-    period_years: int = 2,
-    db: Session = Depends(get_db),
-) -> Response:
-    return _report_export(
-        db, prefecture_slug, municipality_slug, report_type, period_years, "docx"
+        payload=payload,
     )
 
 

@@ -277,24 +277,6 @@ class CompareSide(BaseModel):
     land_price_yearly: list[LandPriceYearlyStat] = []
 
 
-class ReportContext(BaseModel):
-    report_type: str = "seller"
-    period_years: int = 2
-    report_type_label: str = "売主向け（周辺取引事例）"
-    period_label: str = "直近2年 + 年次推移"
-    # 種別ごとに描画するセクションを順序付きで指定する（"summary" / "recent_cases"
-    # / "price_brackets" / "property_mix" / "yearly_trend" / "land_price_trend"
-    # / "land_price" / "methodology"）。
-    sections: list[str] = []
-    summary_text: str = ""
-    # 期間・種別で絞り込み済みの出力用データ。
-    recent_transactions: list[TransactionItem] = []
-    yearly_stats: list[YearlyStat] = []
-    property_stats: list[StatBucket] = []
-    price_brackets: list[InsightBucket] = []
-    land_price_yearly: list[LandPriceYearlyStat] = []
-
-
 class CompareView(BaseModel):
     left: CompareSide
     right: CompareSide

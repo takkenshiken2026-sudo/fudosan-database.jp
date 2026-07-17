@@ -159,7 +159,7 @@
             {% if m.latest_year %}{{ m.latest_year }} Q{{ m.latest_quarter }}{% else %}—{% endif %}
           </td>
           <td class="px-4 py-3 text-right">
-            <a href="/report/preview?prefecture_slug={{ prefecture.slug }}&municipality_slug={{ m.slug }}"
+            <a href="/report/{{ prefecture.slug }}/{{ m.slug }}"
                class="text-xs text-brand-600 hover:underline whitespace-nowrap">レポート</a>
           </td>
         </tr>
