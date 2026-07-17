@@ -174,7 +174,6 @@ def pref_row(o: dict, rank: int) -> str:
     <td class="px-3 py-1.5 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
-    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">{o["cnt"]:,}</td>
   </tr>
 '''
 
@@ -193,7 +192,6 @@ def muni_row(o: dict, rank: int) -> str:
     <td class="px-3 py-1.5 text-right tabular-nums font-medium">
       {fmt_yoy_html(o["yoy"])}
     </td>
-    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">{o["cnt"]:,}</td>
   </tr>
 '''
 
@@ -211,7 +209,6 @@ def pref_card(title: str, rows_html: str) -> str:
                 <th class="px-3 py-1.5">都道府県</th>
                 <th class="px-3 py-1.5 text-right">平均価格</th>
                 <th class="px-3 py-1.5 text-right">前年比</th>
-                <th class="px-3 py-1.5 text-right hidden sm:table-cell">累計件数</th>
               </tr>
             </thead>
             
@@ -238,7 +235,6 @@ def muni_card(title: str, rows_html: str) -> str:
               <th class="px-3 py-1.5 hidden sm:table-cell">都道府県</th>
               <th class="px-3 py-1.5 text-right">平均価格</th>
               <th class="px-3 py-1.5 text-right">前年比</th>
-              <th class="px-3 py-1.5 text-right hidden md:table-cell">累計件数</th>
             </tr>
           </thead>
           
@@ -418,6 +414,35 @@ def build_decline_page(site: Path, munis: list[dict]) -> None:
     print(f"  decline page: wrote {len(items)} rows -> rankings/price-decline/")
 
 
+def strip_cumulative_count_columns(html: str) -> str:
+    """ランキング表から「累計件数」列（th/td）を除去する。"""
+    if "累計件数" not in html:
+        return html
+    html = re.sub(
+        r'\n\s*<th class="[^"]*">\s*累計件数\s*</th>',
+        "",
+        html,
+    )
+    html = re.sub(
+        r'\n\s*<td class="px-[34] py-[13]\.?5 text-right tabular-nums hidden (?:sm|md):table-cell">[\d,]+</td>',
+        "",
+        html,
+    )
+    return html
+
+
+def apply_count_column_strip(site: Path) -> None:
+    targets = [site / "index.html", site / "rankings" / "price-decline" / "index.html"]
+    for path in targets:
+        if not path.exists():
+            continue
+        html = read(path)
+        stripped = strip_cumulative_count_columns(html)
+        if stripped != html:
+            write(path, stripped)
+            print(f"  stripped 累計件数 column: {path.relative_to(site)}")
+
+
 def patch_ranking_tabs(site: Path) -> None:
     """全ランキングページのタブに価格下落率を追加。"""
     ranking_dir = site / "rankings"
@@ -483,6 +508,7 @@ def main() -> None:
     patch_home(site, prefs, munis)
     build_decline_page(site, munis)
     patch_ranking_tabs(site)
+    apply_count_column_strip(site)
     print("== done ==")
 
 
