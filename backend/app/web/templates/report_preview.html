@@ -11,13 +11,14 @@
   <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
     {{ breadcrumb([('トップ', '/'), ('レポート作成', '/report/new'), (detail.name_ja + ' プレビュー', '')]) }}
     <div class="flex gap-2 shrink-0">
-      <a id="report-pdf-link" href="#"
-         class="rounded-lg bg-emerald-600 px-4 py-2 text-sm text-white font-medium hover:bg-emerald-700 transition">
-        PDFダウンロード
+      <a id="report-pptx-link" href="#"
+         class="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white font-medium hover:bg-orange-700 transition">
+        PowerPoint
       </a>
-      <button onclick="window.print()" class="rounded-lg bg-brand-600 px-4 py-2 text-sm text-white font-medium hover:bg-brand-700 transition">
-        印刷
-      </button>
+      <a id="report-docx-link" href="#"
+         class="rounded-lg bg-sky-700 px-4 py-2 text-sm text-white font-medium hover:bg-sky-800 transition">
+        Word
+      </a>
       <a href="/price/{{ detail.prefecture_slug }}/{{ detail.slug }}" class="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 transition">
         エリア詳細 →
       </a>
@@ -178,16 +179,16 @@
   </div>
 
   <div class="no-print mt-6 text-center">
-    <a href="/for-agents" class="text-sm text-brand-600 hover:underline">ロゴ入りPDF・無制限出力は仲介店向けプランで →</a>
+    <a href="/for-agents" class="text-sm text-brand-600 hover:underline">ロゴ入り・無制限出力は仲介店向けプランで →</a>
   </div>
 </article>
 <script>
-  const pdfLink = document.getElementById("report-pdf-link");
-  if (pdfLink) {
-    const params = new URLSearchParams(location.search);
-    params.delete("prefecture_slug");
-    params.delete("municipality_slug");
-    pdfLink.href = `/report/pdf?prefecture_slug={{ detail.prefecture_slug }}&municipality_slug={{ detail.slug }}&report_type={{ report.report_type }}&period_years={{ report.period_years }}`;
-  }
+  (function () {
+    const query = `prefecture_slug={{ detail.prefecture_slug }}&municipality_slug={{ detail.slug }}&report_type={{ report.report_type }}&period_years={{ report.period_years }}`;
+    const pptx = document.getElementById("report-pptx-link");
+    const docx = document.getElementById("report-docx-link");
+    if (pptx) pptx.href = `/report/pptx?${query}`;
+    if (docx) docx.href = `/report/docx?${query}`;
+  })();
 </script>
 {% endblock %}

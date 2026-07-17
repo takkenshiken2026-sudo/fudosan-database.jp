@@ -5,4 +5,5 @@ httpx==0.28.1
 pydantic-settings==2.8.1
 SQLAlchemy==2.0.40
 pykakasi==2.3.0
-xhtml2pdf==0.2.16
+python-pptx==1.0.2
+python-docx==1.1.2

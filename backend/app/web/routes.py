@@ -14,7 +14,7 @@ from app.config import settings
 from app.db import get_db
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
-from app.web.pdf import html_to_pdf
+from app.web.report_export import build_docx, build_pptx
 from app.web.formatters import (
     format_count,
     format_man_yen,
@@ -301,7 +301,7 @@ def report_preview(
             status_code=301,
         )
     detail = services.get_municipality_detail(db, prefecture, municipality)
-    report_ctx = services.build_report_context(report_type, period_years)
+    report_ctx = services.build_report_context(detail, report_type, period_years)
     return _render(
         request,
         "report_preview.html",
@@ -311,37 +311,66 @@ def report_preview(
     )
 
 
-@router.get("/report/pdf")
-def report_pdf(
-    request: Request,
+_REPORT_EXPORTS = {
+    "pptx": (
+        build_pptx,
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ),
+    "docx": (
+        build_docx,
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ),
+}
+
+
+def _report_export(
+    db: Session,
     prefecture_slug: str,
     municipality_slug: str,
-    report_type: str = "seller",
-    period_years: int = 2,
-    db: Session = Depends(get_db),
+    report_type: str,
+    period_years: int,
+    fmt: str,
 ) -> Response:
+    builder, media_type = _REPORT_EXPORTS[fmt]
     prefecture, municipality = services.resolve_municipality(
         db, prefecture_slug, municipality_slug
     )
     if not prefecture or not municipality:
         raise HTTPException(status_code=404, detail="市区町村が見つかりません")
     detail = services.get_municipality_detail(db, prefecture, municipality)
-    report_ctx = services.build_report_context(report_type, period_years)
-    html = templates.get_template("report_pdf.html").render(
-        detail=detail,
-        report=report_ctx,
-        format_man_yen=format_man_yen,
-        format_count=format_count,
-        format_yen_per_sqm=format_yen_per_sqm,
-        format_percent=format_percent,
-        quarter_label=quarter_label,
-    )
-    pdf_bytes = html_to_pdf(html)
-    filename = f"report-{detail.slug}.pdf"
+    report_ctx = services.build_report_context(detail, report_type, period_years)
+    content = builder(detail, report_ctx)
+    filename = f"report-{detail.slug}-{report_ctx.report_type}.{fmt}"
     return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
+        content=content,
+        media_type=media_type,
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.get("/report/pptx")
+def report_pptx(
+    prefecture_slug: str,
+    municipality_slug: str,
+    report_type: str = "seller",
+    period_years: int = 2,
+    db: Session = Depends(get_db),
+) -> Response:
+    return _report_export(
+        db, prefecture_slug, municipality_slug, report_type, period_years, "pptx"
+    )
+
+
+@router.get("/report/docx")
+def report_docx(
+    prefecture_slug: str,
+    municipality_slug: str,
+    report_type: str = "seller",
+    period_years: int = 2,
+    db: Session = Depends(get_db),
+) -> Response:
+    return _report_export(
+        db, prefecture_slug, municipality_slug, report_type, period_years, "docx"
     )
 
 

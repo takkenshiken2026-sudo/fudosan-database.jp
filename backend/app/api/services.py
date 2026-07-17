@@ -627,8 +627,66 @@ REPORT_TYPE_LABELS = {
     "appraisal": "査定用（価格根拠資料）",
 }
 
+# 種別ごとの出力セクション構成（描画順）と直近取引事例の掲載件数。
+REPORT_SECTION_PRESETS: dict[str, list[str]] = {
+    "seller": ["summary", "recent_cases", "price_brackets", "property_mix"],
+    "buyer": ["summary", "yearly_trend", "land_price_trend", "property_mix"],
+    "appraisal": [
+        "summary",
+        "property_mix",
+        "land_price",
+        "yearly_trend",
+        "recent_cases",
+        "methodology",
+    ],
+}
+REPORT_RECENT_LIMITS: dict[str, int] = {"seller": 20, "buyer": 10, "appraisal": 10}
 
-def build_report_context(report_type: str = "seller", period_years: int = 2) -> ReportContext:
+
+def _man_yen_text(value: Optional[float]) -> Optional[str]:
+    if not value:
+        return None
+    man = float(value) / 10_000
+    if man >= 10_000:
+        return f"{man / 10_000:.1f}億円"
+    return f"{man:,.0f}万円"
+
+
+def _report_summary_text(report_type: str, detail: MunicipalityDetail) -> str:
+    area = f"{detail.prefecture_name}{detail.name_ja}"
+    total = f"{detail.total_transactions:,}"
+    avg = _man_yen_text(detail.recent_avg_price)
+    yoy = detail.yoy_price_change_pct
+    yoy_txt = ""
+    if yoy is not None:
+        direction = "上昇" if yoy > 0 else ("下落" if yoy < 0 else "横ばい")
+        yoy_txt = f"直近の平均取引価格は前年比 {yoy:+.1f}%（{direction}）で推移しています。"
+    if report_type == "seller":
+        base = (
+            f"{area}では累計 {total} 件の取引データが国土交通省 不動産情報ライブラリに"
+            "登録されています。以下の周辺取引事例をもとに、ご所有物件の想定価格帯を"
+            "ご確認いただけます。"
+        )
+    elif report_type == "buyer":
+        base = (
+            f"{area}の不動産相場を、取引価格の年次推移と地価公示の動向からご説明します。"
+            f"累計取引件数は {total} 件です。"
+        )
+    else:
+        base = (
+            f"{area}の価格根拠資料です。物件種別ごとの取引実績・㎡単価、地価公示、"
+            f"年次推移をもとに査定価格の妥当性をご確認いただけます（累計 {total} 件）。"
+        )
+    if avg:
+        base += f" 直近の平均取引価格は {avg} です。"
+    return base + (f" {yoy_txt}" if yoy_txt else "")
+
+
+def build_report_context(
+    detail: MunicipalityDetail,
+    report_type: str = "seller",
+    period_years: int = 2,
+) -> ReportContext:
     report_type = report_type if report_type in REPORT_TYPE_LABELS else "seller"
     period_years = period_years if period_years in (1, 2, 3, 5) else 2
     period_label = {
@@ -637,11 +695,32 @@ def build_report_context(report_type: str = "seller", period_years: int = 2) -> 
         3: "直近3年 + 年次推移",
         5: "直近5年 + 年次推移",
     }[period_years]
+
+    # 直近取引事例を対象期間で絞り込み、種別ごとの掲載件数に丸める。
+    recent = detail.recent_transactions
+    if detail.latest_year:
+        min_year = detail.latest_year - period_years + 1
+        recent = [tx for tx in recent if tx.trade_year >= min_year]
+    recent = recent[: REPORT_RECENT_LIMITS[report_type]]
+
+    price_brackets = (
+        detail.purchase_insights.price_bracket_stats
+        if detail.purchase_insights
+        else []
+    )
+
     return ReportContext(
         report_type=report_type,
         period_years=period_years,
         report_type_label=REPORT_TYPE_LABELS[report_type],
         period_label=period_label,
+        sections=REPORT_SECTION_PRESETS[report_type],
+        summary_text=_report_summary_text(report_type, detail),
+        recent_transactions=recent,
+        yearly_stats=detail.yearly_stats,
+        property_stats=detail.property_stats,
+        price_brackets=price_brackets,
+        land_price_yearly=detail.land_price_yearly,
     )
 
 
