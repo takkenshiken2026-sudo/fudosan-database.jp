@@ -40,6 +40,7 @@ from app.web.seo import (
     seo_rankings,
     seo_regional_news,
     seo_report_new,
+    seo_report_page,
     seo_report_preview,
     seo_search,
     seo_station,
@@ -387,6 +388,33 @@ def report_pdf(
         content=pdf_bytes,
         media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.get("/report/{prefecture_slug}/{municipality_slug}", response_class=HTMLResponse)
+def report_page(
+    request: Request,
+    prefecture_slug: str,
+    municipality_slug: str,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    prefecture, municipality = services.resolve_municipality(
+        db, prefecture_slug, municipality_slug
+    )
+    if not prefecture or not municipality:
+        raise HTTPException(status_code=404, detail="市区町村が見つかりません")
+    if municipality.slug != municipality_slug:
+        return RedirectResponse(
+            url=f"/report/{prefecture.slug}/{municipality.slug}", status_code=301
+        )
+    detail = services.get_municipality_detail(db, prefecture, municipality)
+    payload = services.build_report_payload(detail)
+    return _render(
+        request,
+        "report_client.html",
+        seo_report_page(_base(request), detail),
+        detail=detail,
+        payload=payload,
     )
 
 

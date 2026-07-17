@@ -535,6 +535,20 @@ def seo_report_preview(base: str) -> SeoMeta:
     return finalize_seo(seo, base)
 
 
+def seo_report_page(base: str, detail: Any) -> SeoMeta:
+    area = f"{detail.prefecture_name}{detail.name_ja}"
+    seo = SeoMeta(
+        page_title=f"{area}の取引事例レポート | {SITE_NAME}",
+        meta_description=(
+            f"{area}の取引統計・周辺事例・地価公示をまとめたレポートを"
+            "PowerPoint / Word でダウンロード。仲介店の顧客説明資料に。"
+        ),
+        canonical_path=f"/report/{detail.prefecture_slug}/{detail.slug}",
+        robots="noindex,follow",
+    )
+    return finalize_seo(seo, base)
+
+
 def seo_compare(
     base: str,
     left_name: Optional[str] = None,

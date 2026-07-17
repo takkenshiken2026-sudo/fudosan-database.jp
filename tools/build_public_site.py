@@ -104,8 +104,26 @@ def _collect_paths(full: bool) -> list[str]:
             loc.replace(SITE_URL, "") or "/"
             for loc, *_ in build_sitemap_entries(db, SITE_URL, include_deep=full)
         ]
+
+        # 市区町村レポートページ（/report/{pref}/{muni}）を市区町村相場ページから
+        # 派生生成する。サイトマップには載せない（noindex・robots で Disallow）が、
+        # 静的ファイルを出してレポート導線のリンク先を成立させる。
+        def _is_municipality_price(path: str) -> bool:
+            return (
+                path.startswith("/price/")
+                and not _is_district_path(path)
+                and path.count("/") == 3
+            )
+
+        def _report_path(price_path: str) -> str:
+            return price_path.replace("/price/", "/report/", 1)
+
+        report_paths = {
+            _report_path(p) for p in all_paths if _is_municipality_price(p)
+        }
+
         if full:
-            return sorted(set(all_paths) | CORE_PATHS)
+            return sorted(set(all_paths) | CORE_PATHS | report_paths)
 
         selected: set[str] = set(CORE_PATHS)
         for path in all_paths:
@@ -114,6 +132,8 @@ def _collect_paths(full: bool) -> list[str]:
             if path.startswith("/price/"):
                 # 都道府県・市区町村のみ（/area/ は除外済み）
                 selected.add(path)
+                if _is_municipality_price(path):
+                    selected.add(_report_path(path))
             elif path.startswith("/news/area/"):
                 # 都道府県・市区町村ニュース（地区・駅以外は含める）
                 selected.add(path)
