@@ -16,6 +16,7 @@ from app.api.schemas import (
     LandPriceSummary,
     LandPriceYearlyStat,
     MunicipalityDetail,
+    MunicipalityEstatInsights,
     MunicipalitySummary,
     PrefectureChartData,
     PrefectureSummary,
@@ -23,6 +24,7 @@ from app.api.schemas import (
     ReportContext,
     SearchResult,
     StationDetail,
+    StationMunicipalityPrice,
     StationSummary,
     StationYearlyPassenger,
     StatBucket,
@@ -40,7 +42,10 @@ from app.db import (
     StationPassenger,
     TradeTransaction,
 )
+from app.reinfolib.district_pages import DISTRICT_MIN_TRANSACTIONS, district_area_slug
 from app.reinfolib.purchase_insights import get_purchase_insights, renovation_from_raw
+from app.estat.municipality_insights import get_municipality_estat_insights
+from app.api.value_insights import build_cross_metrics, get_similar_municipalities
 from app.reinfolib.station_passengers import (
     haversine_m,
     normalize_station_name,
@@ -73,10 +78,75 @@ def list_prefectures(db: Session) -> list[PrefectureSummary]:
             slug=row[2],
             municipality_count=row[3],
             total_transactions=int(row[4] or 0),
-            avg_price=row[5],
+            avg_price=float(row[5]) if row[5] is not None else None,
         )
         for row in rows
     ]
+
+
+def _median(values: list[float]) -> Optional[float]:
+    if not values:
+        return None
+    ordered = sorted(values)
+    mid = len(ordered) // 2
+    if len(ordered) % 2:
+        return ordered[mid]
+    return (ordered[mid - 1] + ordered[mid]) / 2
+
+
+def _enrich_prefecture_price_stats(
+    db: Session, prefectures: list[PrefectureSummary]
+) -> list[PrefectureSummary]:
+    """市区町村平均の中央値と、年次集計からの前年比を付与。"""
+    if not prefectures:
+        return prefectures
+
+    muni_price_rows = db.execute(
+        select(
+            Municipality.prefecture_code,
+            MunicipalityPageMeta.recent_avg_price,
+        )
+        .join(
+            MunicipalityPageMeta,
+            MunicipalityPageMeta.municipality_code == Municipality.code,
+        )
+        .where(MunicipalityPageMeta.recent_avg_price.isnot(None))
+    ).all()
+    prices_by_pref: dict[str, list[float]] = {}
+    for pref_code, price in muni_price_rows:
+        prices_by_pref.setdefault(pref_code, []).append(float(price))
+
+    yearly_rows = db.execute(
+        select(
+            Municipality.prefecture_code,
+            MunicipalityTradeStat.trade_year,
+            func.sum(MunicipalityTradeStat.transaction_count),
+            func.sum(MunicipalityTradeStat.trade_price_sum),
+        )
+        .join(Municipality, Municipality.code == MunicipalityTradeStat.municipality_code)
+        .where(MunicipalityTradeStat.price_classification == "01")
+        .group_by(Municipality.prefecture_code, MunicipalityTradeStat.trade_year)
+        .order_by(Municipality.prefecture_code, MunicipalityTradeStat.trade_year)
+    ).all()
+    yearly_avg: dict[str, list[tuple[int, float]]] = {}
+    for pref_code, year, cnt, psum in yearly_rows:
+        if not cnt or not psum:
+            continue
+        yearly_avg.setdefault(pref_code, []).append((int(year), float(psum) / float(cnt)))
+
+    yoy_by_pref: dict[str, float] = {}
+    for pref_code, series in yearly_avg.items():
+        if len(series) < 2:
+            continue
+        _prev_year, prev_avg = series[-2]
+        _cur_year, cur_avg = series[-1]
+        if prev_avg:
+            yoy_by_pref[pref_code] = (cur_avg - prev_avg) / prev_avg * 100
+
+    for pref in prefectures:
+        pref.median_price = _median(prices_by_pref.get(pref.code, []))
+        pref.yoy_price_change_pct = yoy_by_pref.get(pref.code)
+    return prefectures
 
 
 def get_prefecture_by_slug(db: Session, slug: str) -> Optional[Prefecture]:
@@ -216,15 +286,63 @@ def get_rankings(
 
 
 def get_home_highlights(db: Session) -> HomeHighlights:
+    from app.api.value_insights import get_feature_rankings
+
     prefectures = list_prefectures(db)
     total_tx = sum(p.total_transactions for p in prefectures)
     muni_count = sum(p.municipality_count for p in prefectures)
+    top_by_price = _enrich_ranking_yoy(db, get_rankings(db, sort="price", limit=10))
+    top_by_yoy = get_feature_rankings(db, kind="price-growth", limit=10)
+    for item in top_by_yoy:
+        if item.yoy_price_change_pct is None and item.metric_value is not None:
+            item.yoy_price_change_pct = float(item.metric_value)
     return HomeHighlights(
         top_by_volume=get_rankings(db, sort="volume", limit=10),
-        top_by_price=get_rankings(db, sort="price", limit=10),
+        top_by_price=top_by_price,
+        top_by_yoy=top_by_yoy,
         total_transactions=total_tx,
         municipality_count=muni_count,
     )
+
+
+def _enrich_ranking_yoy(db: Session, items: list[RankingItem]) -> list[RankingItem]:
+    if not items:
+        return items
+    codes = [item.code for item in items]
+    yearly_rows = db.execute(
+        select(
+            MunicipalityTradeStat.municipality_code,
+            MunicipalityTradeStat.trade_year,
+            func.sum(MunicipalityTradeStat.transaction_count),
+            func.sum(MunicipalityTradeStat.trade_price_sum),
+        )
+        .where(
+            MunicipalityTradeStat.municipality_code.in_(codes),
+            MunicipalityTradeStat.price_classification == "01",
+        )
+        .group_by(
+            MunicipalityTradeStat.municipality_code,
+            MunicipalityTradeStat.trade_year,
+        )
+        .order_by(
+            MunicipalityTradeStat.municipality_code,
+            MunicipalityTradeStat.trade_year,
+        )
+    ).all()
+    by_code: dict[str, list[tuple[int, float]]] = {}
+    for code, year, cnt, psum in yearly_rows:
+        if not cnt or not psum:
+            continue
+        by_code.setdefault(code, []).append((int(year), float(psum) / float(cnt)))
+    for item in items:
+        series = by_code.get(item.code, [])
+        if len(series) < 2:
+            continue
+        _prev_year, prev_avg = series[-2]
+        _cur_year, cur_avg = series[-1]
+        if prev_avg:
+            item.yoy_price_change_pct = (cur_avg - prev_avg) / prev_avg * 100
+    return items
 
 
 _home_chart_cache: Optional[tuple[float, HomeChartData]] = None
@@ -277,17 +395,26 @@ def get_home_chart_data(db: Session) -> HomeChartData:
                 (cur.transaction_count - prev.transaction_count) / prev.transaction_count * 100
             )
 
-    prefectures = list_prefectures(db)
-    with_tx = [p for p in prefectures if p.total_transactions > 0]
-    top_vol = sorted(with_tx, key=lambda p: p.total_transactions, reverse=True)[:10]
+    prefectures = _enrich_prefecture_price_stats(db, list_prefectures(db))
     with_price = [p for p in prefectures if p.avg_price]
     top_price = sorted(with_price, key=lambda p: p.avg_price or 0, reverse=True)[:10]
+    top_yoy = sorted(
+        [p for p in prefectures if p.yoy_price_change_pct is not None],
+        key=lambda p: p.yoy_price_change_pct or 0,
+        reverse=True,
+    )[:10]
+    top_vol = sorted(
+        [p for p in prefectures if p.total_transactions > 0],
+        key=lambda p: p.total_transactions,
+        reverse=True,
+    )[:10]
 
     result = HomeChartData(
         yearly_stats=yearly,
         land_price_yearly=get_national_land_price_yearly_stats(db),
         top_prefectures_volume=top_vol,
         top_prefectures_price=top_price,
+        top_prefectures_yoy=top_yoy,
     )
     _home_chart_cache = (now, result)
     return result
@@ -524,20 +651,27 @@ def search_districts(
             Municipality.slug,
             Prefecture.slug,
         )
+        .having(func.count(TradeTransaction.id) >= DISTRICT_MIN_TRANSACTIONS)
         .order_by(func.count(TradeTransaction.id).desc())
         .limit(limit)
     ).all()
-    return [
-        DistrictSearchResult(
-            code=row[0],
-            name=row[1],
-            municipality_name=row[2],
-            municipality_slug=row[3],
-            prefecture_slug=row[4],
-            transaction_count=int(row[5] or 0),
+    used_by_muni: dict[str, set[str]] = {}
+    result: list[DistrictSearchResult] = []
+    for row in rows:
+        muni_slug = row[3]
+        used = used_by_muni.setdefault(muni_slug, set())
+        result.append(
+            DistrictSearchResult(
+                code=row[0],
+                name=row[1],
+                municipality_name=row[2],
+                municipality_slug=muni_slug,
+                prefecture_slug=row[4],
+                transaction_count=int(row[5] or 0),
+                area_slug=district_area_slug(row[1], row[0], used=used),
+            )
         )
-        for row in rows
-    ]
+    return result
 
 
 REPORT_TYPE_LABELS = {
@@ -572,7 +706,40 @@ def _to_stat(row: MunicipalityTradeStat) -> StatBucket:
         transaction_count=row.transaction_count,
         trade_price_avg=row.trade_price_avg,
         unit_price_avg=row.unit_price_avg,
+        area_avg=row.area_avg,
     )
+
+
+MUNICIPALITY_EMBED_TRANSACTION_LIMIT = 400
+SIMULATOR_RECENT_YEARS = 5
+
+
+def get_municipality_embed_transactions(
+    db: Session,
+    municipality_code: str,
+    *,
+    limit: int = MUNICIPALITY_EMBED_TRANSACTION_LIMIT,
+    min_trade_year: Optional[int] = None,
+) -> list[TransactionItem]:
+    filters = [
+        TradeTransaction.municipality_code == municipality_code,
+        TradeTransaction.price_classification == "01",
+        TradeTransaction.district_name.isnot(None),
+        TradeTransaction.district_name != "",
+    ]
+    if min_trade_year is not None:
+        filters.append(TradeTransaction.trade_year >= min_trade_year)
+    rows = db.scalars(
+        select(TradeTransaction)
+        .where(*filters)
+        .order_by(
+            TradeTransaction.trade_year.desc(),
+            TradeTransaction.trade_quarter.desc(),
+            TradeTransaction.id.desc(),
+        )
+        .limit(limit)
+    ).all()
+    return [_tx_to_item(tx) for tx in rows]
 
 
 def _aggregate_quarterly_stats(rows: list[MunicipalityTradeStat]) -> list[StatBucket]:
@@ -684,21 +851,26 @@ def get_municipality_detail(
 
     latest_year = meta.latest_year if meta else None
     latest_quarter = meta.latest_quarter if meta else None
-    property_stats: list[MunicipalityTradeStat] = []
-    if latest_year and latest_quarter:
-        property_stats = db.scalars(
-            select(MunicipalityTradeStat)
-            .where(
-                MunicipalityTradeStat.municipality_code == municipality.code,
-                MunicipalityTradeStat.trade_year == latest_year,
-                MunicipalityTradeStat.trade_quarter == latest_quarter,
-                MunicipalityTradeStat.price_classification == "01",
-                MunicipalityTradeStat.property_type != "",
-            )
-            .order_by(MunicipalityTradeStat.transaction_count.desc())
-        ).all()
+    property_stats = db.scalars(
+        select(MunicipalityTradeStat)
+        .where(
+            MunicipalityTradeStat.municipality_code == municipality.code,
+            MunicipalityTradeStat.price_classification == "01",
+            MunicipalityTradeStat.property_type != "",
+        )
+        .order_by(
+            MunicipalityTradeStat.trade_year.asc(),
+            MunicipalityTradeStat.trade_quarter.asc(),
+            MunicipalityTradeStat.transaction_count.desc(),
+        )
+    ).all()
 
-    transactions = get_transactions_page(db, municipality.code, page=1, page_size=50).items
+    min_trade_year = (
+        latest_year - (SIMULATOR_RECENT_YEARS - 1) if latest_year else None
+    )
+    transactions = get_municipality_embed_transactions(
+        db, municipality.code, min_trade_year=min_trade_year
+    )
 
     yoy = _compute_yoy_change(yearly_stats)
     related = get_related_municipalities(db, prefecture.code, municipality.code)
@@ -714,6 +886,23 @@ def get_municipality_detail(
         land_price_avg=float(land_summary.avg_unit_price)
         if land_summary and land_summary.avg_unit_price
         else None,
+    )
+
+    estat_raw = get_municipality_estat_insights(municipality.code)
+    estat_insights = (
+        MunicipalityEstatInsights.model_validate(estat_raw) if estat_raw else None
+    )
+    cross_metrics = build_cross_metrics(
+        yoy_price_change_pct=yoy,
+        purchase_insights=purchase_insights,
+        estat=estat_insights,
+    )
+    similar_municipalities = get_similar_municipalities(
+        db,
+        prefecture_code=prefecture.code,
+        municipality_code=municipality.code,
+        recent_avg_price=meta.recent_avg_price if meta else None,
+        estat=estat_insights,
     )
 
     return MunicipalityDetail(
@@ -736,8 +925,11 @@ def get_municipality_detail(
         land_prices=land_summary,
         land_price_yearly=get_land_price_yearly_stats(db, municipality.code),
         related_municipalities=related,
+        similar_municipalities=similar_municipalities,
         yoy_price_change_pct=yoy,
         purchase_insights=purchase_insights,
+        estat_insights=estat_insights,
+        cross_metrics=cross_metrics,
     )
 
 
@@ -751,6 +943,21 @@ POPULAR_AREAS: list[tuple[str, str, str]] = [
     ("aichi", "naka-ku", "名古屋市中区"),
     ("fukuoka", "chuuou-ku", "福岡市中央区"),
 ]
+
+# (a_pref, a_muni, b_pref, b_muni, a_label, b_label)
+POPULAR_COMPARES: list[tuple[str, str, str, str, str, str]] = [
+    ("tokyo", "shibuya-ku", "tokyo", "minato-ku", "渋谷区", "港区"),
+    ("tokyo", "shinjuku-ku", "tokyo", "chiyoda-ku", "新宿区", "千代田区"),
+    ("kanagawa", "naka-ku", "kanagawa", "nishi-ku", "横浜市中区", "横浜市西区"),
+    ("osaka", "kita-ku", "aichi", "naka-ku", "大阪市北区", "名古屋市中区"),
+    ("fukuoka", "chuuou-ku", "fukuoka", "fukuoka-shi", "福岡市中央区", "福岡市"),
+]
+
+
+def compare_path(
+    a_pref: str, a_muni: str, b_pref: str, b_muni: str
+) -> str:
+    return f"/compare/{a_pref}/{a_muni}/vs/{b_pref}/{b_muni}"
 
 
 def _compute_yoy_change(yearly_stats: list[YearlyStat]) -> Optional[float]:
@@ -799,6 +1006,23 @@ def get_related_municipalities(
     ]
 
 
+def _latest_property_stats(
+    rows: list[StatBucket],
+    *,
+    latest_year: Optional[int] = None,
+    latest_quarter: Optional[int] = None,
+) -> list[StatBucket]:
+    if not rows:
+        return []
+    year = latest_year if latest_year is not None else max(r.trade_year for r in rows)
+    quarter = (
+        latest_quarter
+        if latest_quarter is not None
+        else max(r.trade_quarter for r in rows if r.trade_year == year)
+    )
+    return [r for r in rows if r.trade_year == year and r.trade_quarter == quarter]
+
+
 def _municipality_to_compare_side(
     db: Session, prefecture: Prefecture, municipality: Municipality
 ) -> CompareSide:
@@ -812,7 +1036,11 @@ def _municipality_to_compare_side(
         total_transactions=detail.total_transactions,
         recent_avg_price=detail.recent_avg_price,
         yearly_stats=detail.yearly_stats,
-        property_stats=detail.property_stats,
+        property_stats=_latest_property_stats(
+            detail.property_stats,
+            latest_year=detail.latest_year,
+            latest_quarter=detail.latest_quarter,
+        ),
         yoy_price_change_pct=detail.yoy_price_change_pct,
         land_prices=detail.land_prices,
         land_price_yearly=detail.land_price_yearly,
@@ -860,12 +1088,98 @@ def get_station_detail(db: Session, station_id: int) -> Optional[StationDetail]:
     if row.prefecture_code:
         pref = db.scalar(select(Prefecture).where(Prefecture.code == row.prefecture_code))
     base = _station_to_summary(row, pref)
+
+    nearby_municipalities: list[StationMunicipalityPrice] = []
+    nearby_land_price_avg = None
+    nearby_land_price_point_count = 0
+    station_norm = normalize_station_name(row.station_name)
+
+    land_filters = [
+        LandPricePoint.nearest_station.isnot(None),
+        LandPricePoint.unit_price.isnot(None),
+    ]
+    if row.prefecture_code:
+        land_filters.append(
+            LandPricePoint.municipality_code.startswith(row.prefecture_code)
+        )
+
+    land_rows = db.execute(
+        select(
+            LandPricePoint.municipality_code,
+            LandPricePoint.nearest_station,
+            LandPricePoint.unit_price,
+            LandPricePoint.survey_year,
+        ).where(*land_filters)
+    ).all()
+
+    matched_by_muni: dict[str, list[float]] = {}
+    latest_year_by_muni: dict[str, int] = {}
+    for muni_code, nearest, unit_price, survey_year in land_rows:
+        if not nearest or unit_price is None:
+            continue
+        nearest_norm = normalize_station_name(nearest)
+        if not (
+            nearest_norm == station_norm
+            or station_norm in nearest
+            or nearest_norm in row.station_name
+        ):
+            continue
+        matched_by_muni.setdefault(muni_code, []).append(float(unit_price))
+        year = int(survey_year or 0)
+        if year > latest_year_by_muni.get(muni_code, 0):
+            latest_year_by_muni[muni_code] = year
+
+    all_prices: list[float] = []
+    for prices in matched_by_muni.values():
+        all_prices.extend(prices)
+    if all_prices:
+        nearby_land_price_avg = sum(all_prices) / len(all_prices)
+        nearby_land_price_point_count = len(all_prices)
+
+    if matched_by_muni:
+        muni_rows = db.execute(
+            select(
+                Municipality.code,
+                Municipality.name_ja,
+                Municipality.slug,
+                Prefecture.name_ja,
+                Prefecture.slug,
+                MunicipalityPageMeta.recent_avg_price,
+            )
+            .join(Prefecture, Prefecture.code == Municipality.prefecture_code)
+            .outerjoin(
+                MunicipalityPageMeta,
+                MunicipalityPageMeta.municipality_code == Municipality.code,
+            )
+            .where(Municipality.code.in_(list(matched_by_muni.keys())))
+        ).all()
+        for muni in muni_rows:
+            prices = matched_by_muni.get(muni[0], [])
+            nearby_municipalities.append(
+                StationMunicipalityPrice(
+                    code=muni[0],
+                    name_ja=muni[1],
+                    slug=muni[2],
+                    prefecture_name=muni[3],
+                    prefecture_slug=muni[4],
+                    recent_avg_price=muni[5],
+                    land_price_avg=(sum(prices) / len(prices)) if prices else None,
+                    matched_point_count=len(prices),
+                )
+            )
+        nearby_municipalities.sort(
+            key=lambda item: item.matched_point_count, reverse=True
+        )
+
     return StationDetail(
         **base.model_dump(),
         railway_type=row.railway_type,
         latitude=row.latitude,
         longitude=row.longitude,
         yearly_passengers=_station_yearly_passengers(row),
+        nearby_municipalities=nearby_municipalities[:8],
+        nearby_land_price_avg=nearby_land_price_avg,
+        nearby_land_price_point_count=nearby_land_price_point_count,
     )
 
 

@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% from "macros.html" import section_title, report_cta, ranking_rows, prefecture_rows, hero_news_item %}
+{% from "macros.html" import section_title, report_cta, ranking_rows, ranking_price_rows, ranking_yoy_rows, prefecture_rows, prefecture_yoy_rows %}
 {% block description %}全国47都道府県・1,920市区町村の不動産取引価格データを検索。地域別の取引件数・平均価格を無料で閲覧。{% endblock %}
 
 {% block head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="/static/charts.js" defer></script>
+<script src="/static/japan-map.js?v=9" defer></script>
 {% endblock %}
 
 {% block content %}
 <section class="hero-section relative overflow-hidden">
-  <div class="max-w-6xl mx-auto px-4 py-14 md:py-20 relative z-10">
-    <div class="hero-layout">
+  <div class="max-w-6xl mx-auto px-4 py-12 md:py-16 relative z-10">
+    <div class="hero-layout hero-layout--with-map">
       <div class="hero-left">
         <div class="hero-copy">
-          <p class="text-brand-100 text-sm font-medium mb-3 tracking-wide">国土交通省 不動産情報ライブラリ 連携</p>
-          <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-4">地域の不動産相場が、<br class="hidden sm:block">すぐわかる。</h1>
-          <p class="text-brand-50 text-lg leading-relaxed">全国630万件超の取引データを市区町村別に検索。推移グラフ・ランキング・エリア比較が無料。</p>
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4">地域の不動産相場が、<br class="hidden sm:block">すぐわかる。</h1>
+          <p class="text-brand-50 text-base md:text-lg leading-relaxed">全国630万件超の取引データを市区町村別に検索。推移グラフ・ランキング・エリア比較が無料。</p>
         </div>
 
-        <div class="hero-panel">
+        <div class="hero-panel w-full text-left">
           <form action="/search" method="get" class="relative mb-5" id="hero-search-wrap" role="search">
             <label for="hero-search" class="sr-only">市区町村を検索</label>
             <div class="flex gap-2">
@@ -29,21 +29,21 @@
                 検索
               </button>
             </div>
-            <div id="hero-search-results" class="search-dropdown hidden text-ink-900"></div>
+            <div id="hero-search-results" class="search-dropdown hidden text-ink-900 text-left"></div>
           </form>
 
           <div class="grid grid-cols-3 gap-3 mb-5">
-            <div class="rounded-xl bg-white/10 backdrop-blur px-4 py-3 border border-white/20 text-center sm:text-left">
+            <div class="rounded-xl bg-white/10 backdrop-blur px-3 py-3 border border-white/20 text-center sm:text-left">
               <div class="text-brand-100 text-xs">累計取引データ</div>
-              <div class="text-xl sm:text-2xl font-bold tabular-nums">{{ format_count(highlights.total_transactions) }}<span class="text-sm font-normal ml-0.5">件</span></div>
+              <div class="text-lg sm:text-xl font-bold tabular-nums">{{ format_count(highlights.total_transactions) }}<span class="text-sm font-normal ml-0.5">件</span></div>
             </div>
-            <div class="rounded-xl bg-white/10 backdrop-blur px-4 py-3 border border-white/20 text-center sm:text-left">
+            <div class="rounded-xl bg-white/10 backdrop-blur px-3 py-3 border border-white/20 text-center sm:text-left">
               <div class="text-brand-100 text-xs">市区町村</div>
-              <div class="text-xl sm:text-2xl font-bold tabular-nums">{{ format_count(highlights.municipality_count) }}</div>
+              <div class="text-lg sm:text-xl font-bold tabular-nums">{{ format_count(highlights.municipality_count) }}</div>
             </div>
-            <div class="rounded-xl bg-white/10 backdrop-blur px-4 py-3 border border-white/20 text-center sm:text-left">
+            <div class="rounded-xl bg-white/10 backdrop-blur px-3 py-3 border border-white/20 text-center sm:text-left">
               <div class="text-brand-100 text-xs">データ期間</div>
-              <div class="text-xl sm:text-2xl font-bold">2005〜2025</div>
+              <div class="text-lg sm:text-xl font-bold">2005〜2025</div>
             </div>
           </div>
 
@@ -60,22 +60,17 @@
         </div>
       </div>
 
-      {% if news and news.latest %}
-      <aside class="hero-news-panel">
-        <div class="flex items-center justify-between gap-3 mb-4">
-          <h2 class="text-sm font-semibold text-white">不動産・地価ニュース</h2>
-          <a href="/news" class="text-xs text-brand-100 hover:text-white transition shrink-0">すべて見る →</a>
+      <div class="hero-right">
+        <div class="hero-map-panel">
+          <div class="text-brand-100 text-xs mb-2 text-center lg:text-left">地図から都道府県を選ぶ</div>
+          <div class="japan-map-wrap japan-map-wrap--hero" id="japan-map" aria-busy="true"></div>
+          <p class="mt-2 text-center text-xs text-brand-100/80">県をクリックで相場ページへ</p>
         </div>
-        <div class="hero-news-list">
-          {% for item in news.latest[:5] %}
-          {{ hero_news_item(item) }}
-          {% endfor %}
-        </div>
-      </aside>
-      {% endif %}
+      </div>
     </div>
   </div>
 </section>
+<script type="application/json" id="prefecture-map-data">{{ prefecture_map_data | tojson | safe }}</script>
 
 {# Quick actions #}
 <section class="max-w-6xl mx-auto px-4 -mt-6 relative z-10">
@@ -88,7 +83,7 @@
       <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
       <span class="font-semibold text-sm">ランキング</span>
     </a>
-    <a href="/compare?a=tokyo/shibuya-ku&b=tokyo/minato-ku" class="home-action-card">
+    <a href="/compare/tokyo/shibuya-ku/vs/tokyo/minato-ku" class="home-action-card">
       <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
       <span class="font-semibold text-sm">エリア比較</span>
     </a>
@@ -133,39 +128,41 @@
   <div class="max-w-6xl mx-auto px-4 py-14">
     {{ section_title('都道府県ランキング', 'クリックで市区町村一覧へ') }}
     <div class="grid lg:grid-cols-2 gap-8">
-      <div>
-        <h3 class="text-sm font-semibold text-slate-600 mb-3">取引件数トップ10</h3>
-        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-slate-600 text-left">
-              <tr>
-                <th class="px-4 py-2.5 w-12">順位</th>
-                <th class="px-4 py-2.5">都道府県</th>
-                <th class="px-4 py-2.5 text-right">市区町村</th>
-                <th class="px-4 py-2.5 text-right">累計件数</th>
-                <th class="px-4 py-2.5 text-right">平均価格</th>
-                <th class="px-4 py-2.5 w-16 hidden md:table-cell"></th>
-              </tr>
-            </thead>
-            {{ prefecture_rows(chart_data.top_prefectures_volume) }}
-          </table>
+      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
+          <h3 class="text-sm font-semibold text-slate-700">平均価格トップ10</h3>
         </div>
-      </div>
-      <div>
-        <h3 class="text-sm font-semibold text-slate-600 mb-3">平均価格トップ10</h3>
-        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-slate-600 text-left">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm rank-table--compact">
+            <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
               <tr>
-                <th class="px-4 py-2.5 w-12">順位</th>
-                <th class="px-4 py-2.5">都道府県</th>
-                <th class="px-4 py-2.5 text-right">市区町村</th>
-                <th class="px-4 py-2.5 text-right">累計件数</th>
-                <th class="px-4 py-2.5 text-right">平均価格</th>
-                <th class="px-4 py-2.5 w-16 hidden md:table-cell"></th>
+                <th class="px-3 py-1.5 w-12">順位</th>
+                <th class="px-3 py-1.5">都道府県</th>
+                <th class="px-3 py-1.5 text-right">平均価格</th>
+                <th class="px-3 py-1.5 text-right">前年比</th>
+                <th class="px-3 py-1.5 text-right hidden sm:table-cell">累計件数</th>
               </tr>
             </thead>
             {{ prefecture_rows(chart_data.top_prefectures_price) }}
+          </table>
+        </div>
+      </div>
+      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
+          <h3 class="text-sm font-semibold text-slate-700">値上がり率トップ10</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm rank-table--compact">
+            <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+              <tr>
+                <th class="px-3 py-1.5 w-12">順位</th>
+                <th class="px-3 py-1.5">都道府県</th>
+                <th class="px-3 py-1.5 text-right">平均価格</th>
+                <th class="px-3 py-1.5 text-right">前年比</th>
+                <th class="px-3 py-1.5 text-right hidden sm:table-cell">累計件数</th>
+              </tr>
+            </thead>
+            {{ prefecture_yoy_rows(chart_data.top_prefectures_yoy) }}
           </table>
         </div>
       </div>
@@ -178,47 +175,51 @@
   <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
     {{ section_title('市区町村ランキング', '行をクリックして詳細・グラフを表示') }}
     <div class="flex gap-2 shrink-0">
-      <a href="/rankings?sort=volume" class="text-sm text-brand-600 font-medium hover:underline">件数順 全50件 →</a>
+      <a href="/rankings/price" class="text-sm text-brand-600 font-medium hover:underline">価格順 全50件 →</a>
       <span class="text-slate-300">|</span>
-      <a href="/rankings?sort=price" class="text-sm text-brand-600 font-medium hover:underline">価格順 全50件 →</a>
+      <a href="/rankings/price-growth" class="text-sm text-brand-600 font-medium hover:underline">値上がり率 全50件 →</a>
     </div>
   </div>
   <div class="grid lg:grid-cols-2 gap-8">
     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div class="px-4 py-3 border-b border-slate-100 bg-slate-50">
-        <h3 class="text-sm font-semibold text-slate-700">取引件数トップ10</h3>
-      </div>
-      <table class="w-full text-sm">
-        <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
-          <tr>
-            <th class="px-4 py-2 w-12">#</th>
-            <th class="px-4 py-2">市区町村</th>
-            <th class="px-4 py-2 hidden sm:table-cell">都道府県</th>
-            <th class="px-4 py-2 text-right">件数</th>
-            <th class="px-4 py-2 text-right">平均</th>
-            <th class="px-4 py-2 w-12 hidden md:table-cell"></th>
-          </tr>
-        </thead>
-        {{ ranking_rows(highlights.top_by_volume) }}
-      </table>
-    </div>
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div class="px-4 py-3 border-b border-slate-100 bg-slate-50">
+      <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
         <h3 class="text-sm font-semibold text-slate-700">平均価格トップ10</h3>
       </div>
-      <table class="w-full text-sm">
-        <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
-          <tr>
-            <th class="px-4 py-2 w-12">#</th>
-            <th class="px-4 py-2">市区町村</th>
-            <th class="px-4 py-2 hidden sm:table-cell">都道府県</th>
-            <th class="px-4 py-2 text-right">件数</th>
-            <th class="px-4 py-2 text-right">平均</th>
-            <th class="px-4 py-2 w-12 hidden md:table-cell"></th>
-          </tr>
-        </thead>
-        {{ ranking_rows(highlights.top_by_price) }}
-      </table>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm rank-table--compact">
+          <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+            <tr>
+              <th class="px-3 py-1.5 w-12">順位</th>
+              <th class="px-3 py-1.5">市区町村</th>
+              <th class="px-3 py-1.5 hidden sm:table-cell">都道府県</th>
+              <th class="px-3 py-1.5 text-right">平均価格</th>
+              <th class="px-3 py-1.5 text-right">前年比</th>
+              <th class="px-3 py-1.5 text-right hidden md:table-cell">累計件数</th>
+            </tr>
+          </thead>
+          {{ ranking_price_rows(highlights.top_by_price) }}
+        </table>
+      </div>
+    </div>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
+        <h3 class="text-sm font-semibold text-slate-700">値上がり率トップ10</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm rank-table--compact">
+          <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+            <tr>
+              <th class="px-3 py-1.5 w-12">順位</th>
+              <th class="px-3 py-1.5">市区町村</th>
+              <th class="px-3 py-1.5 hidden sm:table-cell">都道府県</th>
+              <th class="px-3 py-1.5 text-right">平均価格</th>
+              <th class="px-3 py-1.5 text-right">前年比</th>
+              <th class="px-3 py-1.5 text-right hidden md:table-cell">累計件数</th>
+            </tr>
+          </thead>
+          {{ ranking_yoy_rows(highlights.top_by_yoy) }}
+        </table>
+      </div>
     </div>
   </div>
 </section>
@@ -228,21 +229,11 @@
   <div class="max-w-6xl mx-auto px-4 py-10">
     {{ section_title('人気の比較', '2エリアの価格・件数を並べて確認') }}
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      <a href="/compare?a=tokyo/shibuya-ku&b=tokyo/minato-ku" class="compare-teaser">
-        <span class="font-medium">渋谷区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">港区</span>
+      {% for a_pref, a_muni, b_pref, b_muni, a_label, b_label in popular_compares %}
+      <a href="/compare/{{ a_pref }}/{{ a_muni }}/vs/{{ b_pref }}/{{ b_muni }}" class="compare-teaser">
+        <span class="font-medium">{{ a_label }}</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">{{ b_label }}</span>
       </a>
-      <a href="/compare?a=tokyo/shinjuku-ku&b=tokyo/chiyoda-ku" class="compare-teaser">
-        <span class="font-medium">新宿区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">千代田区</span>
-      </a>
-      <a href="/compare?a=kanagawa/naka-ku&b=kanagawa/nishi-ku" class="compare-teaser">
-        <span class="font-medium">横浜市中区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">横浜市西区</span>
-      </a>
-      <a href="/compare?a=osaka/kita-ku&b=aichi/naka-ku" class="compare-teaser">
-        <span class="font-medium">大阪市北区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">名古屋市中区</span>
-      </a>
-      <a href="/compare?a=fukuoka/chuuou-ku&b=fukuoka/fukuoka-shi" class="compare-teaser">
-        <span class="font-medium">福岡市中央区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">福岡市</span>
-      </a>
+      {% endfor %}
       <a href="/compare" class="compare-teaser compare-teaser--cta">
         <span class="text-brand-600 font-medium">自分で選んで比較 →</span>
       </a>
@@ -252,19 +243,12 @@
 
 {# Prefecture grid #}
 <section id="search-area" class="max-w-6xl mx-auto px-4 py-14">
-  {{ section_title('都道府県から探す', '47都道府県・1,920市区町村') }}
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-    {% for pref in prefectures %}
-    <a href="/price/{{ pref.slug }}"
-       class="group rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:bg-brand-50/50 hover:shadow-md transition">
-      <div class="font-semibold text-ink-900 group-hover:text-brand-600">{{ pref.name_ja }}</div>
-      <div class="mt-2 flex justify-between text-xs text-slate-500 tabular-nums">
-        <span>{{ format_count(pref.total_transactions) }}件</span>
-        <span class="text-brand-600 opacity-0 group-hover:opacity-100 transition">→</span>
-      </div>
-      {% if pref.avg_price %}
-      <div class="mt-1 text-xs text-slate-400 tabular-nums">平均 {{ format_man_yen(pref.avg_price) }}</div>
-      {% endif %}
+  {{ section_title('都道府県から探す', '取引データのある都道府県') }}
+  <div class="pref-link-grid">
+    {% for pref in prefectures if pref.total_transactions > 0 %}
+    <a href="/price/{{ pref.slug }}" class="pref-link">
+      <span class="pref-link__name">{{ pref.name_ja }}</span>
+      <span class="pref-link__meta tabular-nums">{{ format_count(pref.total_transactions) }}件{% if pref.avg_price %} · {{ format_man_yen(pref.avg_price) }}{% endif %}</span>
     </a>
     {% endfor %}
   </div>
@@ -273,12 +257,26 @@
 <section class="max-w-6xl mx-auto px-4 py-14">
   <div id="recent-views-section" class="hidden mb-14">
     <div class="mb-6">
-      <h2 class="text-lg font-bold text-ink-900">最近見たエリア</h2>
+      <h2 class="text-xl font-bold text-ink-900">最近見たエリア</h2>
       <p class="mt-1 text-sm text-slate-500">このブラウザでの閲覧履歴</p>
     </div>
     <div id="recent-views-list" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
   </div>
   {{ report_cta() }}
+</section>
+
+{# ニュースは外部流出を避けるためヒーローには置かず、専用ページへ誘導 #}
+<section class="border-t border-slate-200 bg-slate-50">
+  <div class="max-w-6xl mx-auto px-4 py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-ink-900">地価・取引の参考ニュース</h2>
+      <p class="mt-1 text-sm text-slate-500">地価公示・不動産取引・住宅市場など、相場判断の材料になる記事をカテゴリ別に整理しています。</p>
+    </div>
+    <a href="/news"
+       class="inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700 transition shrink-0">
+      ニュース一覧を見る →
+    </a>
+  </div>
 </section>
 
 <script>

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb %}
+{% block description %}都道府県・市区町村と面積・築年数を入れるだけで、国土交通省の取引データをもとに周辺相場と比較した参考価格を試算できます。{% endblock %}
+
+{% block head %}
+<script src="/static/estimate.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-b from-brand-50 to-slate-50 border-b border-slate-200">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    {{ breadcrumb([('トップ', '/'), ('相場シミュレーター', '')]) }}
+    <h1 class="text-2xl md:text-3xl font-bold">相場シミュレーター</h1>
+    <p class="mt-2 text-slate-600">エリアと面積・築年数を入れるだけ。国土交通省の取引データをもとに、<b>周辺相場と比較した参考価格</b>を試算します。</p>
+  </div>
+</section>
+
+<section class="max-w-4xl mx-auto px-4 py-8">
+  <div class="grid md:grid-cols-2 gap-6">
+    <form id="est-form" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4" autocomplete="off">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">物件種別</label>
+        <div id="ptype" class="flex flex-wrap gap-2" role="tablist"></div>
+        <p id="ptype-empty" class="text-xs text-slate-400 mt-1">都道府県・市区町村を選ぶと選択できます</p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="pref">都道府県</label>
+        <select id="pref" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none">
+          <option value="">選択してください</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="muni">市区町村</label>
+        <select id="muni" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400" disabled>
+          <option value="">先に都道府県を選択</option>
+        </select>
+      </div>
+      <div id="district-wrap">
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="district">町名・地区 <span class="text-slate-400 font-normal">(任意)</span></label>
+        <select id="district" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400" disabled>
+          <option value="">エリア全体</option>
+        </select>
+        <p class="text-xs text-slate-400 mt-1">町名を選ぶと、その地区の実際の取引事例で絞り込みます。</p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="area"><span id="area-label">面積</span></label>
+        <select id="area" disabled
+                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400">
+          <option value="">市区町村・種別を選択</option>
+        </select>
+        <p id="area-hint" class="text-xs text-slate-400 mt-1"></p>
+      </div>
+      <div id="age-wrap">
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="age">築年数</label>
+        <select id="age" disabled
+                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400">
+          <option value="">市区町村・種別を選択</option>
+        </select>
+      </div>
+      <button type="submit" class="w-full rounded-full bg-brand-600 text-white font-medium py-3 hover:bg-brand-700 transition">相場を試算する</button>
+    </form>
+
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div id="result-empty" class="h-full flex flex-col items-center justify-center text-center text-slate-400 py-10">
+        <svg class="w-10 h-10 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <p class="text-sm">都道府県を選ぶと<br>相場の概要が表示されます</p>
+      </div>
+      <div id="result" class="hidden">
+        <p class="text-sm text-slate-500" id="r-area-name"></p>
+        <p class="text-xs text-slate-400 mb-3" id="r-cond"></p>
+        <div id="r-type-breakdown" class="mb-4 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"></div>
+        <div id="r-range-wrap" class="rounded-xl bg-brand-50 border border-brand-100 p-4 text-center mb-4 hidden">
+          <p class="text-xs text-brand-700 font-medium mb-1">参考価格レンジ</p>
+          <p class="text-2xl font-bold text-brand-800" id="r-range"></p>
+          <p class="text-sm text-slate-500 mt-1" id="r-point"></p>
+        </div>
+        <p id="r-range-hint" class="text-sm text-slate-400 text-center mb-4 hidden">面積を選ぶと参考価格レンジが表示されます</p>
+        <dl class="space-y-2 text-sm">
+          <div class="flex justify-between"><dt class="text-slate-500">エリアの㎡単価（中央値）</dt><dd class="tabular-nums font-medium" id="r-unit"></dd></div>
+          <div class="flex justify-between"><dt class="text-slate-500">エリアの平均取引価格</dt><dd class="tabular-nums font-medium" id="r-avg"></dd></div>
+          <div class="flex justify-between"><dt class="text-slate-500">データ件数（近年の同種取引）</dt><dd class="tabular-nums font-medium" id="r-n"></dd></div>
+          <div id="r-age-adj-wrap" class="flex justify-between hidden"><dt class="text-slate-500">築年補正</dt><dd class="tabular-nums font-medium" id="r-age-adj"></dd></div>
+        </dl>
+        <p id="r-note" class="mt-3 text-sm rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 text-slate-600"></p>
+        <div id="comps" class="mt-4 hidden">
+          <p class="text-sm font-medium text-slate-700 mb-2" id="comps-title">周辺の実際の取引事例</p>
+          <div class="overflow-x-auto rounded-lg border border-slate-100">
+            <table class="w-full text-xs">
+              <thead class="bg-slate-50 text-slate-500 text-left">
+                <tr>
+                  <th class="px-2.5 py-1.5 font-medium">地区</th>
+                  <th class="px-2.5 py-1.5 text-right font-medium">面積</th>
+                  <th class="px-2.5 py-1.5 text-right font-medium">築年</th>
+                  <th class="px-2.5 py-1.5 text-right font-medium">取引価格</th>
+                  <th class="px-2.5 py-1.5 text-right font-medium">㎡単価</th>
+                </tr>
+              </thead>
+              <tbody id="comps-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+        <a id="r-link" href="#" class="mt-4 inline-flex items-center gap-1 text-sm text-brand-600 font-medium hover:underline">このエリアの詳細・実際の取引事例を見る →</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="mt-6 text-xs text-slate-400 leading-relaxed">
+    ※ 本試算は国土交通省「不動産情報ライブラリ」の取引価格情報をもとにした<b>簡易的な参考値</b>です。エリア（町名を選んだ場合はその地区）の㎡単価に選択した面積を掛け、築年数による補正を加えて算出しています。町名単位は取引件数が少なく（表示中の実事例が母数）、個別の物件の状態・立地・階数・間取り等は反映されないため、実際の売買価格・査定額とは異なります。正式な査定は不動産会社等の専門家にご相談ください。
+  </p>
+</section>
+{% endblock %}

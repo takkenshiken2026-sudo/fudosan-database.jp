@@ -93,7 +93,11 @@
           {% for s in chart_data.top_stations %}
           <tr class="hover:bg-slate-50">
             <td class="px-4 py-3">
+              {% if publish_deep_pages() %}
               <a href="/station/{{ s.id }}" class="font-medium text-brand-700 hover:underline">{{ s.station_name }}駅</a>
+              {% else %}
+              <span class="font-medium">{{ s.station_name }}駅</span>
+              {% endif %}
             </td>
             <td class="px-4 py-3 text-slate-500 hidden sm:table-cell">{{ s.line_name }}</td>
             <td class="px-4 py-3 text-right tabular-nums text-emerald-700">
@@ -108,7 +112,7 @@
   {% endif %}
 
   {% if regional_news and regional_news['items'] %}
-  {{ section_title(prefecture.name_ja ~ 'の不動産ニュース') }}
+  {{ section_title(prefecture.name_ja ~ 'の相場判断の参考ニュース', '地価・取引・住宅市場など') }}
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
     {% for item in regional_news['items'][:6] %}
     {{ news_item(item) }}

@@ -100,6 +100,19 @@ def _breadcrumb_list(items: list[tuple[str, str]]) -> dict[str, Any]:
     }
 
 
+def _dataset_description(text: str) -> str:
+    """Google Dataset Search requires description length between 50 and 5000."""
+    text = " ".join((text or "").split())
+    if len(text) > 5000:
+        return text[:4999] + "…"
+    if len(text) < 50:
+        text = (
+            f"{text} "
+            "年次・四半期の価格推移、物件種別内訳、地価公示などの統計を公開しています。"
+        ).strip()
+    return text[:5000]
+
+
 def seo_home(base: str) -> SeoMeta:
     seo = SeoMeta(
         page_title=f"{SITE_NAME} | 全国の不動産取引価格・相場データ",
@@ -170,6 +183,54 @@ def seo_prefecture(base: str, name: str, slug: str, muni_count: int) -> SeoMeta:
     return finalize_seo(seo, base)
 
 
+def seo_district(
+    base: str,
+    pref_name: str,
+    pref_slug: str,
+    muni_name: str,
+    muni_slug: str,
+    district_name: str,
+    area_slug: str,
+    *,
+    total_transactions: int,
+    recent_avg_price: Optional[float],
+) -> SeoMeta:
+    path = f"/price/{pref_slug}/{muni_slug}/area/{area_slug}"
+    url = absolute_url(base, path)
+    pref_url = absolute_url(base, f"/price/{pref_slug}")
+    muni_url = absolute_url(base, f"/price/{pref_slug}/{muni_slug}")
+    price_text = (
+        f"平均取引価格{_format_man(recent_avg_price)}、" if recent_avg_price else ""
+    )
+    seo = SeoMeta(
+        page_title=f"{pref_name}{muni_name}{district_name}の不動産取引価格 | {SITE_NAME}",
+        meta_description=(
+            f"{pref_name}{muni_name}{district_name}の不動産取引価格相場。"
+            f"累計{total_transactions:,}件の取引データ、{price_text}"
+            f"年次推移グラフと取引事例を掲載。"
+        ),
+        canonical_path=path,
+        og_type="article",
+        breadcrumbs=[
+            (SITE_NAME, base),
+            (pref_name, pref_url),
+            (muni_name, muni_url),
+            (district_name, url),
+        ],
+        extra_graph=[
+            {
+                "@type": "WebPage",
+                "@id": f"{url}#webpage",
+                "url": url,
+                "name": f"{pref_name}{muni_name}{district_name}の不動産取引価格",
+                "isPartOf": {"@id": f"{base}/#website"},
+                "inLanguage": "ja-JP",
+            }
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
 def seo_municipality(
     base: str,
     pref_name: str,
@@ -181,6 +242,7 @@ def seo_municipality(
     recent_avg_price: Optional[float],
     latest_year: Optional[int],
     stats_updated_at: Optional[datetime] = None,
+    population: Optional[int] = None,
 ) -> SeoMeta:
     path = f"/price/{pref_slug}/{muni_slug}"
     url = absolute_url(base, path)
@@ -189,6 +251,9 @@ def seo_municipality(
         f"平均取引価格{_format_man(recent_avg_price)}、" if recent_avg_price else ""
     )
     year_text = f"{latest_year}年までの" if latest_year else ""
+    population_text = (
+        f"人口{population:,}人（国勢調査）、" if population else ""
+    )
     webpage: dict[str, Any] = {
         "@type": "WebPage",
         "@id": f"{url}#webpage",
@@ -206,7 +271,8 @@ def seo_municipality(
         meta_description=(
             f"{pref_name}{name}の不動産取引価格相場。"
             f"累計{total_transactions:,}件の取引データ、{price_text}"
-            f"{year_text}四半期・年次の価格推移グラフ、物件種別内訳、地価公示を掲載。"
+            f"{population_text}"
+            f"{year_text}四半期・年次の価格推移グラフ、物件種別内訳、地価公示、人口・住宅統計を掲載。"
         ),
         canonical_path=path,
         og_type="article",
@@ -230,9 +296,11 @@ def seo_municipality(
                 "@type": "Dataset",
                 "@id": f"{url}#dataset",
                 "name": f"{pref_name}{name}の不動産取引価格データ",
-                "description": (
-                    f"国土交通省 不動産情報ライブラリに基づく"
-                    f"{pref_name}{name}の取引価格統計（{total_transactions:,}件）"
+                "description": _dataset_description(
+                    f"国土交通省 不動産情報ライブラリの取引データに基づく、"
+                    f"{pref_name}{name}の不動産取引価格統計。"
+                    f"累計{total_transactions:,}件の取引事例から算出した平均価格・中央値、"
+                    f"年次・四半期の価格推移、物件種別内訳を掲載。"
                 ),
                 "creator": MLIT_ORG,
                 "isBasedOn": "https://www.reinfolib.mlit.go.jp/",
@@ -249,10 +317,20 @@ def seo_municipality(
 
 
 def seo_rankings(
-    base: str, sort: str, items: Optional[list] = None
+    base: str,
+    sort: str,
+    items: Optional[list] = None,
+    *,
+    title: Optional[str] = None,
 ) -> SeoMeta:
-    is_price = sort == "price"
-    title = "平均価格ランキング" if is_price else "取引件数ランキング"
+    title = title or ("平均価格ランキング" if sort == "price" else "取引件数ランキング")
+    path = f"/rankings/{sort}" if sort not in ("", "volume") else "/rankings"
+    if sort == "volume":
+        path = "/rankings"
+    elif sort == "price":
+        path = "/rankings/price"
+    else:
+        path = f"/rankings/{sort}"
     extra: list[dict[str, Any]] = []
     if items:
         extra.append(
@@ -274,13 +352,14 @@ def seo_rankings(
     seo = SeoMeta(
         page_title=f"市区町村{title} | 不動産取引価格 | {SITE_NAME}",
         meta_description=(
-            f"全国市区町村の不動産{title}（TOP50）。"
-            "国土交通省データに基づく取引件数・平均価格のランキング。"
+            f"全国市区町村の{title}（TOP50）。"
+            "国土交通省・e-Statデータに基づくランキング。"
         ),
-        canonical_path="/rankings",
+        canonical_path=path,
         breadcrumbs=[
             (SITE_NAME, base),
-            (title, absolute_url(base, "/rankings")),
+            ("ランキング", absolute_url(base, "/rankings")),
+            (title, absolute_url(base, path)),
         ],
         extra_graph=extra,
     )
@@ -401,6 +480,36 @@ def seo_for_agents(base: str) -> SeoMeta:
         breadcrumbs=[
             (SITE_NAME, base),
             ("仲介店向け", absolute_url(base, "/for-agents")),
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
+def seo_estimate(base: str) -> SeoMeta:
+    seo = SeoMeta(
+        page_title=f"相場シミュレーター｜あなたの物件を周辺相場と比較 | {SITE_NAME}",
+        meta_description=(
+            "都道府県・市区町村と面積・築年数を入れるだけで、国土交通省の取引データをもとに"
+            "周辺相場と比較した参考価格を試算できます。"
+        ),
+        canonical_path="/estimate",
+        breadcrumbs=[
+            (SITE_NAME, base),
+            ("相場シミュレーター", absolute_url(base, "/estimate")),
+        ],
+        extra_graph=[
+            {
+                "@type": "WebApplication",
+                "name": "不動産相場シミュレーター",
+                "url": absolute_url(base, "/estimate"),
+                "applicationCategory": "FinanceApplication",
+                "operatingSystem": "Web",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "JPY",
+                },
+            }
         ],
     )
     return finalize_seo(seo, base)

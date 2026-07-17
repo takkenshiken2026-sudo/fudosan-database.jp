@@ -91,14 +91,76 @@
   }
 
   // --- Search autocomplete (reusable) ---
-  function setupAutocomplete(inputId, resultsId, wrapId, onSelect) {
+  var POPULAR_SEARCH_SUGGESTIONS = [
+    {
+      name_ja: "渋谷区",
+      prefecture_name: "東京都",
+      prefecture_slug: "tokyo",
+      slug: "shibuya-ku",
+      total_transactions: 0,
+    },
+    {
+      name_ja: "新宿区",
+      prefecture_name: "東京都",
+      prefecture_slug: "tokyo",
+      slug: "shinjuku-ku",
+      total_transactions: 0,
+    },
+    {
+      name_ja: "港区",
+      prefecture_name: "東京都",
+      prefecture_slug: "tokyo",
+      slug: "minato-ku",
+      total_transactions: 0,
+    },
+    {
+      name_ja: "千代田区",
+      prefecture_name: "東京都",
+      prefecture_slug: "tokyo",
+      slug: "chiyoda-ku",
+      total_transactions: 0,
+    },
+    {
+      name_ja: "大阪市北区",
+      prefecture_name: "大阪府",
+      prefecture_slug: "osaka",
+      slug: "kita-ku",
+      total_transactions: 0,
+    },
+    {
+      name_ja: "横浜市中区",
+      prefecture_name: "神奈川県",
+      prefecture_slug: "kanagawa",
+      slug: "naka-ku",
+      total_transactions: 0,
+    },
+    {
+      name_ja: "名古屋市中区",
+      prefecture_name: "愛知県",
+      prefecture_slug: "aichi",
+      slug: "naka-ku",
+      total_transactions: 0,
+    },
+    {
+      name_ja: "福岡市中央区",
+      prefecture_name: "福岡県",
+      prefecture_slug: "fukuoka",
+      slug: "chuuou-ku",
+      total_transactions: 0,
+    },
+  ];
+
+  function setupAutocomplete(inputId, resultsId, wrapId, onSelect, options) {
     const searchInput = document.getElementById(inputId);
     const searchResults = document.getElementById(resultsId);
     if (!searchInput || !searchResults) return;
 
+    const opts = options || {};
+    const showPopularOnFocus = opts.showPopularOnFocus !== false;
     let searchTimer = null;
     let activeIndex = -1;
     let currentItems = [];
+    let showingPopular = false;
 
     function getItems() {
       return searchResults.querySelectorAll(".search-result-item");
@@ -113,25 +175,39 @@
       });
     }
 
-    function renderResults(items) {
+    function renderResults(items, meta) {
       currentItems = items;
       activeIndex = -1;
+      showingPopular = !!(meta && meta.popular);
       if (!items.length) {
         searchResults.innerHTML =
           '<div class="px-4 py-3 text-sm text-slate-500">該当する市区町村がありません</div>';
         searchResults.classList.remove("hidden");
         return;
       }
-      searchResults.innerHTML = items
-        .map(
-          (item, i) => `
-        <a href="#" class="search-result-item" role="option" data-index="${i}">
+      const header = showingPopular
+        ? '<div class="search-suggest-heading">よく検索されるエリア</div>'
+        : "";
+      searchResults.innerHTML =
+        header +
+        items
+          .map((item, i) => {
+            const count =
+              item.total_transactions > 0
+                ? `<span class="text-xs text-brand-600 ml-auto">${Number(
+                    item.total_transactions
+                  ).toLocaleString()}件</span>`
+                : showingPopular
+                  ? '<span class="text-xs text-slate-400 ml-auto">人気</span>'
+                  : "";
+            return `
+        <a href="/price/${item.prefecture_slug}/${item.slug}" class="search-result-item" role="option" data-index="${i}">
           <span class="font-medium text-ink-900">${item.name_ja}</span>
           <span class="text-xs text-slate-500">${item.prefecture_name}</span>
-          <span class="text-xs text-brand-600 ml-auto">${item.total_transactions.toLocaleString()}件</span>
-        </a>`
-        )
-        .join("");
+          ${count}
+        </a>`;
+          })
+          .join("");
       searchResults.classList.remove("hidden");
 
       searchResults.querySelectorAll(".search-result-item").forEach((el) => {
@@ -148,18 +224,34 @@
     function hideResults() {
       searchResults.classList.add("hidden");
       activeIndex = -1;
+      showingPopular = false;
     }
+
+    function showPopularSuggestions() {
+      if (!showPopularOnFocus) return;
+      renderResults(POPULAR_SEARCH_SUGGESTIONS, { popular: true });
+    }
+
+    searchInput.addEventListener("focus", () => {
+      if (searchInput.value.trim().length < 1) showPopularSuggestions();
+    });
+
+    searchInput.addEventListener("click", () => {
+      if (searchInput.value.trim().length < 1) showPopularSuggestions();
+    });
 
     searchInput.addEventListener("input", () => {
       clearTimeout(searchTimer);
       const q = searchInput.value.trim();
       if (q.length < 1) {
-        hideResults();
+        showPopularSuggestions();
         return;
       }
       searchTimer = setTimeout(async () => {
         try {
-          const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&limit=8`);
+          const res = await fetch(
+            `/api/search?q=${encodeURIComponent(q)}&limit=8`
+          );
           const data = await res.json();
           renderResults(data);
         } catch {
@@ -197,13 +289,32 @@
     }
   }
 
-  setupAutocomplete("global-search", "search-results", "global-search-wrap", (item) => {
-    location.href = `/price/${item.prefecture_slug}/${item.slug}`;
-  });
+  setupAutocomplete(
+    "global-search",
+    "search-results",
+    "global-search-wrap",
+    (item) => {
+      location.href = `/price/${item.prefecture_slug}/${item.slug}`;
+    }
+  );
 
-  setupAutocomplete("hero-search", "hero-search-results", "hero-search-wrap", (item, input, results) => {
-    location.href = `/price/${item.prefecture_slug}/${item.slug}`;
-  });
+  setupAutocomplete(
+    "hero-search",
+    "hero-search-results",
+    "hero-search-wrap",
+    (item) => {
+      location.href = `/price/${item.prefecture_slug}/${item.slug}`;
+    }
+  );
+
+  setupAutocomplete(
+    "search-page-input",
+    "search-page-results",
+    "search-page-wrap",
+    (item) => {
+      location.href = `/price/${item.prefecture_slug}/${item.slug}`;
+    }
+  );
 
   // --- Compare page pickers ---
   function setupComparePicker(side) {
@@ -219,8 +330,10 @@
 
       const a = document.getElementById("compare-a")?.value;
       const b = document.getElementById("compare-b")?.value;
-      if (a && b) {
-        location.href = `/compare?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`;
+      if (a && b && a.includes("/") && b.includes("/")) {
+        const [ap, am] = a.split("/", 2);
+        const [bp, bm] = b.split("/", 2);
+        location.href = `/compare/${ap}/${am}/vs/${bp}/${bm}`;
       }
     });
   }
@@ -357,32 +470,64 @@
   // --- Tab navigation ---
   const tabBtns = document.querySelectorAll("[data-tab]");
   const tabPanels = document.querySelectorAll("[data-tab-panel]");
+  const moreWrap = document.getElementById("muni-more-tabs");
+  const moreBtn = document.getElementById("muni-more-tabs-btn");
+  const moreMenu = document.getElementById("muni-more-tabs-menu");
+  const secondaryTabs = new Set(["property", "land", "stations", "news"]);
+
+  function setActiveTab(target) {
+    tabBtns.forEach((b) => {
+      const active = b.dataset.tab === target;
+      b.classList.toggle("tab-active", active);
+      b.classList.toggle("tab-inactive", !active);
+    });
+    tabPanels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.dataset.tabPanel !== target);
+    });
+    if (moreBtn) {
+      const secondaryActive = secondaryTabs.has(target);
+      moreBtn.classList.toggle("tab-active", secondaryActive);
+      moreBtn.classList.toggle("tab-inactive", !secondaryActive);
+      moreBtn.setAttribute("aria-expanded", "false");
+    }
+    if (moreMenu) moreMenu.classList.add("hidden");
+    const activePanel = document.querySelector(`[data-tab-panel="${target}"]`);
+    if (activePanel) {
+      requestAnimationFrame(() => {
+        if (typeof resizeChartsIn === "function") resizeChartsIn(activePanel);
+      });
+    }
+    history.replaceState(null, "", `#${target}`);
+  }
+
   if (tabBtns.length) {
     tabBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const target = btn.dataset.tab;
-        tabBtns.forEach((b) => {
-          b.classList.toggle("tab-active", b.dataset.tab === target);
-          b.classList.toggle("tab-inactive", b.dataset.tab !== target);
-        });
-        tabPanels.forEach((panel) => {
-          panel.classList.toggle("hidden", panel.dataset.tabPanel !== target);
-        });
-        const activePanel = document.querySelector(`[data-tab-panel="${target}"]`);
-        if (activePanel) {
-          requestAnimationFrame(() => {
-            if (typeof resizeChartsIn === "function") resizeChartsIn(activePanel);
-          });
-        }
-        history.replaceState(null, "", `#${target}`);
-      });
+      btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
     });
 
-    const hash = location.hash.replace("#", "");
-    if (hash) {
-      const btn = document.querySelector(`[data-tab="${hash}"]`);
-      if (btn) btn.click();
+    function activateFromHash() {
+      const hash = location.hash.replace("#", "");
+      if (!hash) return;
+      const panel = document.querySelector(`[data-tab-panel="${hash}"]`);
+      if (panel) setActiveTab(hash);
     }
+
+    activateFromHash();
+    window.addEventListener("hashchange", activateFromHash);
+  }
+
+  if (moreBtn && moreMenu) {
+    moreBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = moreMenu.classList.toggle("hidden") === false;
+      moreBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    document.addEventListener("click", (e) => {
+      if (!moreWrap?.contains(e.target)) {
+        moreMenu.classList.add("hidden");
+        moreBtn.setAttribute("aria-expanded", "false");
+      }
+    });
   }
 
   // --- Report form municipality search ---

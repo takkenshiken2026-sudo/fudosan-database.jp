@@ -24,7 +24,7 @@
 {# Section heading #}
 {% macro section_title(title, desc='') %}
 <div class="mb-6">
-  <h2 class="text-lg font-bold text-ink-900">{{ title }}</h2>
+  <h2 class="text-xl font-bold text-ink-900">{{ title }}</h2>
   {% if desc %}<p class="mt-1 text-sm text-slate-500">{{ desc }}</p>{% endif %}
 </div>
 {% endmacro %}
@@ -43,19 +43,19 @@
 <tbody class="divide-y divide-slate-100">
   {% for item in items %}
   <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ item.prefecture_slug }}/{{ item.slug }}'">
-    <td class="px-4 py-3">
-      <span class="rank-badge {{ 'rank-' ~ item.rank if item.rank <= 3 else 'rank-n' }}">{{ item.rank }}</span>
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm {{ 'rank-' ~ item.rank if item.rank <= 3 else 'rank-n' }}">{{ item.rank }}</span>
     </td>
-    <td class="px-4 py-3">
+    <td class="px-3 py-1.5">
       <span class="font-medium text-ink-900 group-hover:text-brand-700">{{ item.name_ja }}</span>
       {% if show_pref %}<span class="block text-xs text-slate-400 sm:hidden">{{ item.prefecture_name }}</span>{% endif %}
     </td>
     {% if show_pref %}
-    <td class="px-4 py-3 text-slate-500 hidden sm:table-cell">{{ item.prefecture_name }}</td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">{{ item.prefecture_name }}</td>
     {% endif %}
-    <td class="px-4 py-3 text-right tabular-nums">{{ format_count(item.total_transactions) }}</td>
-    <td class="px-4 py-3 text-right tabular-nums font-medium text-brand-700">{{ format_man_yen(item.recent_avg_price) }}</td>
-    <td class="px-4 py-3 text-right hidden md:table-cell">
+    <td class="px-3 py-1.5 text-right tabular-nums">{{ format_count(item.total_transactions) }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium text-brand-700">{{ format_man_yen(item.recent_avg_price) }}</td>
+    <td class="px-3 py-1.5 text-right hidden md:table-cell">
       <span class="text-xs text-brand-600 opacity-0 group-hover:opacity-100 transition">詳細 →</span>
     </td>
   </tr>
@@ -63,22 +63,112 @@
 </tbody>
 {% endmacro %}
 
-{# Prefecture table rows #}
+{# Municipality price ranking (平均・前年比) #}
+{% macro ranking_price_rows(items) %}
+<tbody class="divide-y divide-slate-100">
+  {% for item in items %}
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ item.prefecture_slug }}/{{ item.slug }}'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm {{ 'rank-' ~ item.rank if item.rank <= 3 else 'rank-n' }}">{{ item.rank }}</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">{{ item.name_ja }}</span>
+      <span class="block text-xs text-slate-400 sm:hidden">{{ item.prefecture_name }}</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">{{ item.prefecture_name }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">{{ format_man_yen(item.recent_avg_price) }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      {% if item.yoy_price_change_pct is not none %}
+      <span class="{% if item.yoy_price_change_pct >= 0 %}text-red-600{% else %}text-blue-600{% endif %}">
+        {{ "%+.1f"|format(item.yoy_price_change_pct) }}%
+      </span>
+      {% else %}
+      <span class="text-slate-400">—</span>
+      {% endif %}
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">{{ format_count(item.total_transactions) }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+{% endmacro %}
+
+{# Municipality YoY ranking — same columns as price ranking #}
+{% macro ranking_yoy_rows(items) %}
+<tbody class="divide-y divide-slate-100">
+  {% for item in items %}
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ item.prefecture_slug }}/{{ item.slug }}'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm {{ 'rank-' ~ item.rank if item.rank <= 3 else 'rank-n' }}">{{ item.rank }}</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">{{ item.name_ja }}</span>
+      <span class="block text-xs text-slate-400 sm:hidden">{{ item.prefecture_name }}</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">{{ item.prefecture_name }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">{{ format_man_yen(item.recent_avg_price) }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      {% set yoy = item.yoy_price_change_pct if item.yoy_price_change_pct is not none else item.metric_value %}
+      {% if yoy is not none %}
+      <span class="{% if yoy >= 0 %}text-red-600{% else %}text-blue-600{% endif %}">
+        {{ "%+.1f"|format(yoy) }}%
+      </span>
+      {% else %}
+      <span class="text-slate-400">—</span>
+      {% endif %}
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">{{ format_count(item.total_transactions) }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+{% endmacro %}
+
+{# Prefecture table rows (平均価格・前年比・累計件数) #}
 {% macro prefecture_rows(items, rank_start=1) %}
 <tbody class="divide-y divide-slate-100">
   {% for pref in items %}
   <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ pref.slug }}'">
-    <td class="px-4 py-3">
+    <td class="px-3 py-1.5">
       {% set r = rank_start + loop.index0 %}
-      <span class="rank-badge {{ 'rank-' ~ r if r <= 3 else 'rank-n' }}">{{ r }}</span>
+      <span class="rank-badge rank-badge--sm {{ 'rank-' ~ r if r <= 3 else 'rank-n' }}">{{ r }}</span>
     </td>
-    <td class="px-4 py-3 font-medium group-hover:text-brand-700">{{ pref.name_ja }}</td>
-    <td class="px-4 py-3 text-right tabular-nums">{{ format_count(pref.municipality_count) }}</td>
-    <td class="px-4 py-3 text-right tabular-nums font-medium">{{ format_count(pref.total_transactions) }}</td>
-    <td class="px-4 py-3 text-right tabular-nums text-brand-700">{{ format_man_yen(pref.avg_price) }}</td>
-    <td class="px-4 py-3 text-right hidden md:table-cell">
-      <span class="text-xs text-brand-600 opacity-0 group-hover:opacity-100 transition">一覧 →</span>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">{{ pref.name_ja }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">{{ format_man_yen(pref.avg_price) }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      {% if pref.yoy_price_change_pct is not none %}
+      <span class="{% if pref.yoy_price_change_pct >= 0 %}text-red-600{% else %}text-blue-600{% endif %}">
+        {{ "%+.1f"|format(pref.yoy_price_change_pct) }}%
+      </span>
+      {% else %}
+      <span class="text-slate-400">—</span>
+      {% endif %}
     </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">{{ format_count(pref.total_transactions) }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+{% endmacro %}
+
+{# Prefecture YoY ranking rows — same columns as price ranking #}
+{% macro prefecture_yoy_rows(items, rank_start=1) %}
+<tbody class="divide-y divide-slate-100">
+  {% for pref in items %}
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/{{ pref.slug }}'">
+    <td class="px-3 py-1.5">
+      {% set r = rank_start + loop.index0 %}
+      <span class="rank-badge rank-badge--sm {{ 'rank-' ~ r if r <= 3 else 'rank-n' }}">{{ r }}</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">{{ pref.name_ja }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">{{ format_man_yen(pref.avg_price) }}</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      {% if pref.yoy_price_change_pct is not none %}
+      <span class="{% if pref.yoy_price_change_pct >= 0 %}text-red-600{% else %}text-blue-600{% endif %}">
+        {{ "%+.1f"|format(pref.yoy_price_change_pct) }}%
+      </span>
+      {% else %}
+      <span class="text-slate-400">—</span>
+      {% endif %}
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">{{ format_count(pref.total_transactions) }}</td>
   </tr>
   {% endfor %}
 </tbody>

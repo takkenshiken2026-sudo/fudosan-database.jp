@@ -59,8 +59,8 @@
       }
     }
   </script>
-  <link rel="stylesheet" href="/static/site.css">
-  <script src="/static/site.js" defer></script>
+  <link rel="stylesheet" href="/static/site.css?v=12">
+  <script src="/static/site.js?v=11" defer></script>
   {% block head %}{% endblock %}
 </head>
 <body class="font-sans bg-slate-50 text-ink-900 min-h-screen flex flex-col has-mobile-nav">
@@ -72,19 +72,9 @@
           <span class="hidden sm:inline">不動産相場ナビ</span>
         </a>
 
-        <form action="/search" method="get" class="flex-1 max-w-md mx-2 relative" id="global-search-wrap" role="search">
-          <div class="relative">
-            <label for="global-search" class="sr-only">市区町村を検索</label>
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="search" id="global-search" name="q" placeholder="市区町村を検索（例: 渋谷区）"
-                   autocomplete="off"
-                   class="w-full rounded-full border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-100 transition">
-          </div>
-          <div id="search-results" class="search-dropdown hidden" role="listbox" aria-label="検索候補"></div>
-        </form>
-
-        <nav class="hidden md:flex items-center gap-1 text-sm shrink-0" aria-label="メインナビゲーション">
+        <nav class="hidden md:flex items-center gap-1 text-sm shrink-0 ml-auto" aria-label="メインナビゲーション">
           <a href="/rankings" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">ランキング</a>
+          <a href="/estimate" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">相場シミュレーター</a>
           <a href="/news" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">ニュース</a>
           <a href="/compare" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">比較</a>
           <a href="/report/new" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">レポート</a>
@@ -98,6 +88,7 @@
 
       <nav id="mobile-menu" class="hidden md:hidden pt-3 pb-1 flex flex-wrap gap-2 border-t border-slate-100 mt-3" aria-label="モバイルナビゲーション">
         <a href="/rankings" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">ランキング</a>
+        <a href="/estimate" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">シミュレーター</a>
         <a href="/news" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">ニュース</a>
         <a href="/compare" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">エリア比較</a>
         <a href="/report/new" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">レポート作成</a>

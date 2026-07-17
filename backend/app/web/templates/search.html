@@ -12,16 +12,18 @@
       {% if query %}{{ results | length }}件の市区町村が見つかりました{% else %}市区町村名を入力して相場データを探せます{% endif %}
     </p>
 
-    <form action="/search" method="get" class="mt-6" role="search">
+    <form action="/search" method="get" class="mt-6 relative" id="search-page-wrap" role="search">
       <label for="search-page-input" class="sr-only">市区町村名</label>
       <div class="flex gap-2">
         <input type="search" id="search-page-input" name="q" value="{{ query }}"
                placeholder="例: 渋谷区、横浜市"
+               autocomplete="off"
                class="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100">
         <button type="submit" class="rounded-xl bg-brand-600 px-6 py-3 text-white font-medium hover:bg-brand-700 transition">
           検索
         </button>
       </div>
+      <div id="search-page-results" class="search-dropdown hidden" role="listbox" aria-label="検索候補"></div>
     </form>
   </div>
 </section>
@@ -38,7 +40,7 @@
   </ol>
   {% endif %}
 
-  {% if query and stations %}
+  {% if query and stations and publish_deep_pages() %}
   <h2 class="text-sm font-bold text-slate-500 mb-3">鉄道駅（{{ stations | length }}件）</h2>
   <ol class="space-y-2 list-none mb-10">
     {% for s in stations %}
@@ -58,12 +60,12 @@
   </ol>
   {% endif %}
 
-  {% if query and districts %}
+  {% if query and districts and publish_deep_pages() %}
   <h2 class="text-sm font-bold text-slate-500 mb-3">地区（{{ districts | length }}件）</h2>
   <ol class="space-y-2 list-none">
     {% for d in districts %}
     <li>
-      <a href="/price/{{ d.prefecture_slug }}/{{ d.municipality_slug }}"
+      <a href="/price/{{ d.prefecture_slug }}/{{ d.municipality_slug }}/area/{{ d.area_slug }}"
          class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-brand-400 hover:bg-brand-50/50 transition">
         <span>
           <span class="font-medium">{{ d.name }}</span>
@@ -74,7 +76,7 @@
     </li>
     {% endfor %}
   </ol>
-  {% elif query and not results and not districts and not stations %}
+  {% elif query and not results and not (districts and publish_deep_pages()) and not (stations and publish_deep_pages()) %}
   <p class="text-slate-500 text-sm">該当する市区町村・地区・駅がありません。別のキーワードでお試しください。</p>
   {% elif not query %}
   <p class="text-slate-500 text-sm">人気エリア: 

@@ -44,3 +44,26 @@ def dedupe_slug(slug: str, code: str) -> str:
     if not slug:
         return code
     return slug
+
+
+_DISTRICT_SUFFIXES: tuple[tuple[str, str], ...] = (
+    ("丁目", "-chome"),
+    ("町", "-cho"),
+    ("台", "-dai"),
+)
+
+
+def district_slug(name: str, fallback_code: str = "") -> str:
+    base = name
+    suffix = ""
+    for ja, en in _DISTRICT_SUFFIXES:
+        if name.endswith(ja):
+            base = name[: -len(ja)]
+            suffix = en
+            break
+    roman = _romanize(base)
+    if suffix:
+        slug = f"{roman}{suffix}" if roman else suffix.lstrip("-")
+    else:
+        slug = roman
+    return slug or fallback_code

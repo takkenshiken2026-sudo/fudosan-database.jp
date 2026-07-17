@@ -68,7 +68,11 @@
       </section>
 
       {# Property mix #}
-      {% if detail.property_stats %}
+      {% set display_property_stats = detail.property_stats
+        | selectattr('trade_year', 'equalto', detail.latest_year)
+        | selectattr('trade_quarter', 'equalto', detail.latest_quarter)
+        | list %}
+      {% if display_property_stats %}
       <section>
         <h2 class="text-lg font-bold border-l-4 border-brand-600 pl-3 mb-4">物件種別の内訳（最新四半期）</h2>
         <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
@@ -81,7 +85,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
-            {% for s in detail.property_stats %}
+            {% for s in display_property_stats %}
             <tr>
               <td class="px-4 py-2">{{ s.property_type }}</td>
               <td class="px-4 py-2 text-right tabular-nums">{{ format_count(s.transaction_count) }}</td>

@@ -22,6 +22,17 @@
     return Math.round(value / 10000);
   }
 
+  function latestPropertyStats(rows) {
+    if (!rows.length) return [];
+    const maxYear = Math.max(...rows.map((r) => r.trade_year));
+    const maxQuarter = Math.max(
+      ...rows.filter((r) => r.trade_year === maxYear).map((r) => r.trade_quarter)
+    );
+    return rows.filter(
+      (r) => r.trade_year === maxYear && r.trade_quarter === maxQuarter
+    );
+  }
+
   function baseOptions(yTitle) {
     return {
       responsive: true,
@@ -76,6 +87,7 @@
     const quarterly = data.quarterly_chart || [];
     const yearly = data.yearly_stats || [];
     const property = data.property_stats || [];
+    const propertyDisplay = latestPropertyStats(property);
     const landYearly = data.land_price_yearly || [];
 
     if (quarterly.length) {
@@ -254,14 +266,14 @@
       });
     }
 
-    if (property.length) {
+    if (propertyDisplay.length) {
       createChart("chart-property-mix", {
         type: "doughnut",
         data: {
-          labels: property.map((r) => r.property_type || "種別不明"),
+          labels: propertyDisplay.map((r) => r.property_type || "種別不明"),
           datasets: [
             {
-              data: property.map((r) => r.transaction_count),
+              data: propertyDisplay.map((r) => r.transaction_count),
               backgroundColor: [
                 "#0284c7",
                 "#0ea5e9",
@@ -294,11 +306,11 @@
       createChart("chart-property-price", {
         type: "bar",
         data: {
-          labels: property.map((r) => r.property_type || "種別不明"),
+          labels: propertyDisplay.map((r) => r.property_type || "種別不明"),
           datasets: [
             {
               label: "平均取引価格",
-              data: property.map((r) => toManYen(r.trade_price_avg)),
+              data: propertyDisplay.map((r) => toManYen(r.trade_price_avg)),
               backgroundColor: "rgba(2, 132, 199, 0.75)",
               borderRadius: 6,
             },
@@ -345,6 +357,70 @@
         data: { labels: landLabels, datasets: [landPriceDataset] },
         options: landPriceOptions,
       });
+    }
+
+    const estat = data.estat_insights;
+    if (estat && estat.available) {
+      const popSeries = estat.population_series || [];
+      if (popSeries.length >= 2) {
+        createChart("chart-estat-population", {
+          type: "bar",
+          data: {
+            labels: popSeries.map((r) => `${r.year}年`),
+            datasets: [
+              {
+                label: "人口",
+                data: popSeries.map((r) => r.population),
+                backgroundColor: "rgba(99, 102, 241, 0.65)",
+                borderColor: "#6366f1",
+                borderWidth: 1,
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            ...baseOptions("人"),
+            plugins: {
+              ...baseOptions().plugins,
+              title: {
+                display: true,
+                text: "国勢調査 人口推移",
+                font: { size: 14, weight: "600" },
+              },
+            },
+          },
+        });
+      }
+
+      const ageChart = estat.building_age_chart || [];
+      if (ageChart.length) {
+        createChart("chart-estat-building-age", {
+          type: "bar",
+          data: {
+            labels: ageChart.map((r) => r.label),
+            datasets: [
+              {
+                label: "住宅数",
+                data: ageChart.map((r) => r.count),
+                backgroundColor: "rgba(14, 165, 233, 0.65)",
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            ...baseOptions("戸"),
+            plugins: {
+              ...baseOptions().plugins,
+              title: {
+                display: true,
+                text: "建築年代別 住宅数",
+                font: { size: 14, weight: "600" },
+              },
+            },
+          },
+        });
+      }
     }
   };
 
@@ -904,5 +980,95 @@
         },
       });
     }
+  };
+
+  window.initDistrictCharts = function (data) {
+    const yearly = data.yearly_stats || [];
+    if (!yearly.length) return;
+
+    const labels = yearly.map((r) => `${r.trade_year}年`);
+
+    createChart("chart-district-volume", {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "取引件数",
+            data: yearly.map((r) => r.transaction_count),
+            backgroundColor: "rgba(2, 132, 199, 0.7)",
+            borderColor: BRAND,
+            borderWidth: 1,
+            borderRadius: 4,
+          },
+        ],
+      },
+      options: {
+        ...baseOptions("件"),
+        plugins: {
+          ...baseOptions().plugins,
+          title: { display: true, text: "年間取引件数", font: { size: 14, weight: "600" } },
+        },
+      },
+    });
+
+    createChart("chart-district-price", {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "この地区",
+            data: yearly.map((r) => toManYen(r.trade_price_avg)),
+            borderColor: "#f59e0b",
+            backgroundColor: "rgba(245, 158, 11, 0.12)",
+            fill: true,
+            tension: 0.25,
+            pointRadius: 3,
+          },
+          ...(data.municipality_yearly_stats || []).length
+            ? [
+                {
+                  label: "市区町村平均",
+                  data: labels.map((label) => {
+                    const year = parseInt(label, 10);
+                    const row = (data.municipality_yearly_stats || []).find(
+                      (r) => r.trade_year === year
+                    );
+                    return row ? toManYen(row.trade_price_avg) : null;
+                  }),
+                  borderColor: BRAND,
+                  borderDash: [6, 4],
+                  backgroundColor: "rgba(2, 132, 199, 0.05)",
+                  fill: false,
+                  tension: 0.25,
+                  pointRadius: 2,
+                },
+              ]
+            : [],
+        ],
+      },
+      options: {
+        ...baseOptions("万円"),
+        plugins: {
+          ...baseOptions().plugins,
+          title: {
+            display: true,
+            text: "年平均取引価格（市区町村比較）",
+            font: { size: 14, weight: "600" },
+          },
+          tooltip: {
+            callbacks: {
+              label(ctx) {
+                const v = ctx.parsed.y;
+                return v != null
+                  ? `${ctx.dataset.label}: ${v.toLocaleString()}万円`
+                  : `${ctx.dataset.label}: —`;
+              },
+            },
+          },
+        },
+      },
+    });
   };
 })();

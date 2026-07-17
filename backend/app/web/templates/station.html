@@ -27,6 +27,13 @@
       <span class="font-bold text-emerald-700 tabular-nums ml-2">{{ format_passengers_daily(station.latest_passengers) }}</span>
     </p>
     {% endif %}
+    {% if station.nearby_land_price_avg %}
+    <p class="mt-2 text-sm text-slate-600">
+      最寄駅として紐づく地価公示:
+      <span class="font-semibold text-emerald-700 tabular-nums">{{ format_yen_per_sqm(station.nearby_land_price_avg) }}</span>
+      <span class="text-xs text-slate-400">（{{ format_count(station.nearby_land_price_point_count) }}地点）</span>
+    </p>
+    {% endif %}
   </div>
 </section>
 
@@ -66,9 +73,39 @@
   <p class="text-slate-500 text-sm">この駅の乗降客数データはまだありません。</p>
   {% endif %}
 
+  {% if station.nearby_municipalities %}
+  {{ section_title('関連する市区町村の相場', '地価公示の最寄駅としてこの駅が紐づく市区町村') }}
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-8">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-600">
+        <tr>
+          <th class="px-4 py-3 text-left">市区町村</th>
+          <th class="px-4 py-3 text-right">平均取引価格</th>
+          <th class="px-4 py-3 text-right">地価公示平均</th>
+          <th class="px-4 py-3 text-right hidden sm:table-cell">地点数</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for m in station.nearby_municipalities %}
+        <tr class="hover:bg-brand-50/30">
+          <td class="px-4 py-3">
+            <a href="/price/{{ m.prefecture_slug }}/{{ m.slug }}" class="font-medium text-brand-700 hover:underline">
+              {{ m.prefecture_name }}{{ m.name_ja }}
+            </a>
+          </td>
+          <td class="px-4 py-3 text-right tabular-nums">{{ format_man_yen(m.recent_avg_price) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums text-emerald-700">{{ format_yen_per_sqm(m.land_price_avg) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums hidden sm:table-cell">{{ format_count(m.matched_point_count) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
   <p class="text-xs text-slate-400 border-t border-slate-200 pt-6">
-    出典: 国土交通省 国土数値情報（駅別乗降客数）· 不動産情報ライブラリ API（XKT015）。
-    非公開の駅や路線は表示されない場合があります。
+    出典: 国土交通省 国土数値情報（駅別乗降客数）· 不動産情報ライブラリ API（XKT015 / XPT002）。
+    駅周辺の取引価格は緯度経度がないため、最寄駅として紐づく市区町村の相場を表示しています。
   </p>
 </section>
 

@@ -34,12 +34,16 @@
   <p>{{ detail.prefecture_name }}{{ detail.name_ja }}の累計取引は<strong>{{ format_count(detail.total_transactions) }}件</strong>。
   {% if detail.recent_avg_price %}平均取引価格は<strong>{{ format_man_yen(detail.recent_avg_price) }}</strong>。{% endif %}</p>
 
-  {% if detail.property_stats %}
-  <h2>物件種別の内訳</h2>
+  {% set display_property_stats = detail.property_stats
+    | selectattr('trade_year', 'equalto', detail.latest_year)
+    | selectattr('trade_quarter', 'equalto', detail.latest_quarter)
+    | list %}
+  {% if display_property_stats %}
+  <h2>物件種別の内訳（最新四半期）</h2>
   <table>
     <thead><tr><th>種別</th><th>件数</th><th>平均価格</th><th>㎡単価</th></tr></thead>
     <tbody>
-      {% for s in detail.property_stats %}
+      {% for s in display_property_stats %}
       <tr>
         <td>{{ s.property_type }}</td>
         <td>{{ format_count(s.transaction_count) }}</td>

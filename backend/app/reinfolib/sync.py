@@ -126,7 +126,7 @@ def _record_to_transaction(
         trade_quarter=trade_quarter,
         property_type=record.get("Type") or None,
         region=record.get("Region") or None,
-        municipality_code=str(record.get("MunicipalityCode") or ""),
+        municipality_code=str(record.get("MunicipalityCode") or "").zfill(5),
         prefecture_name=record.get("Prefecture") or None,
         municipality_name=record.get("Municipality") or None,
         district_code=record.get("DistrictCode") or None,
@@ -203,7 +203,7 @@ def sync_transactions_for_city_period(
 
     pending_districts: set[str] = set()
     for record in records:
-        municipality_code = str(record.get("MunicipalityCode") or city_code)
+        municipality_code = str(record.get("MunicipalityCode") or city_code).zfill(5)
         _upsert_district(
             db,
             municipality_code,

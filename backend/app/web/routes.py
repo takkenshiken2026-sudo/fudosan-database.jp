@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -12,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.api import services
 from app.config import settings
 from app.db import get_db
+from app.reinfolib.district_pages import get_district_detail, resolve_district
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
 from app.web.pdf import html_to_pdf
@@ -26,6 +28,8 @@ from app.web.formatters import (
 )
 from app.web.seo import (
     seo_compare,
+    seo_district,
+    seo_estimate,
     seo_for_agents,
     seo_home,
     seo_market,
@@ -48,6 +52,20 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.filters["tojson"] = lambda value: json.dumps(
     value, ensure_ascii=False, default=str
 )
+
+
+def publish_deep_pages() -> bool:
+    """静的ビルドで地区・駅を未生成のとき、壊れたリンクを出さない。"""
+    static = os.environ.get("STATIC_BUILD", "").strip().lower() in ("1", "true", "yes")
+    if not static:
+        return True
+    return os.environ.get("STATIC_PUBLISH_DEEP_PAGES", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+
+
 templates.env.globals.update(
     {
         "format_man_yen": format_man_yen,
@@ -58,6 +76,7 @@ templates.env.globals.update(
         "format_passengers_daily": format_passengers_daily,
         "quarter_label": quarter_label,
         "google_site_verification": settings.google_site_verification,
+        "publish_deep_pages": publish_deep_pages,
     }
 )
 
@@ -111,16 +130,26 @@ def home(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
     highlights = services.get_home_highlights(db)
     prefectures = services.list_prefectures(db)
     chart_data = services.get_home_chart_data(db)
-    news = get_news_feed(per_category=5)
+    prefecture_map_data = [
+        {
+            "code": p.code,
+            "slug": p.slug,
+            "name_ja": p.name_ja,
+            "total_transactions": p.total_transactions,
+            "avg_price": p.avg_price,
+        }
+        for p in prefectures
+    ]
     return _render(
         request,
         "index.html",
         seo_home(_base(request)),
         highlights=highlights,
         prefectures=prefectures,
+        prefecture_map_data=prefecture_map_data,
         chart_data=chart_data.model_dump(),
         popular_areas=services.POPULAR_AREAS,
-        news=news,
+        popular_compares=services.POPULAR_COMPARES,
     )
 
 
@@ -133,6 +162,11 @@ def market_page(request: Request, db: Session = Depends(get_db)) -> HTMLResponse
         seo_market(_base(request)),
         chart_data=chart_data.model_dump(),
     )
+
+
+@router.get("/estimate", response_class=HTMLResponse)
+def estimate_page(request: Request) -> HTMLResponse:
+    return _render(request, "estimate.html", seo_estimate(_base(request)))
 
 
 @router.get("/search", response_class=HTMLResponse)
@@ -241,17 +275,40 @@ def regional_news_municipality_page(
 def rankings_page(
     request: Request, sort: str = "volume", db: Session = Depends(get_db)
 ) -> HTMLResponse:
-    if sort not in ("volume", "price"):
-        sort = "volume"
-    items = services.get_rankings(db, sort=sort, limit=50)
-    title = "取引件数ランキング" if sort == "volume" else "平均価格ランキング"
+    from app.api.value_insights import FEATURE_RANKING_META
+
+    # 旧 ?sort= はパス形式へ（静的配信でも解決できるように）
+    if sort in FEATURE_RANKING_META and sort != "volume":
+        return RedirectResponse(url=f"/rankings/{sort}", status_code=301)
+    return rankings_kind_page(request, kind="volume", db=db)
+
+
+@router.get("/rankings/volume", response_class=HTMLResponse)
+def rankings_volume_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/rankings", status_code=301)
+
+
+@router.get("/rankings/{kind}", response_class=HTMLResponse)
+def rankings_kind_page(
+    request: Request, kind: str = "volume", db: Session = Depends(get_db)
+) -> HTMLResponse:
+    from app.api.value_insights import FEATURE_RANKING_META, get_feature_rankings, ranking_tabs
+
+    if kind not in FEATURE_RANKING_META:
+        kind = "volume"
+    meta = FEATURE_RANKING_META[kind]
+    items = get_feature_rankings(db, kind=kind, limit=50)
     return _render(
         request,
         "rankings.html",
-        seo_rankings(_base(request), sort, items),
+        seo_rankings(_base(request), kind, items, title=meta["title"]),
         items=items,
-        sort=sort,
-        title=title,
+        sort=kind,
+        title=meta["title"],
+        description=meta["description"],
+        metric_label=meta["metric_label"],
+        secondary_label="平均地価" if kind == "land-price-growth" else None,
+        ranking_tabs=ranking_tabs(),
     )
 
 
@@ -414,12 +471,55 @@ def municipality_page(
             recent_avg_price=detail.recent_avg_price,
             latest_year=detail.latest_year,
             stats_updated_at=detail.stats_updated_at,
+            population=detail.estat_insights.population
+            if detail.estat_insights and detail.estat_insights.available
+            else None,
         ),
         detail=detail,
         regional_news=regional_news,
         stations=services.list_stations_for_municipality(
             db, municipality.code, prefecture.code, limit=12
         ),
+    )
+
+
+@router.get(
+    "/price/{prefecture_slug}/{municipality_slug}/area/{area_slug}",
+    response_class=HTMLResponse,
+)
+def district_page(
+    request: Request,
+    prefecture_slug: str,
+    municipality_slug: str,
+    area_slug: str,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    prefecture, municipality, district = resolve_district(
+        db, prefecture_slug, municipality_slug, area_slug
+    )
+    if not prefecture or not municipality or not district:
+        raise HTTPException(status_code=404, detail="地区が見つかりません")
+    detail = get_district_detail(db, prefecture, municipality, district)
+    if detail.slug != area_slug and area_slug == district.code:
+        return RedirectResponse(
+            url=f"/price/{prefecture.slug}/{municipality.slug}/area/{detail.slug}",
+            status_code=301,
+        )
+    return _render(
+        request,
+        "district.html",
+        seo_district(
+            _base(request),
+            detail.prefecture_name,
+            detail.prefecture_slug,
+            detail.municipality_name,
+            detail.municipality_slug,
+            detail.name,
+            detail.slug,
+            total_transactions=detail.total_transactions,
+            recent_avg_price=detail.recent_avg_price,
+        ),
+        detail=detail,
     )
 
 
@@ -445,22 +545,49 @@ def compare_page(
     b: str = "",
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
-    compare = None
-    left_name = right_name = None
     if a and b and "/" in a and "/" in b:
         a_parts = a.split("/", 1)
         b_parts = b.split("/", 1)
-        compare = services.get_compare_view(db, a_parts[0], a_parts[1], b_parts[0], b_parts[1])
-        if compare:
-            left_name = f"{compare.left.prefecture_name}{compare.left.name_ja}"
-            right_name = f"{compare.right.prefecture_name}{compare.right.name_ja}"
+        return RedirectResponse(
+            url=services.compare_path(a_parts[0], a_parts[1], b_parts[0], b_parts[1]),
+            status_code=302,
+        )
+    return _render(
+        request,
+        "compare.html",
+        seo_compare(_base(request), None, None),
+        compare=None,
+        param_a=a,
+        param_b=b,
+        popular_compares=services.POPULAR_COMPARES,
+    )
+
+
+@router.get(
+    "/compare/{a_pref}/{a_muni}/vs/{b_pref}/{b_muni}",
+    response_class=HTMLResponse,
+)
+def compare_pair_page(
+    request: Request,
+    a_pref: str,
+    a_muni: str,
+    b_pref: str,
+    b_muni: str,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    compare = services.get_compare_view(db, a_pref, a_muni, b_pref, b_muni)
+    if not compare:
+        raise HTTPException(status_code=404, detail="比較対象の市区町村が見つかりません")
+    left_name = f"{compare.left.prefecture_name}{compare.left.name_ja}"
+    right_name = f"{compare.right.prefecture_name}{compare.right.name_ja}"
     return _render(
         request,
         "compare.html",
         seo_compare(_base(request), left_name, right_name),
         compare=compare,
-        param_a=a,
-        param_b=b,
+        param_a=f"{a_pref}/{a_muni}",
+        param_b=f"{b_pref}/{b_muni}",
+        popular_compares=services.POPULAR_COMPARES,
     )
 
 

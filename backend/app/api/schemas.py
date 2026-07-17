@@ -13,6 +13,8 @@ class PrefectureSummary(BaseModel):
     municipality_count: int = 0
     total_transactions: int = 0
     avg_price: Optional[float] = None
+    median_price: Optional[float] = None
+    yoy_price_change_pct: Optional[float] = None
 
 
 class MunicipalitySummary(BaseModel):
@@ -32,6 +34,7 @@ class StatBucket(BaseModel):
     transaction_count: int
     trade_price_avg: Optional[float] = None
     unit_price_avg: Optional[float] = None
+    area_avg: Optional[float] = None
 
 
 class YearlyStat(BaseModel):
@@ -68,6 +71,13 @@ class RankingItem(BaseModel):
     prefecture_slug: str
     total_transactions: int = 0
     recent_avg_price: Optional[float] = None
+    yoy_price_change_pct: Optional[float] = None
+    metric_value: Optional[float] = None
+    metric_unit: str = ""
+    metric_label: str = ""
+    secondary_value: Optional[float] = None
+    secondary_label: Optional[str] = None
+    sample_count: Optional[int] = None
 
 
 class LandPriceSummary(BaseModel):
@@ -82,6 +92,7 @@ class LandPriceSummary(BaseModel):
 class HomeHighlights(BaseModel):
     top_by_volume: list[RankingItem] = []
     top_by_price: list[RankingItem] = []
+    top_by_yoy: list[RankingItem] = []
     total_transactions: int = 0
     municipality_count: int = 0
 
@@ -91,6 +102,7 @@ class HomeChartData(BaseModel):
     land_price_yearly: list[LandPriceYearlyStat] = []
     top_prefectures_volume: list[PrefectureSummary] = []
     top_prefectures_price: list[PrefectureSummary] = []
+    top_prefectures_yoy: list[PrefectureSummary] = []
 
 
 class TransactionItem(BaseModel):
@@ -115,6 +127,8 @@ class InsightBucket(BaseModel):
     transaction_count: int
     trade_price_avg: Optional[float] = None
     unit_price_avg: Optional[float] = None
+    code: Optional[str] = None
+    slug: Optional[str] = None
 
 
 class PriceClassComparison(BaseModel):
@@ -211,6 +225,9 @@ class StationDetail(StationSummary):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     yearly_passengers: list[StationYearlyPassenger] = []
+    nearby_municipalities: list[StationMunicipalityPrice] = []
+    nearby_land_price_avg: Optional[float] = None
+    nearby_land_price_point_count: int = 0
 
 
 class DistrictSearchResult(BaseModel):
@@ -220,6 +237,103 @@ class DistrictSearchResult(BaseModel):
     municipality_slug: str
     prefecture_slug: str
     transaction_count: int = 0
+    area_slug: str = ""
+
+
+class DistrictSummary(BaseModel):
+    code: str
+    name: str
+    slug: str
+    transaction_count: int = 0
+    recent_avg_price: Optional[float] = None
+
+
+class DistrictDetail(BaseModel):
+    code: str
+    name: str
+    slug: str
+    municipality_code: str
+    municipality_name: str
+    municipality_slug: str
+    prefecture_code: str
+    prefecture_name: str
+    prefecture_slug: str
+    total_transactions: int = 0
+    recent_avg_price: Optional[float] = None
+    latest_year: Optional[int] = None
+    latest_quarter: Optional[int] = None
+    yearly_stats: list[YearlyStat] = []
+    property_stats: list[StatBucket] = []
+    recent_transactions: list[TransactionItem] = []
+    sibling_districts: list[DistrictSummary] = []
+    yoy_price_change_pct: Optional[float] = None
+    municipality_avg_price: Optional[float] = None
+    price_gap_pct: Optional[float] = None
+    municipality_avg_unit_price: Optional[float] = None
+    unit_price_gap_pct: Optional[float] = None
+    municipality_yearly_stats: list[YearlyStat] = []
+
+
+class EstatMetricItem(BaseModel):
+    label: str
+    value: float
+    unit: str = ""
+    year: Optional[int] = None
+    source: str = ""
+
+
+class EstatPopulationPoint(BaseModel):
+    year: int
+    population: int
+
+
+class EstatBuildingAgeBucket(BaseModel):
+    label: str
+    count: int
+
+
+class MunicipalityEstatInsights(BaseModel):
+    available: bool = False
+    population: Optional[int] = None
+    population_year: Optional[int] = None
+    population_change_pct: Optional[float] = None
+    population_series: list[EstatPopulationPoint] = []
+    building_age_chart: list[EstatBuildingAgeBucket] = []
+    highlights: list[EstatMetricItem] = []
+    details: list[EstatMetricItem] = []
+    latest_year: Optional[int] = None
+    sources: list[str] = []
+    average_monthly_rent: Optional[float] = None
+    elderly_pct: Optional[float] = None
+    owner_occupied_pct: Optional[float] = None
+    vacancy_pct: Optional[float] = None
+    population_density: Optional[float] = None
+    single_household_pct: Optional[float] = None
+    housing_count: Optional[int] = None
+
+
+class CrossMetric(BaseModel):
+    key: str
+    label: str
+    value: float
+    unit: str = ""
+    description: str = ""
+
+
+class SimilarMunicipality(MunicipalitySummary):
+    similarity_score: float = 0
+    similarity_reasons: list[str] = []
+
+
+class StationMunicipalityPrice(BaseModel):
+    code: str
+    name_ja: str
+    slug: str
+    prefecture_name: str
+    prefecture_slug: str
+    recent_avg_price: Optional[float] = None
+    land_price_avg: Optional[float] = None
+    matched_point_count: int = 0
 
 
 class MunicipalityDetail(BaseModel):
@@ -241,9 +355,12 @@ class MunicipalityDetail(BaseModel):
     land_prices: Optional[LandPriceSummary] = None
     land_price_yearly: list[LandPriceYearlyStat] = []
     related_municipalities: list[MunicipalitySummary] = []
+    similar_municipalities: list[SimilarMunicipality] = []
     yoy_price_change_pct: Optional[float] = None
     stats_updated_at: Optional[datetime] = None
     purchase_insights: Optional[PurchaseInsights] = None
+    estat_insights: Optional[MunicipalityEstatInsights] = None
+    cross_metrics: list[CrossMetric] = []
 
 
 class CompareSide(BaseModel):

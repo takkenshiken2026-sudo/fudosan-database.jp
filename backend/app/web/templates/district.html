@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% from "macros.html" import breadcrumb, stat_card, section_title, report_cta %}
+{% block description %}{{ detail.prefecture_name }}{{ detail.municipality_name }}{{ detail.name }}の不動産取引価格相場。取引{{ format_count(detail.total_transactions) }}件。{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="/static/charts.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<article>
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    {{ breadcrumb([
+      ('トップ', '/'),
+      (detail.prefecture_name, '/price/' ~ detail.prefecture_slug),
+      (detail.municipality_name, '/price/' ~ detail.prefecture_slug ~ '/' ~ detail.municipality_slug),
+      (detail.name, '')
+    ]) }}
+    <h1 class="text-2xl md:text-3xl font-bold">{{ detail.prefecture_name }}{{ detail.municipality_name }} {{ detail.name }}の不動産取引価格</h1>
+    <p class="mt-2 text-slate-600">地区別の取引価格・相場データ（取引{{ format_count(detail.total_transactions) }}件以上の地区）</p>
+    <div class="mt-4 flex flex-wrap gap-2 no-print">
+      <a href="/price/{{ detail.prefecture_slug }}/{{ detail.municipality_slug }}"
+         class="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition">
+        ← {{ detail.municipality_name }}の相場
+      </a>
+      <a href="/compare?a={{ detail.prefecture_slug }}/{{ detail.municipality_slug }}"
+         class="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition">
+        市区町村を比較
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-6">
+  <div class="grid sm:grid-cols-2 lg:grid-cols-{% if detail.price_gap_pct is not none %}5{% else %}4{% endif %} gap-4">
+    {{ stat_card('累計取引件数', format_count(detail.total_transactions)) }}
+    {{ stat_card('平均取引価格', format_man_yen(detail.recent_avg_price)) }}
+    {% if detail.price_gap_pct is not none %}
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="text-sm text-slate-500">{{ detail.municipality_name }}平均との差</div>
+      <div class="mt-1 text-2xl font-bold tabular-nums {% if detail.price_gap_pct >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+        {{ "%+.1f"|format(detail.price_gap_pct) }}%
+      </div>
+      <div class="mt-1 text-xs text-slate-400">市区町村平均 {{ format_man_yen(detail.municipality_avg_price) }}</div>
+    </div>
+    {% endif %}
+    {% if detail.yoy_price_change_pct is not none %}
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="text-sm text-slate-500">前年比（平均価格）</div>
+      <div class="mt-1 text-2xl font-bold tabular-nums {% if detail.yoy_price_change_pct >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+        {{ "%+.1f"|format(detail.yoy_price_change_pct) }}%
+      </div>
+    </div>
+    {% endif %}
+    {{ stat_card('最新データ', quarter_label(detail.latest_year, detail.latest_quarter) if detail.latest_year else '—') }}
+  </div>
+  {% if detail.unit_price_gap_pct is not none %}
+  <p class="mt-3 text-sm text-slate-500">
+    ㎡単価は市区町村平均より
+    <span class="font-medium {% if detail.unit_price_gap_pct >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+      {{ "%+.1f"|format(detail.unit_price_gap_pct) }}%
+    </span>
+    （市区町村平均 {{ format_yen_per_sqm(detail.municipality_avg_unit_price) }}）
+  </p>
+  {% endif %}
+</section>
+
+{% if detail.yearly_stats %}
+<section class="max-w-6xl mx-auto px-4 py-8">
+  {{ section_title(detail.name ~ 'の価格・取引件数の推移', '国土交通省 不動産情報ライブラリの取引データ') }}
+  <div class="grid lg:grid-cols-2 gap-6 mb-8">
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="chart-card"><canvas id="chart-district-volume"></canvas></div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="chart-card"><canvas id="chart-district-price"></canvas></div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if detail.property_stats %}
+<section class="max-w-6xl mx-auto px-4 py-8">
+  {{ section_title('物件種別の内訳') }}
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm max-w-2xl">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-600">
+        <tr>
+          <th class="px-4 py-3 text-left">種別</th>
+          <th class="px-4 py-3 text-right">件数</th>
+          <th class="px-4 py-3 text-right">平均価格</th>
+          <th class="px-4 py-3 text-right hidden sm:table-cell">㎡単価</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for s in detail.property_stats %}
+        <tr>
+          <td class="px-4 py-3 font-medium">{{ s.property_type }}</td>
+          <td class="px-4 py-3 text-right tabular-nums">{{ format_count(s.transaction_count) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums">{{ format_man_yen(s.trade_price_avg) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums hidden sm:table-cell">{{ format_yen_per_sqm(s.unit_price_avg) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+{% if detail.recent_transactions %}
+<section class="max-w-6xl mx-auto px-4 py-8">
+  {{ section_title('取引事例', 'この地区の直近の取引（匿名化データ）') }}
+  <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-600">
+        <tr>
+          <th class="px-4 py-3 text-left">時期</th>
+          <th class="px-4 py-3 text-left">種別</th>
+          <th class="px-4 py-3 text-right">取引価格</th>
+          <th class="px-4 py-3 text-right hidden sm:table-cell">㎡単価</th>
+          <th class="px-4 py-3 text-left hidden md:table-cell">間取り</th>
+          <th class="px-4 py-3 text-left hidden lg:table-cell">築年</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for tx in detail.recent_transactions %}
+        <tr>
+          <td class="px-4 py-3">{{ quarter_label(tx.trade_year, tx.trade_quarter) }}</td>
+          <td class="px-4 py-3">{{ tx.property_type or '—' }}</td>
+          <td class="px-4 py-3 text-right tabular-nums font-medium text-brand-700">{{ format_man_yen(tx.trade_price) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums hidden sm:table-cell">{{ format_yen_per_sqm(tx.unit_price) }}</td>
+          <td class="px-4 py-3 hidden md:table-cell">{{ tx.floor_plan or '—' }}</td>
+          <td class="px-4 py-3 hidden lg:table-cell">{{ tx.building_year or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+{% if detail.sibling_districts %}
+<section class="max-w-6xl mx-auto px-4 py-8">
+  {{ section_title(detail.municipality_name ~ 'のほかの地区', '取引10件以上の地区') }}
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    {% for d in detail.sibling_districts %}
+    <a href="/price/{{ detail.prefecture_slug }}/{{ detail.municipality_slug }}/area/{{ d.slug }}"
+       class="rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:bg-brand-50/50 transition">
+      <div class="font-medium text-ink-900">{{ d.name }}</div>
+      <div class="mt-1 text-xs text-slate-500 tabular-nums">{{ format_count(d.transaction_count) }}件</div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="max-w-6xl mx-auto px-4 py-14">
+  {{ report_cta(detail.municipality_name ~ ' ' ~ detail.name) }}
+</section>
+</article>
+
+{% if detail.yearly_stats %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof initDistrictCharts === "function") {
+      initDistrictCharts({{ detail.model_dump() | tojson | safe }});
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

@@ -183,10 +183,22 @@
     });
   </script>
   {% else %}
-  <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+  <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center mb-8">
     <p class="text-slate-600 mb-2">上のフォームから2つの市区町村を選ぶと比較結果が表示されます</p>
     <p class="text-sm text-slate-400">例: 渋谷区 vs 港区、横浜市中区 vs 川崎市中原区</p>
   </div>
+  {% if popular_compares %}
+  <div>
+    <h2 class="text-sm font-bold text-slate-500 mb-3">人気の比較</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {% for a_pref, a_muni, b_pref, b_muni, a_label, b_label in popular_compares %}
+      <a href="/compare/{{ a_pref }}/{{ a_muni }}/vs/{{ b_pref }}/{{ b_muni }}" class="compare-teaser">
+        <span class="font-medium">{{ a_label }}</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">{{ b_label }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
   {% endif %}
 </section>
 {% endblock %}

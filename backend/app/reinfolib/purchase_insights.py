@@ -371,10 +371,13 @@ def _city_planning_stats(db: Session, code: str, min_year: int) -> list[InsightB
 
 
 def _district_stats(db: Session, code: str, min_year: int) -> list[InsightBucket]:
+    from app.reinfolib.district_pages import DISTRICT_MIN_TRANSACTIONS, district_area_slug
+
     rows = db.execute(
         text(
             """
-            SELECT district_name,
+            SELECT district_code,
+                   MAX(district_name) AS name,
                    COUNT(*) AS cnt,
                    AVG(trade_price) AS avg_price,
                    AVG(unit_price) AS avg_unit
@@ -382,8 +385,8 @@ def _district_stats(db: Session, code: str, min_year: int) -> list[InsightBucket
             WHERE municipality_code = :code
               AND price_classification = '01'
               AND trade_year >= :min_year
-              AND district_name IS NOT NULL AND district_name != ''
-            GROUP BY district_name
+              AND district_code IS NOT NULL AND district_code != ''
+            GROUP BY district_code
             HAVING COUNT(*) >= :min_cnt
             ORDER BY cnt DESC
             LIMIT 10
@@ -391,15 +394,27 @@ def _district_stats(db: Session, code: str, min_year: int) -> list[InsightBucket
         ),
         {"code": code, "min_year": min_year, "min_cnt": MIN_BUCKET_COUNT},
     ).all()
-    return [
-        InsightBucket(
-            label=row[0],
-            transaction_count=int(row[1]),
-            trade_price_avg=float(row[2]) if row[2] is not None else None,
-            unit_price_avg=float(row[3]) if row[3] is not None else None,
+    used: set[str] = set()
+    result: list[InsightBucket] = []
+    for row in rows:
+        district_code = row[0]
+        name = row[1] or district_code
+        slug = (
+            district_area_slug(name, district_code, used=used)
+            if int(row[2]) >= DISTRICT_MIN_TRANSACTIONS
+            else None
         )
-        for row in rows
-    ]
+        result.append(
+            InsightBucket(
+                label=name,
+                code=district_code,
+                slug=slug,
+                transaction_count=int(row[2]),
+                trade_price_avg=float(row[3]) if row[3] is not None else None,
+                unit_price_avg=float(row[4]) if row[4] is not None else None,
+            )
+        )
+    return result
 
 
 def _price_class_comparison(db: Session, code: str, min_year: int) -> Optional[PriceClassComparison]:

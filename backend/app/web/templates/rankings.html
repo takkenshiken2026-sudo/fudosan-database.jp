@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "macros.html" import breadcrumb, section_title %}
-{% block description %}全国市区町村の不動産取引件数・平均価格ランキング。{% endblock %}
+{% block description %}{{ description }}{% endblock %}
 
 {% block content %}
 <section class="bg-white border-b border-slate-200">
@@ -8,17 +8,15 @@
     {{ breadcrumb([('トップ', '/'), ('ランキング', '/rankings'), (title, '')]) }}
 
     <h1 class="text-2xl md:text-3xl font-bold">{{ title }}</h1>
-    <p class="mt-2 text-slate-600">国土交通省 不動産情報ライブラリの取引価格情報に基づく統計</p>
+    <p class="mt-2 text-slate-600">{{ description }}</p>
 
-    <div class="flex gap-2 mt-6">
-      <a href="/rankings?sort=volume"
-         class="px-4 py-2 rounded-full text-sm font-medium transition {{ 'bg-brand-600 text-white' if sort == 'volume' else 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-        取引件数順
+    <div class="flex flex-wrap gap-2 mt-6">
+      {% for key, label in ranking_tabs %}
+      <a href="{% if key == 'volume' %}/rankings{% else %}/rankings/{{ key }}{% endif %}"
+         class="px-4 py-2 rounded-full text-sm font-medium transition {{ 'bg-brand-600 text-white' if sort == key else 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+        {{ label }}
       </a>
-      <a href="/rankings?sort=price"
-         class="px-4 py-2 rounded-full text-sm font-medium transition {{ 'bg-brand-600 text-white' if sort == 'price' else 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-        平均価格順
-      </a>
+      {% endfor %}
     </div>
   </div>
 </section>
@@ -31,8 +29,10 @@
           <th class="px-4 py-3 w-14 font-medium">順位</th>
           <th class="px-4 py-3 font-medium">市区町村</th>
           <th class="px-4 py-3 font-medium">都道府県</th>
-          <th class="px-4 py-3 text-right font-medium">累計件数</th>
-          <th class="px-4 py-3 text-right font-medium">平均価格</th>
+          <th class="px-4 py-3 text-right font-medium">{{ metric_label }}</th>
+          <th class="px-4 py-3 text-right font-medium hidden sm:table-cell">
+            {% if secondary_label %}{{ secondary_label }}{% else %}累計件数{% endif %}
+          </th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
@@ -47,12 +47,34 @@
             </a>
           </td>
           <td class="px-4 py-3 text-slate-500">{{ item.prefecture_name }}</td>
-          <td class="px-4 py-3 text-right tabular-nums font-medium">{{ format_count(item.total_transactions) }}</td>
-          <td class="px-4 py-3 text-right tabular-nums">{{ format_man_yen(item.recent_avg_price) }}</td>
+          <td class="px-4 py-3 text-right tabular-nums font-medium">
+            {% if sort == 'volume' %}
+              {{ format_count(item.total_transactions) }}
+            {% elif sort == 'price' %}
+              {{ format_man_yen(item.recent_avg_price) }}
+            {% elif item.metric_value is not none %}
+              {% if item.metric_unit == '%' %}{{ "%+.1f"|format(item.metric_value) if sort in ['price-growth','land-price-growth','population-growth'] else "%.1f"|format(item.metric_value) }}%
+              {% elif item.metric_unit == '円/㎡' %}{{ format_yen_per_sqm(item.metric_value) }}
+              {% elif item.metric_unit == '円' %}{{ "{:,.0f}".format(item.metric_value) }}円
+              {% else %}{{ "%.1f"|format(item.metric_value) }}{{ item.metric_unit }}{% endif %}
+            {% else %}—{% endif %}
+          </td>
+          <td class="px-4 py-3 text-right tabular-nums hidden sm:table-cell">
+            {% if item.secondary_value is not none %}
+              {{ format_yen_per_sqm(item.secondary_value) }}
+            {% elif sort == 'price' %}
+              {{ format_count(item.total_transactions) }}
+            {% else %}
+              {{ format_man_yen(item.recent_avg_price) }}
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+  <p class="mt-4 text-xs text-slate-400">
+    価格・地価上昇率は直近2年比較。地価水準は最新公示年の地点平均。家賃・空き家・持ち家・人口指標は e-Stat（住宅・土地統計調査／社会・人口統計体系）。
+  </p>
 </section>
 {% endblock %}
