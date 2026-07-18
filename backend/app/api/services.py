@@ -739,6 +739,8 @@ def build_report_payload(detail: MunicipalityDetail) -> dict:
         ],
         "propertyStats": [
             {
+                "year": s.trade_year,
+                "quarter": s.trade_quarter,
                 "type": s.property_type,
                 "count": s.transaction_count,
                 "avg": s.trade_price_avg,
