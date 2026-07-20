@@ -14,6 +14,7 @@ from app.config import settings
 from app.db import get_db
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
+from app.reinfolib.prefectures import PREFECTURES
 from app.web.content import (
     build_municipality_faq,
     build_municipality_intro,
@@ -64,6 +65,8 @@ templates.env.globals.update(
         "format_passengers_daily": format_passengers_daily,
         "quarter_label": quarter_label,
         "google_site_verification": settings.google_site_verification,
+        # 全ページ共通フッターで都道府県ハブへ内部リンクを張るための静的マスタ。
+        "all_prefectures": PREFECTURES,
     }
 )
 
