@@ -14,6 +14,12 @@ from app.config import settings
 from app.db import get_db
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
+from app.web.content import (
+    build_municipality_faq,
+    build_municipality_intro,
+    build_prefecture_faq,
+    build_prefecture_intro,
+)
 from app.web.formatters import (
     format_count,
     format_man_yen,
@@ -339,7 +345,12 @@ def prefecture_page(
         raise HTTPException(status_code=404, detail="都道府県が見つかりません")
     municipalities = services.list_municipalities_for_prefecture(db, prefecture)
     chart_data = services.get_prefecture_chart_data(db, prefecture, municipalities)
+    chart_dict = chart_data.model_dump()
     regional_news = get_regional_news(prefecture.name_ja, prefecture.slug, limit=6)
+    intro = build_prefecture_intro(
+        prefecture.name_ja, len(municipalities), chart_dict
+    )
+    faq = build_prefecture_faq(prefecture.name_ja, len(municipalities), chart_dict)
     return _render(
         request,
         "prefecture.html",
@@ -348,11 +359,14 @@ def prefecture_page(
             prefecture.name_ja,
             prefecture.slug,
             len(municipalities),
+            faq_items=faq,
         ),
         prefecture=prefecture,
         municipalities=municipalities,
-        chart_data=chart_data.model_dump(),
+        chart_data=chart_dict,
         regional_news=regional_news,
+        intro_text=intro,
+        faq=faq,
     )
 
 
@@ -384,6 +398,9 @@ def municipality_page(
         detail.slug,
         limit=6,
     )
+    intro = build_municipality_intro(detail)
+    faq = build_municipality_faq(detail)
+    land = detail.land_prices
     return _render(
         request,
         "municipality.html",
@@ -397,9 +414,14 @@ def municipality_page(
             recent_avg_price=detail.recent_avg_price,
             latest_year=detail.latest_year,
             stats_updated_at=detail.stats_updated_at,
+            land_avg_unit_price=land.avg_unit_price if land else None,
+            land_yoy=land.yoy_change_avg if land else None,
+            faq_items=faq,
         ),
         detail=detail,
         regional_news=regional_news,
+        intro_text=intro,
+        faq=faq,
         stations=services.list_stations_for_municipality(
             db, municipality.code, prefecture.code, limit=12
         ),

@@ -158,14 +158,33 @@ def seo_satei(base: str) -> SeoMeta:
     return finalize_seo(seo, base)
 
 
-def seo_prefecture(base: str, name: str, slug: str, muni_count: int) -> SeoMeta:
+def seo_prefecture(
+    base: str,
+    name: str,
+    slug: str,
+    muni_count: int,
+    faq_items: Optional[list[tuple[str, str]]] = None,
+) -> SeoMeta:
     path = f"/price/{slug}"
     url = absolute_url(base, path)
+    extra_graph: list[dict[str, Any]] = [
+        {
+            "@type": "CollectionPage",
+            "@id": f"{url}#webpage",
+            "url": url,
+            "name": f"{name}の不動産相場・土地価格",
+            "description": f"{name}内の市区町村別の取引価格・地価公示データ",
+            "isPartOf": {"@id": f"{base}/#website"},
+            "inLanguage": "ja-JP",
+        }
+    ]
+    if faq_items:
+        extra_graph.append(_faq_page(url, faq_items))
     seo = SeoMeta(
-        page_title=f"{name}の不動産取引価格・相場一覧 | {SITE_NAME}",
+        page_title=f"{name}の不動産相場・土地価格一覧【市区町村別】 | {SITE_NAME}",
         meta_description=(
-            f"{name}の{muni_count}市区町村の不動産取引価格・取引件数・平均価格を一覧。"
-            f"年次推移グラフとランキングで{name}の相場を比較できます。"
+            f"{name}の{muni_count}市区町村の不動産相場・土地価格・取引件数を一覧比較。"
+            f"取引価格と地価公示の年次推移グラフ・ランキングで{name}の相場がわかります。"
         ),
         canonical_path=path,
         og_type="website",
@@ -173,17 +192,7 @@ def seo_prefecture(base: str, name: str, slug: str, muni_count: int) -> SeoMeta:
             (SITE_NAME, base),
             (name, url),
         ],
-        extra_graph=[
-            {
-                "@type": "CollectionPage",
-                "@id": f"{url}#webpage",
-                "url": url,
-                "name": f"{name}の不動産取引価格・相場",
-                "description": f"{name}内の市区町村別取引価格データ",
-                "isPartOf": {"@id": f"{base}/#website"},
-                "inLanguage": "ja-JP",
-            }
-        ],
+        extra_graph=extra_graph,
     )
     return finalize_seo(seo, base)
 
@@ -199,6 +208,9 @@ def seo_municipality(
     recent_avg_price: Optional[float],
     latest_year: Optional[int],
     stats_updated_at: Optional[datetime] = None,
+    land_avg_unit_price: Optional[float] = None,
+    land_yoy: Optional[float] = None,
+    faq_items: Optional[list[tuple[str, str]]] = None,
 ) -> SeoMeta:
     path = f"/price/{pref_slug}/{muni_slug}"
     url = absolute_url(base, path)
@@ -206,6 +218,14 @@ def seo_municipality(
     price_text = (
         f"平均取引価格{_format_man(recent_avg_price)}、" if recent_avg_price else ""
     )
+    land_text = ""
+    if land_avg_unit_price:
+        land_text = f"地価公示{int(land_avg_unit_price):,}円/㎡"
+        if land_yoy is not None:
+            sign = "+" if land_yoy > 0 else ""
+            land_text += f"（前年比{sign}{land_yoy:.1f}%）"
+        land_text += "、"
+    year_prefix = f"【{latest_year}年最新】" if latest_year else ""
     year_text = f"{latest_year}年までの" if latest_year else ""
     webpage: dict[str, Any] = {
         "@type": "WebPage",
@@ -219,12 +239,44 @@ def seo_municipality(
     }
     if stats_updated_at:
         webpage["dateModified"] = stats_updated_at.strftime("%Y-%m-%d")
+    extra_graph: list[dict[str, Any]] = [
+        webpage,
+        {
+            "@type": "Place",
+            "@id": f"{url}#place",
+            "name": f"{pref_name}{name}",
+            "containedInPlace": {
+                "@type": "AdministrativeArea",
+                "name": pref_name,
+            },
+        },
+        {
+            "@type": "Dataset",
+            "@id": f"{url}#dataset",
+            "name": f"{pref_name}{name}の不動産取引価格データ",
+            "description": (
+                f"国土交通省 不動産情報ライブラリに基づく"
+                f"{pref_name}{name}の取引価格統計（{total_transactions:,}件）"
+            ),
+            "creator": MLIT_ORG,
+            "isBasedOn": "https://www.reinfolib.mlit.go.jp/",
+            "temporalCoverage": "2005/2025",
+            "spatialCoverage": {
+                "@type": "Place",
+                "name": f"{pref_name}{name}",
+            },
+            "license": "https://www.mlit.go.jp/",
+        },
+    ]
+    if faq_items:
+        extra_graph.append(_faq_page(url, faq_items))
     seo = SeoMeta(
-        page_title=f"{pref_name}{name}の不動産取引価格・相場 | {SITE_NAME}",
+        page_title=f"{pref_name}{name}の不動産相場・土地価格{year_prefix} | {SITE_NAME}",
         meta_description=(
-            f"{pref_name}{name}の不動産取引価格相場。"
-            f"累計{total_transactions:,}件の取引データ、{price_text}"
-            f"{year_text}四半期・年次の価格推移グラフ、物件種別内訳、地価公示を掲載。"
+            f"{pref_name}{name}の不動産相場・土地価格を無料公開。"
+            f"{price_text}{land_text}"
+            f"{year_text}中古マンション・土地・戸建の取引価格の推移グラフと"
+            f"累計{total_transactions:,}件の実データ、地価公示を掲載。"
         ),
         canonical_path=path,
         og_type="article",
@@ -233,37 +285,25 @@ def seo_municipality(
             (pref_name, pref_url),
             (name, url),
         ],
-        extra_graph=[
-            webpage,
-            {
-                "@type": "Place",
-                "@id": f"{url}#place",
-                "name": f"{pref_name}{name}",
-                "containedInPlace": {
-                    "@type": "AdministrativeArea",
-                    "name": pref_name,
-                },
-            },
-            {
-                "@type": "Dataset",
-                "@id": f"{url}#dataset",
-                "name": f"{pref_name}{name}の不動産取引価格データ",
-                "description": (
-                    f"国土交通省 不動産情報ライブラリに基づく"
-                    f"{pref_name}{name}の取引価格統計（{total_transactions:,}件）"
-                ),
-                "creator": MLIT_ORG,
-                "isBasedOn": "https://www.reinfolib.mlit.go.jp/",
-                "temporalCoverage": "2005/2025",
-                "spatialCoverage": {
-                    "@type": "Place",
-                    "name": f"{pref_name}{name}",
-                },
-                "license": "https://www.mlit.go.jp/",
-            },
-        ],
+        extra_graph=extra_graph,
     )
     return finalize_seo(seo, base)
+
+
+def _faq_page(page_url: str, items: list[tuple[str, str]]) -> dict[str, Any]:
+    """可視 FAQ セクションと対になる FAQPage 構造化データを生成。"""
+    return {
+        "@type": "FAQPage",
+        "@id": f"{page_url}#faq",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": question,
+                "acceptedAnswer": {"@type": "Answer", "text": answer},
+            }
+            for question, answer in items
+        ],
+    }
 
 
 def seo_rankings(
