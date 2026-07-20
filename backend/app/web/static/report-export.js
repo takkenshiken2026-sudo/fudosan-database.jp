@@ -594,9 +594,30 @@
     return out.join("");
   }
 
+  // 物件種別を英数字スラッグへ（日本語ファイル名は環境依存で崩れやすいため回避）
+  var PROP_SLUG = {
+    "中古マンション等": "condo",
+    "宅地(土地)": "land",
+    "宅地(土地と建物)": "house",
+    "農地": "farmland",
+    "林地": "forest",
+  };
+  function propSlug(pt) {
+    if (!pt || pt === "all") return "all";
+    if (PROP_SLUG[pt]) return PROP_SLUG[pt];
+    var ascii = pt.replace(/[^A-Za-z0-9]+/g, "");
+    return ascii || "type";
+  }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function stamp() {
+    var d = new Date();
+    return "" + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "-" +
+      pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
+  }
+  function rand4() { return Math.random().toString(36).slice(2, 6); }
+  // report-{エリア}-{種別}-{物件種別}-{日時}-{ランダム}  （英数字のみ・毎回ユニーク）
   function fileBase(data, type, pt) {
-    var suffix = pt && pt !== "all" ? "-" + pt.replace(/[()（）\s]/g, "") : "";
-    return "report-" + (data.slug || "area") + "-" + normalizeType(type) + suffix;
+    return ["report", data.slug || "area", normalizeType(type), propSlug(pt), stamp(), rand4()].join("-");
   }
 
   var api = { buildModel: buildModel, buildPptx: buildPptx, buildDocx: buildDocx, renderPreviewHtml: renderPreviewHtml,
