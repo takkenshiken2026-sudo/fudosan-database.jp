@@ -65,6 +65,12 @@ def _base_graph(base: str) -> list[dict[str, Any]]:
             "name": ORG_NAME,
             "url": base,
             "logo": absolute_url(base, "/static/og-default.svg"),
+            "description": (
+                "国土交通省 不動産情報ライブラリの取引価格情報・地価公示データに基づき、"
+                "全国の不動産相場を集計・公開する情報サービス。"
+            ),
+            "knowsAbout": ["不動産取引価格", "地価公示", "不動産相場", "土地価格"],
+            "publishingPrinciples": absolute_url(base, "/about"),
         },
         {
             "@type": "WebSite",
@@ -459,6 +465,36 @@ def seo_for_agents(base: str) -> SeoMeta:
         breadcrumbs=[
             (SITE_NAME, base),
             ("仲介店向け", absolute_url(base, "/for-agents")),
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
+def seo_about(base: str) -> SeoMeta:
+    path = "/about"
+    url = absolute_url(base, path)
+    seo = SeoMeta(
+        page_title=f"データについて（出典・調査方法） | {SITE_NAME}",
+        meta_description=(
+            "不動産相場ナビのデータ出典・対象範囲・統計の算出方法・更新方針・"
+            "免責事項について。国土交通省 不動産情報ライブラリのデータに基づく"
+            "全国の不動産相場情報の根拠を公開しています。"
+        ),
+        canonical_path=path,
+        breadcrumbs=[
+            (SITE_NAME, base),
+            ("データについて", url),
+        ],
+        extra_graph=[
+            {
+                "@type": "AboutPage",
+                "@id": f"{url}#webpage",
+                "url": url,
+                "name": f"データについて（出典・調査方法） | {SITE_NAME}",
+                "isPartOf": {"@id": f"{base}/#website"},
+                "about": {"@id": f"{base}/#organization"},
+                "inLanguage": "ja-JP",
+            }
         ],
     )
     return finalize_seo(seo, base)

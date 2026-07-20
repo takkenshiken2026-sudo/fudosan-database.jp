@@ -31,6 +31,7 @@ from app.web.formatters import (
     quarter_label,
 )
 from app.web.seo import (
+    seo_about,
     seo_compare,
     seo_for_agents,
     seo_home,
@@ -475,3 +476,8 @@ def compare_page(
 @router.get("/for-agents", response_class=HTMLResponse)
 def for_agents(request: Request) -> HTMLResponse:
     return _render(request, "for_agents.html", seo_for_agents(_base(request)))
+
+
+@router.get("/about", response_class=HTMLResponse)
+def about_page(request: Request) -> HTMLResponse:
+    return _render(request, "about.html", seo_about(_base(request)))
