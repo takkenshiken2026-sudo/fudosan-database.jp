@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>不動産相場ナビ | 全国の不動産取引価格・相場データ</title>
+  <meta name="description" content="全国1,920市区町村の不動産取引価格・取引件数・価格推移を無料公開。国土交通省 不動産情報ライブラリのデータに基づく地域別相場検索。">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://fudosan-database.jp/">
+  <link rel="alternate" hreflang="ja" href="https://fudosan-database.jp/">
+  <link rel="alternate" hreflang="x-default" href="https://fudosan-database.jp/">
+
+  
+
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:site_name" content="不動産相場ナビ">
+  <meta property="og:title" content="不動産相場ナビ | 全国の不動産取引価格・相場データ">
+  <meta property="og:description" content="全国1,920市区町村の不動産取引価格・取引件数・価格推移を無料公開。国土交通省 不動産情報ライブラリのデータに基づく地域別相場検索。">
+  <meta property="og:url" content="https://fudosan-database.jp/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://fudosan-database.jp/static/og-default.svg">
+  <meta name="twitter:image" content="https://fudosan-database.jp/static/og-default.svg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="不動産相場ナビ | 全国の不動産取引価格・相場データ">
+  <meta name="twitter:description" content="全国1,920市区町村の不動産取引価格・取引件数・価格推移を無料公開。国土交通省 不動産情報ライブラリのデータに基づく地域別相場検索。">
+
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/og-default.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://fudosan-database.jp/#organization", "name": "不動産相場ナビ", "url": "https://fudosan-database.jp", "logo": "https://fudosan-database.jp/static/og-default.svg"}, {"@type": "WebSite", "@id": "https://fudosan-database.jp/#website", "url": "https://fudosan-database.jp", "name": "不動産相場ナビ", "publisher": {"@id": "https://fudosan-database.jp/#organization"}, "inLanguage": "ja-JP", "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": "https://fudosan-database.jp/search?q={search_term_string}"}, "query-input": "required name=search_term_string"}}, {"@type": "WebPage", "@id": "https://fudosan-database.jp/#webpage", "url": "https://fudosan-database.jp", "name": "不動産相場ナビ | 全国の不動産取引価格・相場データ", "isPartOf": {"@id": "https://fudosan-database.jp/#website"}, "inLanguage": "ja-JP"}]}</script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+            ink: { 700: '#334155', 900: '#0f172a' }
+          },
+          fontFamily: { sans: ['"Noto Sans JP"', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/static/site.css?v=12">
+  <script src="/static/site.js?v=11" defer></script>
+  
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="/static/charts.js" defer></script>
+<script src="/static/japan-map.js?v=9" defer></script>
+
+</head>
+<body class="font-sans bg-slate-50 text-ink-900 min-h-screen flex flex-col has-mobile-nav">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm" role="banner">
+    <div class="max-w-6xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between gap-3">
+        <a href="/" class="flex items-center gap-2 font-bold text-lg text-brand-700 hover:text-brand-600 shrink-0" aria-label="不動産相場ナビ トップ">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white text-sm font-bold" aria-hidden="true">相</span>
+          <span class="hidden sm:inline">不動産相場ナビ</span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-1 text-sm shrink-0 ml-auto" aria-label="メインナビゲーション">
+          <a href="/rankings" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">ランキング</a>
+          <a href="/estimate" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">相場シミュレーター</a>
+          <a href="/news" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">ニュース</a>
+          <a href="/compare" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">比較</a>
+          <a href="/report/new" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">レポート</a>
+          <a href="/for-agents" class="ml-1 rounded-full bg-brand-600 px-4 py-2 text-white font-medium hover:bg-brand-700 transition">仲介店向け</a>
+        </nav>
+
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-slate-100" aria-label="メニューを開く" aria-expanded="false">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+      <nav id="mobile-menu" class="hidden md:hidden pt-3 pb-1 flex flex-wrap gap-2 border-t border-slate-100 mt-3" aria-label="モバイルナビゲーション">
+        <a href="/rankings" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">ランキング</a>
+        <a href="/estimate" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">シミュレーター</a>
+        <a href="/news" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">ニュース</a>
+        <a href="/compare" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">エリア比較</a>
+        <a href="/report/new" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">レポート作成</a>
+        <a href="/for-agents" class="px-3 py-1.5 rounded-lg text-sm text-white bg-brand-600">仲介店向け</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1 pb-16 md:pb-0" id="main-content" role="main">
+    
+<section class="hero-section relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-4 py-12 md:py-16 relative z-10">
+    <div class="hero-layout hero-layout--with-map">
+      <div class="hero-left">
+        <div class="hero-copy">
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4">地域の不動産相場が、<br class="hidden sm:block">すぐわかる。</h1>
+          <p class="text-brand-50 text-base md:text-lg leading-relaxed">全国630万件超の取引データを市区町村別に検索。推移グラフ・ランキング・エリア比較が無料。</p>
+        </div>
+
+        <div class="hero-panel w-full text-left">
+          <form action="/search" method="get" class="relative mb-5" id="hero-search-wrap" role="search">
+            <label for="hero-search" class="sr-only">市区町村を検索</label>
+            <div class="flex gap-2">
+              <input type="search" id="hero-search" name="q" placeholder="市区町村名で検索（例: 渋谷区）"
+                     autocomplete="off"
+                     class="flex-1 rounded-full border-0 bg-white/95 text-ink-900 px-5 py-3 text-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50">
+              <button type="submit" class="rounded-full bg-brand-500 px-5 py-3 text-white font-medium hover:bg-brand-400 transition shadow-lg shrink-0">
+                検索
+              </button>
+            </div>
+            <div id="hero-search-results" class="search-dropdown hidden text-ink-900 text-left"></div>
+          </form>
+
+          <div class="grid grid-cols-3 gap-3 mb-5">
+            <div class="rounded-xl bg-white/10 backdrop-blur px-3 py-3 border border-white/20 text-center sm:text-left">
+              <div class="text-brand-100 text-xs">累計取引データ</div>
+              <div class="text-lg sm:text-xl font-bold tabular-nums">6,367,602<span class="text-sm font-normal ml-0.5">件</span></div>
+            </div>
+            <div class="rounded-xl bg-white/10 backdrop-blur px-3 py-3 border border-white/20 text-center sm:text-left">
+              <div class="text-brand-100 text-xs">市区町村</div>
+              <div class="text-lg sm:text-xl font-bold tabular-nums">1,920</div>
+            </div>
+            <div class="rounded-xl bg-white/10 backdrop-blur px-3 py-3 border border-white/20 text-center sm:text-left">
+              <div class="text-brand-100 text-xs">データ期間</div>
+              <div class="text-lg sm:text-xl font-bold">2005〜2025</div>
+            </div>
+          </div>
+
+          
+          <div>
+            <div class="text-brand-100 text-xs mb-2">人気エリア</div>
+            <div class="flex flex-wrap gap-2">
+              
+              <a href="/price/tokyo/shibuya-ku" class="area-chip">渋谷区</a>
+              
+              <a href="/price/tokyo/shinjuku-ku" class="area-chip">新宿区</a>
+              
+              <a href="/price/tokyo/minato-ku" class="area-chip">港区</a>
+              
+              <a href="/price/tokyo/chiyoda-ku" class="area-chip">千代田区</a>
+              
+              <a href="/price/osaka/kita-ku" class="area-chip">大阪市北区</a>
+              
+              <a href="/price/kanagawa/naka-ku" class="area-chip">横浜市中区</a>
+              
+              <a href="/price/aichi/naka-ku" class="area-chip">名古屋市中区</a>
+              
+              <a href="/price/fukuoka/chuuou-ku" class="area-chip">福岡市中央区</a>
+              
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-map-panel">
+          <div class="text-brand-100 text-xs mb-2 text-center lg:text-left">地図から都道府県を選ぶ</div>
+          <div class="japan-map-wrap japan-map-wrap--hero" id="japan-map" aria-busy="true"></div>
+          <p class="mt-2 text-center text-xs text-brand-100/80">県をクリックで相場ページへ</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script type="application/json" id="prefecture-map-data">[{"code": "01", "slug": "hokkaido", "name_ja": "北海道", "total_transactions": 304872, "avg_price": 6540326.781941663}, {"code": "02", "slug": "aomori", "name_ja": "青森県", "total_transactions": 76643, "avg_price": 4204712.254599874}, {"code": "03", "slug": "iwate", "name_ja": "岩手県", "total_transactions": 62789, "avg_price": 6437546.200044966}, {"code": "04", "slug": "miyagi", "name_ja": "宮城県", "total_transactions": 128590, "avg_price": 15375271.65605198}, {"code": "05", "slug": "akita", "name_ja": "秋田県", "total_transactions": 60646, "avg_price": 4894083.438333908}, {"code": "06", "slug": "yamagata", "name_ja": "山形県", "total_transactions": 57643, "avg_price": 5388758.199835126}, {"code": "07", "slug": "fukushima", "name_ja": "福島県", "total_transactions": 92181, "avg_price": 6749843.352519235}, {"code": "08", "slug": "ibaraki", "name_ja": "茨城県", "total_transactions": 133182, "avg_price": 12358209.403554952}, {"code": "09", "slug": "tochigi", "name_ja": "栃木県", "total_transactions": 101306, "avg_price": 11557359.906184511}, {"code": "10", "slug": "gunma", "name_ja": "群馬県", "total_transactions": 86660, "avg_price": 11336378.779327389}, {"code": "11", "slug": "saitama", "name_ja": "埼玉県", "total_transactions": 346001, "avg_price": 24994088.70330868}, {"code": "12", "slug": "chiba", "name_ja": "千葉県", "total_transactions": 312537, "avg_price": 17992094.828987766}, {"code": "13", "slug": "tokyo", "name_ja": "東京都", "total_transactions": 732940, "avg_price": 53727272.74035033}, {"code": "14", "slug": "kanagawa", "name_ja": "神奈川県", "total_transactions": 477638, "avg_price": 36616505.91188079}, {"code": "15", "slug": "niigata", "name_ja": "新潟県", "total_transactions": 125595, "avg_price": 8735610.240558174}, {"code": "16", "slug": "toyama", "name_ja": "富山県", "total_transactions": 51443, "avg_price": 9769355.074973451}, {"code": "17", "slug": "ishikawa", "name_ja": "石川県", "total_transactions": 61345, "avg_price": 11182929.466019824}, {"code": "18", "slug": "fukui", "name_ja": "福井県", "total_transactions": 33858, "avg_price": 9002174.733720083}, {"code": "19", "slug": "yamanashi", "name_ja": "山梨県", "total_transactions": 41140, "avg_price": 11310036.45417142}, {"code": "20", "slug": "nagano", "name_ja": "長野県", "total_transactions": 102296, "avg_price": 8108254.8095803335}, {"code": "21", "slug": "gifu", "name_ja": "岐阜県", "total_transactions": 110011, "avg_price": 11815376.665344253}, {"code": "22", "slug": "shizuoka", "name_ja": "静岡県", "total_transactions": 181563, "avg_price": 17439906.574776374}, {"code": "23", "slug": "aichi", "name_ja": "愛知県", "total_transactions": 333777, "avg_price": 31590234.07190007}, {"code": "24", "slug": "mie", "name_ja": "三重県", "total_transactions": 87452, "avg_price": 12903995.001018168}, {"code": "25", "slug": "shiga", "name_ja": "滋賀県", "total_transactions": 75003, "avg_price": 18043572.991389904}, {"code": "26", "slug": "kyoto", "name_ja": "京都府", "total_transactions": 139570, "avg_price": 26306139.897633076}, {"code": "27", "slug": "osaka", "name_ja": "大阪府", "total_transactions": 433508, "avg_price": 34261792.75141025}, {"code": "28", "slug": "hyogo", "name_ja": "兵庫県", "total_transactions": 285985, "avg_price": 19796813.78650722}, {"code": "29", "slug": "nara", "name_ja": "奈良県", "total_transactions": 63186, "avg_price": 12819756.966230858}, {"code": "30", "slug": "wakayama", "name_ja": "和歌山県", "total_transactions": 45732, "avg_price": 9521522.030070739}, {"code": "31", "slug": "tottori", "name_ja": "鳥取県", "total_transactions": 31394, "avg_price": 5351815.059357681}, {"code": "32", "slug": "shimane", "name_ja": "島根県", "total_transactions": 43089, "avg_price": 3906775.14658933}, {"code": "33", "slug": "okayama", "name_ja": "岡山県", "total_transactions": 85990, "avg_price": 10293944.264005251}, {"code": "34", "slug": "hiroshima", "name_ja": "広島県", "total_transactions": 124085, "avg_price": 20107788.793274797}, {"code": "35", "slug": "yamaguchi", "name_ja": "山口県", "total_transactions": 65238, "avg_price": 10487113.273404673}, {"code": "36", "slug": "tokushima", "name_ja": "徳島県", "total_transactions": 33646, "avg_price": 7722648.099616062}, {"code": "37", "slug": "kagawa", "name_ja": "香川県", "total_transactions": 43362, "avg_price": 10613663.641981933}, {"code": "38", "slug": "ehime", "name_ja": "愛媛県", "total_transactions": 62872, "avg_price": 9293048.910570672}, {"code": "39", "slug": "kochi", "name_ja": "高知県", "total_transactions": 40398, "avg_price": 4260356.594503848}, {"code": "40", "slug": "fukuoka", "name_ja": "福岡県", "total_transactions": 230864, "avg_price": 19653147.51291369}, {"code": "41", "slug": "saga", "name_ja": "佐賀県", "total_transactions": 37285, "avg_price": 10005380.276838021}, {"code": "42", "slug": "nagasaki", "name_ja": "長崎県", "total_transactions": 52943, "avg_price": 9384948.672999911}, {"code": "43", "slug": "kumamoto", "name_ja": "熊本県", "total_transactions": 88836, "avg_price": 8556191.454447895}, {"code": "44", "slug": "oita", "name_ja": "大分県", "total_transactions": 60012, "avg_price": 7412587.526808261}, {"code": "45", "slug": "miyazaki", "name_ja": "宮崎県", "total_transactions": 68485, "avg_price": 4850916.297841849}, {"code": "46", "slug": "kagoshima", "name_ja": "鹿児島県", "total_transactions": 106046, "avg_price": 4313591.533974603}, {"code": "47", "slug": "okinawa", "name_ja": "沖縄県", "total_transactions": 47965, "avg_price": 17796184.611849323}]</script>
+
+
+<section class="max-w-6xl mx-auto px-4 -mt-6 relative z-10">
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <a href="#market-overview" class="home-action-card">
+      <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      <span class="font-semibold text-sm">全国の推移</span>
+    </a>
+    <a href="#rankings" class="home-action-card">
+      <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+      <span class="font-semibold text-sm">ランキング</span>
+    </a>
+    <a href="/compare/tokyo/shibuya-ku/vs/tokyo/minato-ku" class="home-action-card">
+      <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      <span class="font-semibold text-sm">エリア比較</span>
+    </a>
+    <a href="/report/new" class="home-action-card">
+      <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <span class="font-semibold text-sm">レポート作成</span>
+    </a>
+  </div>
+</section>
+
+
+
+<section id="market-overview" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+    
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-ink-900">全国の取引・地価動向</h2>
+  <p class="mt-1 text-sm text-slate-500">国土交通省データに基づく年次推移</p>
+</div>
+
+    <a href="/market" class="text-sm text-brand-600 font-medium hover:underline shrink-0">年次データ（表）を見る →</a>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-volume"></canvas></div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-price"></canvas></div>
+    </div>
+    
+    
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-land-price"></canvas></div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
+      <div class="chart-card chart-card--compact"><canvas id="chart-home-land-points"></canvas></div>
+    </div>
+    
+  </div>
+</section>
+
+
+
+<section class="bg-slate-100 border-y border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-14">
+    
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-ink-900">都道府県ランキング</h2>
+  <p class="mt-1 text-sm text-slate-500">クリックで市区町村一覧へ</p>
+</div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
+          <h3 class="text-sm font-semibold text-slate-700">平均価格トップ10</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm rank-table--compact">
+            <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+              <tr>
+                <th class="px-3 py-1.5 w-12">順位</th>
+                <th class="px-3 py-1.5">都道府県</th>
+                <th class="px-3 py-1.5 text-right">平均価格</th>
+                <th class="px-3 py-1.5 text-right">前年比</th>
+                <th class="px-3 py-1.5 text-right hidden sm:table-cell">累計件数</th>
+              </tr>
+            </thead>
+            
+<tbody class="divide-y divide-slate-100">
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-1">1</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">5,373万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +1.6%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">732,940</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/kanagawa'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-2">2</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">神奈川県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">3,662万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +3.5%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">477,638</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/osaka'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-3">3</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">大阪府</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">3,426万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -6.0%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">433,508</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/aichi'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">4</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">愛知県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">3,159万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -2.1%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">333,777</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/kyoto'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">5</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">京都府</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">2,631万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -2.8%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">139,570</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/saitama'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">6</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">埼玉県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">2,499万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -9.0%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">346,001</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/hiroshima'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">7</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">広島県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">2,011万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +4.6%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">124,085</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/hyogo'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">8</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">兵庫県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1,980万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +2.3%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">285,985</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/fukuoka'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">9</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">福岡県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1,965万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -4.1%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">230,864</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/shiga'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">10</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">滋賀県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1,804万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -7.0%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">75,003</td>
+  </tr>
+  
+</tbody>
+
+          </table>
+        </div>
+      </div>
+      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
+          <h3 class="text-sm font-semibold text-slate-700">値上がり率トップ10</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm rank-table--compact">
+            <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+              <tr>
+                <th class="px-3 py-1.5 w-12">順位</th>
+                <th class="px-3 py-1.5">都道府県</th>
+                <th class="px-3 py-1.5 text-right">平均価格</th>
+                <th class="px-3 py-1.5 text-right">前年比</th>
+                <th class="px-3 py-1.5 text-right hidden sm:table-cell">累計件数</th>
+              </tr>
+            </thead>
+            
+<tbody class="divide-y divide-slate-100">
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/toyama'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-1">1</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">富山県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">977万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +44.1%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">51,443</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/okinawa'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-2">2</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">沖縄県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">1,780万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +34.7%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">47,965</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/wakayama'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-3">3</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">和歌山県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">952万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +29.4%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">45,732</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/hokkaido'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">4</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">北海道</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">654万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +19.1%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">304,872</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/iwate'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">5</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">岩手県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">644万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +19.1%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">62,789</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tochigi'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">6</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">栃木県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">1,156万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +18.1%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">101,306</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/ibaraki'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">7</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">茨城県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">1,236万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +17.3%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">133,182</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/aomori'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">8</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">青森県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">420万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +16.7%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">76,643</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/niigata'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">9</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">新潟県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">874万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +16.4%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">125,595</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/nagano'">
+    <td class="px-3 py-1.5">
+      
+      <span class="rank-badge rank-badge--sm rank-n">10</span>
+    </td>
+    <td class="px-3 py-1.5 font-medium group-hover:text-brand-700">長野県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">811万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      <span class="text-red-600">
+        +14.3%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden sm:table-cell">102,296</td>
+  </tr>
+  
+</tbody>
+
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="rankings" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+    
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-ink-900">市区町村ランキング</h2>
+  <p class="mt-1 text-sm text-slate-500">行をクリックして詳細・グラフを表示</p>
+</div>
+
+    <div class="flex gap-2 shrink-0">
+      <a href="/rankings/price" class="text-sm text-brand-600 font-medium hover:underline">価格順 全50件 →</a>
+      <span class="text-slate-300">|</span>
+      <a href="/rankings/price-growth" class="text-sm text-brand-600 font-medium hover:underline">値上がり率 全50件 →</a>
+    </div>
+  </div>
+  <div class="grid lg:grid-cols-2 gap-8">
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
+        <h3 class="text-sm font-semibold text-slate-700">平均価格トップ10</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm rank-table--compact">
+          <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+            <tr>
+              <th class="px-3 py-1.5 w-12">順位</th>
+              <th class="px-3 py-1.5">市区町村</th>
+              <th class="px-3 py-1.5 hidden sm:table-cell">都道府県</th>
+              <th class="px-3 py-1.5 text-right">平均価格</th>
+              <th class="px-3 py-1.5 text-right">前年比</th>
+              <th class="px-3 py-1.5 text-right hidden md:table-cell">累計件数</th>
+            </tr>
+          </thead>
+          
+<tbody class="divide-y divide-slate-100">
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo/chiyoda-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-1">1</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">千代田区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">東京都</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">2.0億円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -20.2%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">7,475</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo/minato-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-2">2</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">港区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">東京都</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1.6億円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -2.4%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">24,159</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo/shibuya-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-3">3</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">渋谷区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">東京都</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1.5億円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +27.4%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">17,179</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/aichi/tobishima-mura'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">4</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">飛島村</span>
+      <span class="block text-xs text-slate-400 sm:hidden">愛知県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">愛知県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1.4億円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +153.4%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">258</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo/chuuou-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">5</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">中央区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">東京都</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1.2億円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -10.8%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">19,839</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/osaka/chuuou-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">6</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">中央区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">大阪府</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">大阪府</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">1.1億円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -17.5%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">13,949</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo/meguro-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">7</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">目黒区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">東京都</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">9,692万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +8.8%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">15,210</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo/shinjuku-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">8</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">新宿区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">東京都</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">8,905万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-red-600">
+        +4.0%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">25,746</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/aichi/naka-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">9</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">中区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">愛知県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">愛知県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">8,728万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -21.0%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">7,960</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/tokyo/musashino-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">10</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">武蔵野市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">東京都</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">東京都</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700 font-medium">8,391万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums">
+      
+      <span class="text-blue-600">
+        -0.9%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">5,791</td>
+  </tr>
+  
+</tbody>
+
+        </table>
+      </div>
+    </div>
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="px-4 py-2 border-b border-slate-100 bg-slate-50">
+        <h3 class="text-sm font-semibold text-slate-700">値上がり率トップ10</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm rank-table--compact">
+          <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+            <tr>
+              <th class="px-3 py-1.5 w-12">順位</th>
+              <th class="px-3 py-1.5">市区町村</th>
+              <th class="px-3 py-1.5 hidden sm:table-cell">都道府県</th>
+              <th class="px-3 py-1.5 text-right">平均価格</th>
+              <th class="px-3 py-1.5 text-right">前年比</th>
+              <th class="px-3 py-1.5 text-right hidden md:table-cell">累計件数</th>
+            </tr>
+          </thead>
+          
+<tbody class="divide-y divide-slate-100">
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/iwate/ichinoseki-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-1">1</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">一関市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">岩手県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">岩手県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">781万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +323.7%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">5,393</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/shizuoka/kakegawa-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-2">2</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">掛川市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">静岡県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">静岡県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">1,569万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +188.5%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">5,770</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/gifu/nakatsugawa-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-3">3</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">中津川市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">岐阜県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">岐阜県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">812万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +173.9%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">4,384</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/kyoto/kizugawa-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">4</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">木津川市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">京都府</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">京都府</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">2,493万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +154.5%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">4,015</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/niigata/nishikan-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">5</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">西蒲区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">新潟県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">新潟県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">591万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +141.4%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">3,172</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/ibaraki/hitachinaka-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">6</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">ひたちなか市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">茨城県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">茨城県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">2,299万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +136.7%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">5,752</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/hiroshima/sanji-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">7</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">三次市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">広島県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">広島県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">785万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +135.9%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">2,737</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/fukuoka/wakamatsu-ku'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">8</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">若松区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">福岡県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">福岡県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">2,787万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +124.8%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">3,321</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/niigata/murakami-shi'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">9</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">村上市</span>
+      <span class="block text-xs text-slate-400 sm:hidden">新潟県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">新潟県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">482万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +114.5%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">4,196</td>
+  </tr>
+  
+  <tr class="hover:bg-brand-50/40 transition cursor-pointer group" onclick="location.href='/price/kanagawa/midori-ku-14151'">
+    <td class="px-3 py-1.5">
+      <span class="rank-badge rank-badge--sm rank-n">10</span>
+    </td>
+    <td class="px-3 py-1.5">
+      <span class="font-medium text-ink-900 group-hover:text-brand-700">緑区</span>
+      <span class="block text-xs text-slate-400 sm:hidden">神奈川県</span>
+    </td>
+    <td class="px-3 py-1.5 text-slate-500 hidden sm:table-cell">神奈川県</td>
+    <td class="px-3 py-1.5 text-right tabular-nums text-brand-700">2,977万円</td>
+    <td class="px-3 py-1.5 text-right tabular-nums font-medium">
+      
+      
+      <span class="text-red-600">
+        +106.4%
+      </span>
+      
+    </td>
+    <td class="px-3 py-1.5 text-right tabular-nums hidden md:table-cell">7,720</td>
+  </tr>
+  
+</tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="bg-white border-y border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-ink-900">人気の比較</h2>
+  <p class="mt-1 text-sm text-slate-500">2エリアの価格・件数を並べて確認</p>
+</div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      
+      <a href="/compare/tokyo/shibuya-ku/vs/tokyo/minato-ku" class="compare-teaser">
+        <span class="font-medium">渋谷区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">港区</span>
+      </a>
+      
+      <a href="/compare/tokyo/shinjuku-ku/vs/tokyo/chiyoda-ku" class="compare-teaser">
+        <span class="font-medium">新宿区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">千代田区</span>
+      </a>
+      
+      <a href="/compare/kanagawa/naka-ku/vs/kanagawa/nishi-ku" class="compare-teaser">
+        <span class="font-medium">横浜市中区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">横浜市西区</span>
+      </a>
+      
+      <a href="/compare/osaka/kita-ku/vs/aichi/naka-ku" class="compare-teaser">
+        <span class="font-medium">大阪市北区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">名古屋市中区</span>
+      </a>
+      
+      <a href="/compare/fukuoka/chuuou-ku/vs/fukuoka/fukuoka-shi" class="compare-teaser">
+        <span class="font-medium">福岡市中央区</span><span class="text-slate-400 text-xs">vs</span><span class="font-medium">福岡市</span>
+      </a>
+      
+      <a href="/compare" class="compare-teaser compare-teaser--cta">
+        <span class="text-brand-600 font-medium">自分で選んで比較 →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<section id="search-area" class="max-w-6xl mx-auto px-4 py-14">
+  
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-ink-900">都道府県から探す</h2>
+  <p class="mt-1 text-sm text-slate-500">取引データのある都道府県</p>
+</div>
+
+  <div class="pref-link-grid">
+    
+    <a href="/price/hokkaido" class="pref-link">
+      <span class="pref-link__name">北海道</span>
+      <span class="pref-link__meta tabular-nums">304,872件 · 654万円</span>
+    </a>
+    
+    <a href="/price/aomori" class="pref-link">
+      <span class="pref-link__name">青森県</span>
+      <span class="pref-link__meta tabular-nums">76,643件 · 420万円</span>
+    </a>
+    
+    <a href="/price/iwate" class="pref-link">
+      <span class="pref-link__name">岩手県</span>
+      <span class="pref-link__meta tabular-nums">62,789件 · 644万円</span>
+    </a>
+    
+    <a href="/price/miyagi" class="pref-link">
+      <span class="pref-link__name">宮城県</span>
+      <span class="pref-link__meta tabular-nums">128,590件 · 1,538万円</span>
+    </a>
+    
+    <a href="/price/akita" class="pref-link">
+      <span class="pref-link__name">秋田県</span>
+      <span class="pref-link__meta tabular-nums">60,646件 · 489万円</span>
+    </a>
+    
+    <a href="/price/yamagata" class="pref-link">
+      <span class="pref-link__name">山形県</span>
+      <span class="pref-link__meta tabular-nums">57,643件 · 539万円</span>
+    </a>
+    
+    <a href="/price/fukushima" class="pref-link">
+      <span class="pref-link__name">福島県</span>
+      <span class="pref-link__meta tabular-nums">92,181件 · 675万円</span>
+    </a>
+    
+    <a href="/price/ibaraki" class="pref-link">
+      <span class="pref-link__name">茨城県</span>
+      <span class="pref-link__meta tabular-nums">133,182件 · 1,236万円</span>
+    </a>
+    
+    <a href="/price/tochigi" class="pref-link">
+      <span class="pref-link__name">栃木県</span>
+      <span class="pref-link__meta tabular-nums">101,306件 · 1,156万円</span>
+    </a>
+    
+    <a href="/price/gunma" class="pref-link">
+      <span class="pref-link__name">群馬県</span>
+      <span class="pref-link__meta tabular-nums">86,660件 · 1,134万円</span>
+    </a>
+    
+    <a href="/price/saitama" class="pref-link">
+      <span class="pref-link__name">埼玉県</span>
+      <span class="pref-link__meta tabular-nums">346,001件 · 2,499万円</span>
+    </a>
+    
+    <a href="/price/chiba" class="pref-link">
+      <span class="pref-link__name">千葉県</span>
+      <span class="pref-link__meta tabular-nums">312,537件 · 1,799万円</span>
+    </a>
+    
+    <a href="/price/tokyo" class="pref-link">
+      <span class="pref-link__name">東京都</span>
+      <span class="pref-link__meta tabular-nums">732,940件 · 5,373万円</span>
+    </a>
+    
+    <a href="/price/kanagawa" class="pref-link">
+      <span class="pref-link__name">神奈川県</span>
+      <span class="pref-link__meta tabular-nums">477,638件 · 3,662万円</span>
+    </a>
+    
+    <a href="/price/niigata" class="pref-link">
+      <span class="pref-link__name">新潟県</span>
+      <span class="pref-link__meta tabular-nums">125,595件 · 874万円</span>
+    </a>
+    
+    <a href="/price/toyama" class="pref-link">
+      <span class="pref-link__name">富山県</span>
+      <span class="pref-link__meta tabular-nums">51,443件 · 977万円</span>
+    </a>
+    
+    <a href="/price/ishikawa" class="pref-link">
+      <span class="pref-link__name">石川県</span>
+      <span class="pref-link__meta tabular-nums">61,345件 · 1,118万円</span>
+    </a>
+    
+    <a href="/price/fukui" class="pref-link">
+      <span class="pref-link__name">福井県</span>
+      <span class="pref-link__meta tabular-nums">33,858件 · 900万円</span>
+    </a>
+    
+    <a href="/price/yamanashi" class="pref-link">
+      <span class="pref-link__name">山梨県</span>
+      <span class="pref-link__meta tabular-nums">41,140件 · 1,131万円</span>
+    </a>
+    
+    <a href="/price/nagano" class="pref-link">
+      <span class="pref-link__name">長野県</span>
+      <span class="pref-link__meta tabular-nums">102,296件 · 811万円</span>
+    </a>
+    
+    <a href="/price/gifu" class="pref-link">
+      <span class="pref-link__name">岐阜県</span>
+      <span class="pref-link__meta tabular-nums">110,011件 · 1,182万円</span>
+    </a>
+    
+    <a href="/price/shizuoka" class="pref-link">
+      <span class="pref-link__name">静岡県</span>
+      <span class="pref-link__meta tabular-nums">181,563件 · 1,744万円</span>
+    </a>
+    
+    <a href="/price/aichi" class="pref-link">
+      <span class="pref-link__name">愛知県</span>
+      <span class="pref-link__meta tabular-nums">333,777件 · 3,159万円</span>
+    </a>
+    
+    <a href="/price/mie" class="pref-link">
+      <span class="pref-link__name">三重県</span>
+      <span class="pref-link__meta tabular-nums">87,452件 · 1,290万円</span>
+    </a>
+    
+    <a href="/price/shiga" class="pref-link">
+      <span class="pref-link__name">滋賀県</span>
+      <span class="pref-link__meta tabular-nums">75,003件 · 1,804万円</span>
+    </a>
+    
+    <a href="/price/kyoto" class="pref-link">
+      <span class="pref-link__name">京都府</span>
+      <span class="pref-link__meta tabular-nums">139,570件 · 2,631万円</span>
+    </a>
+    
+    <a href="/price/osaka" class="pref-link">
+      <span class="pref-link__name">大阪府</span>
+      <span class="pref-link__meta tabular-nums">433,508件 · 3,426万円</span>
+    </a>
+    
+    <a href="/price/hyogo" class="pref-link">
+      <span class="pref-link__name">兵庫県</span>
+      <span class="pref-link__meta tabular-nums">285,985件 · 1,980万円</span>
+    </a>
+    
+    <a href="/price/nara" class="pref-link">
+      <span class="pref-link__name">奈良県</span>
+      <span class="pref-link__meta tabular-nums">63,186件 · 1,282万円</span>
+    </a>
+    
+    <a href="/price/wakayama" class="pref-link">
+      <span class="pref-link__name">和歌山県</span>
+      <span class="pref-link__meta tabular-nums">45,732件 · 952万円</span>
+    </a>
+    
+    <a href="/price/tottori" class="pref-link">
+      <span class="pref-link__name">鳥取県</span>
+      <span class="pref-link__meta tabular-nums">31,394件 · 535万円</span>
+    </a>
+    
+    <a href="/price/shimane" class="pref-link">
+      <span class="pref-link__name">島根県</span>
+      <span class="pref-link__meta tabular-nums">43,089件 · 391万円</span>
+    </a>
+    
+    <a href="/price/okayama" class="pref-link">
+      <span class="pref-link__name">岡山県</span>
+      <span class="pref-link__meta tabular-nums">85,990件 · 1,029万円</span>
+    </a>
+    
+    <a href="/price/hiroshima" class="pref-link">
+      <span class="pref-link__name">広島県</span>
+      <span class="pref-link__meta tabular-nums">124,085件 · 2,011万円</span>
+    </a>
+    
+    <a href="/price/yamaguchi" class="pref-link">
+      <span class="pref-link__name">山口県</span>
+      <span class="pref-link__meta tabular-nums">65,238件 · 1,049万円</span>
+    </a>
+    
+    <a href="/price/tokushima" class="pref-link">
+      <span class="pref-link__name">徳島県</span>
+      <span class="pref-link__meta tabular-nums">33,646件 · 772万円</span>
+    </a>
+    
+    <a href="/price/kagawa" class="pref-link">
+      <span class="pref-link__name">香川県</span>
+      <span class="pref-link__meta tabular-nums">43,362件 · 1,061万円</span>
+    </a>
+    
+    <a href="/price/ehime" class="pref-link">
+      <span class="pref-link__name">愛媛県</span>
+      <span class="pref-link__meta tabular-nums">62,872件 · 929万円</span>
+    </a>
+    
+    <a href="/price/kochi" class="pref-link">
+      <span class="pref-link__name">高知県</span>
+      <span class="pref-link__meta tabular-nums">40,398件 · 426万円</span>
+    </a>
+    
+    <a href="/price/fukuoka" class="pref-link">
+      <span class="pref-link__name">福岡県</span>
+      <span class="pref-link__meta tabular-nums">230,864件 · 1,965万円</span>
+    </a>
+    
+    <a href="/price/saga" class="pref-link">
+      <span class="pref-link__name">佐賀県</span>
+      <span class="pref-link__meta tabular-nums">37,285件 · 1,001万円</span>
+    </a>
+    
+    <a href="/price/nagasaki" class="pref-link">
+      <span class="pref-link__name">長崎県</span>
+      <span class="pref-link__meta tabular-nums">52,943件 · 938万円</span>
+    </a>
+    
+    <a href="/price/kumamoto" class="pref-link">
+      <span class="pref-link__name">熊本県</span>
+      <span class="pref-link__meta tabular-nums">88,836件 · 856万円</span>
+    </a>
+    
+    <a href="/price/oita" class="pref-link">
+      <span class="pref-link__name">大分県</span>
+      <span class="pref-link__meta tabular-nums">60,012件 · 741万円</span>
+    </a>
+    
+    <a href="/price/miyazaki" class="pref-link">
+      <span class="pref-link__name">宮崎県</span>
+      <span class="pref-link__meta tabular-nums">68,485件 · 485万円</span>
+    </a>
+    
+    <a href="/price/kagoshima" class="pref-link">
+      <span class="pref-link__name">鹿児島県</span>
+      <span class="pref-link__meta tabular-nums">106,046件 · 431万円</span>
+    </a>
+    
+    <a href="/price/okinawa" class="pref-link">
+      <span class="pref-link__name">沖縄県</span>
+      <span class="pref-link__meta tabular-nums">47,965件 · 1,780万円</span>
+    </a>
+    
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div id="recent-views-section" class="hidden mb-14">
+    <div class="mb-6">
+      <h2 class="text-xl font-bold text-ink-900">最近見たエリア</h2>
+      <p class="mt-1 text-sm text-slate-500">このブラウザでの閲覧履歴</p>
+    </div>
+    <div id="recent-views-list" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+  </div>
+  
+<div class="rounded-2xl bg-gradient-to-r from-brand-600 to-brand-700 p-6 md:p-8 text-white">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <p class="text-brand-200 text-xs font-medium uppercase tracking-wide mb-1">仲介店向け</p>
+      <h2 class="text-lg font-bold">顧客向けレポートを作成</h2>
+      <p class="mt-1 text-brand-100 text-sm">周辺取引・地価公示をまとめたPDFレポートを自動生成</p>
+    </div>
+    <a href="/report/new"
+       class="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-6 py-3 text-brand-700 font-semibold hover:bg-brand-50 transition shadow-lg">
+      レポートを作成 →
+    </a>
+  </div>
+</div>
+
+</section>
+
+
+<section class="border-t border-slate-200 bg-slate-50">
+  <div class="max-w-6xl mx-auto px-4 py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-ink-900">地価・取引の参考ニュース</h2>
+      <p class="mt-1 text-sm text-slate-500">地価公示・不動産取引・住宅市場など、相場判断の材料になる記事をカテゴリ別に整理しています。</p>
+    </div>
+    <a href="/news"
+       class="inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700 transition shrink-0">
+      ニュース一覧を見る →
+    </a>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof initHomeCharts === "function") {
+      initHomeCharts({"yearly_stats": [{"trade_year": 2005, "transaction_count": 23096, "trade_price_avg": 63834760.35677174, "unit_price_avg": null, "yoy_transaction_pct": null}, {"trade_year": 2006, "transaction_count": 74289, "trade_price_avg": 55564253.3928307, "unit_price_avg": null, "yoy_transaction_pct": 221.6531001039141}, {"trade_year": 2007, "transaction_count": 222511, "trade_price_avg": 34641330.41220434, "unit_price_avg": null, "yoy_transaction_pct": 199.5207904265773}, {"trade_year": 2008, "transaction_count": 274098, "trade_price_avg": 29477635.92623806, "unit_price_avg": null, "yoy_transaction_pct": 23.18402236293936}, {"trade_year": 2009, "transaction_count": 277041, "trade_price_avg": 24616800.732418668, "unit_price_avg": null, "yoy_transaction_pct": 1.0737035658778977}, {"trade_year": 2010, "transaction_count": 300703, "trade_price_avg": 25097072.320894703, "unit_price_avg": null, "yoy_transaction_pct": 8.54097407964886}, {"trade_year": 2011, "transaction_count": 283934, "trade_price_avg": 25242697.64853804, "unit_price_avg": null, "yoy_transaction_pct": -5.576598836725939}, {"trade_year": 2012, "transaction_count": 308225, "trade_price_avg": 24580336.974223375, "unit_price_avg": null, "yoy_transaction_pct": 8.555157184416098}, {"trade_year": 2013, "transaction_count": 332198, "trade_price_avg": 25112363.017417323, "unit_price_avg": null, "yoy_transaction_pct": 7.77775975342688}, {"trade_year": 2014, "transaction_count": 318560, "trade_price_avg": 25450749.04708689, "unit_price_avg": null, "yoy_transaction_pct": -4.105382934274138}, {"trade_year": 2015, "transaction_count": 325056, "trade_price_avg": 26360187.70073464, "unit_price_avg": null, "yoy_transaction_pct": 2.0391762933199398}, {"trade_year": 2016, "transaction_count": 317956, "trade_price_avg": 27653734.694989245, "unit_price_avg": null, "yoy_transaction_pct": -2.184239023429809}, {"trade_year": 2017, "transaction_count": 315984, "trade_price_avg": 28118079.616910983, "unit_price_avg": null, "yoy_transaction_pct": -0.6202116016052536}, {"trade_year": 2018, "transaction_count": 311385, "trade_price_avg": 28387319.344188064, "unit_price_avg": null, "yoy_transaction_pct": -1.4554534406805408}, {"trade_year": 2019, "transaction_count": 305785, "trade_price_avg": 28213286.99386824, "unit_price_avg": null, "yoy_transaction_pct": -1.798416750967452}, {"trade_year": 2020, "transaction_count": 329897, "trade_price_avg": 27825290.917528804, "unit_price_avg": null, "yoy_transaction_pct": 7.885278872410353}, {"trade_year": 2021, "transaction_count": 334538, "trade_price_avg": 28780505.512886427, "unit_price_avg": null, "yoy_transaction_pct": 1.4068027293367324}, {"trade_year": 2022, "transaction_count": 300290, "trade_price_avg": 31567660.847980287, "unit_price_avg": null, "yoy_transaction_pct": -10.237402029066953}, {"trade_year": 2023, "transaction_count": 290506, "trade_price_avg": 33378259.13667876, "unit_price_avg": null, "yoy_transaction_pct": -3.25818375570282}, {"trade_year": 2024, "transaction_count": 289818, "trade_price_avg": 35328610.137500085, "unit_price_avg": null, "yoy_transaction_pct": -0.2368281550122889}, {"trade_year": 2025, "transaction_count": 210528, "trade_price_avg": 36288736.515950374, "unit_price_avg": null, "yoy_transaction_pct": -27.358549158437363}], "land_price_yearly": [{"survey_year": 2005, "point_count": 53475, "avg_unit_price": 141018.6330060776, "yoy_avg_price_pct": null}, {"survey_year": 2006, "point_count": 52570, "avg_unit_price": 143721.585885486, "yoy_avg_price_pct": 1.9167345632203878}, {"survey_year": 2007, "point_count": 50626, "avg_unit_price": 157921.19375419745, "yoy_avg_price_pct": 9.879940985361342}, {"survey_year": 2008, "point_count": 49271, "avg_unit_price": 172848.62992429623, "yoy_avg_price_pct": 9.452459049501085}, {"survey_year": 2009, "point_count": 47835, "avg_unit_price": 160874.96726246472, "yoy_avg_price_pct": -6.927253439657403}, {"survey_year": 2010, "point_count": 47182, "avg_unit_price": 148788.04084184646, "yoy_avg_price_pct": -7.513242505217511}, {"survey_year": 2011, "point_count": 45224, "avg_unit_price": 144543.84413143463, "yoy_avg_price_pct": -2.8525119938390655}, {"survey_year": 2012, "point_count": 45044, "avg_unit_price": 142160.66677026908, "yoy_avg_price_pct": -1.648757424078547}, {"survey_year": 2013, "point_count": 44884, "avg_unit_price": 143011.07098297833, "yoy_avg_price_pct": 0.5981993697901707}, {"survey_year": 2014, "point_count": 42148, "avg_unit_price": 144168.17286703995, "yoy_avg_price_pct": 0.8090995166376582}, {"survey_year": 2015, "point_count": 42155, "avg_unit_price": 148037.83062507413, "yoy_avg_price_pct": 2.6841276275332984}, {"survey_year": 2016, "point_count": 43995, "avg_unit_price": 157385.95272190022, "yoy_avg_price_pct": 6.3146846028171515}, {"survey_year": 2017, "point_count": 44714, "avg_unit_price": 166162.8776893143, "yoy_avg_price_pct": 5.576688907505518}, {"survey_year": 2018, "point_count": 44711, "avg_unit_price": 173977.35575138108, "yoy_avg_price_pct": 4.702902459764821}, {"survey_year": 2019, "point_count": 44721, "avg_unit_price": 184666.15525144787, "yoy_avg_price_pct": 6.143787767036422}, {"survey_year": 2020, "point_count": 44746, "avg_unit_price": 192657.48625575472, "yoy_avg_price_pct": 4.327447546317068}, {"survey_year": 2021, "point_count": 44699, "avg_unit_price": 190853.26246672185, "yoy_avg_price_pct": -0.9364929565403671}, {"survey_year": 2022, "point_count": 44704, "avg_unit_price": 191893.66309502505, "yoy_avg_price_pct": 0.5451311729526324}, {"survey_year": 2023, "point_count": 44687, "avg_unit_price": 198424.88822252557, "yoy_avg_price_pct": 3.4035647775748967}, {"survey_year": 2024, "point_count": 44745, "avg_unit_price": 209699.19984355793, "yoy_avg_price_pct": 5.681903979902296}, {"survey_year": 2025, "point_count": 44326, "avg_unit_price": 224945.13885755537, "yoy_avg_price_pct": 7.270384925346107}], "top_prefectures_volume": [{"code": "13", "name_ja": "東京都", "slug": "tokyo", "municipality_count": 62, "total_transactions": 732940, "avg_price": 53727272.74035033, "median_price": 48056837.69984096, "yoy_price_change_pct": 1.5823034063968728}, {"code": "14", "name_ja": "神奈川県", "slug": "kanagawa", "municipality_count": 61, "total_transactions": 477638, "avg_price": 36616505.91188079, "median_price": 35658385.33768001, "yoy_price_change_pct": 3.4829325356675565}, {"code": "27", "name_ja": "大阪府", "slug": "osaka", "municipality_count": 74, "total_transactions": 433508, "avg_price": 34261792.75141025, "median_price": 32400997.218246147, "yoy_price_change_pct": -5.955328679510224}, {"code": "11", "name_ja": "埼玉県", "slug": "saitama", "municipality_count": 74, "total_transactions": 346001, "avg_price": 24994088.70330868, "median_price": 23897292.85725718, "yoy_price_change_pct": -9.04120664095255}, {"code": "23", "name_ja": "愛知県", "slug": "aichi", "municipality_count": 70, "total_transactions": 333777, "avg_price": 31590234.07190007, "median_price": 28723412.803532008, "yoy_price_change_pct": -2.0868685618993994}, {"code": "12", "name_ja": "千葉県", "slug": "chiba", "municipality_count": 60, "total_transactions": 312537, "avg_price": 17992094.828987766, "median_price": 11345989.523536166, "yoy_price_change_pct": 2.4491327046633917}, {"code": "01", "name_ja": "北海道", "slug": "hokkaido", "municipality_count": 195, "total_transactions": 304872, "avg_price": 6540326.781941663, "median_price": 4182921.7102438314, "yoy_price_change_pct": 19.099037077678396}, {"code": "28", "name_ja": "兵庫県", "slug": "hyogo", "municipality_count": 50, "total_transactions": 285985, "avg_price": 19796813.78650722, "median_price": 16228065.72972973, "yoy_price_change_pct": 2.3002535634957098}, {"code": "40", "name_ja": "福岡県", "slug": "fukuoka", "municipality_count": 74, "total_transactions": 230864, "avg_price": 19653147.51291369, "median_price": 14420735.038110893, "yoy_price_change_pct": -4.098295087280084}, {"code": "22", "name_ja": "静岡県", "slug": "shizuoka", "municipality_count": 41, "total_transactions": 181563, "avg_price": 17439906.574776374, "median_price": 16164523.407521104, "yoy_price_change_pct": -2.153496625757013}], "top_prefectures_price": [{"code": "13", "name_ja": "東京都", "slug": "tokyo", "municipality_count": 62, "total_transactions": 732940, "avg_price": 53727272.74035033, "median_price": 48056837.69984096, "yoy_price_change_pct": 1.5823034063968728}, {"code": "14", "name_ja": "神奈川県", "slug": "kanagawa", "municipality_count": 61, "total_transactions": 477638, "avg_price": 36616505.91188079, "median_price": 35658385.33768001, "yoy_price_change_pct": 3.4829325356675565}, {"code": "27", "name_ja": "大阪府", "slug": "osaka", "municipality_count": 74, "total_transactions": 433508, "avg_price": 34261792.75141025, "median_price": 32400997.218246147, "yoy_price_change_pct": -5.955328679510224}, {"code": "23", "name_ja": "愛知県", "slug": "aichi", "municipality_count": 70, "total_transactions": 333777, "avg_price": 31590234.07190007, "median_price": 28723412.803532008, "yoy_price_change_pct": -2.0868685618993994}, {"code": "26", "name_ja": "京都府", "slug": "kyoto", "municipality_count": 37, "total_transactions": 139570, "avg_price": 26306139.897633076, "median_price": 25935932.40404205, "yoy_price_change_pct": -2.75716824167664}, {"code": "11", "name_ja": "埼玉県", "slug": "saitama", "municipality_count": 74, "total_transactions": 346001, "avg_price": 24994088.70330868, "median_price": 23897292.85725718, "yoy_price_change_pct": -9.04120664095255}, {"code": "34", "name_ja": "広島県", "slug": "hiroshima", "municipality_count": 31, "total_transactions": 124085, "avg_price": 20107788.793274797, "median_price": 17029619.662684113, "yoy_price_change_pct": 4.638761958818519}, {"code": "28", "name_ja": "兵庫県", "slug": "hyogo", "municipality_count": 50, "total_transactions": 285985, "avg_price": 19796813.78650722, "median_price": 16228065.72972973, "yoy_price_change_pct": 2.3002535634957098}, {"code": "40", "name_ja": "福岡県", "slug": "fukuoka", "municipality_count": 74, "total_transactions": 230864, "avg_price": 19653147.51291369, "median_price": 14420735.038110893, "yoy_price_change_pct": -4.098295087280084}, {"code": "25", "name_ja": "滋賀県", "slug": "shiga", "municipality_count": 19, "total_transactions": 75003, "avg_price": 18043572.991389904, "median_price": 15466765.53911205, "yoy_price_change_pct": -7.027712854429025}], "top_prefectures_yoy": [{"code": "16", "name_ja": "富山県", "slug": "toyama", "municipality_count": 15, "total_transactions": 51443, "avg_price": 9769355.074973451, "median_price": 10169791.666666666, "yoy_price_change_pct": 44.120898491727935}, {"code": "47", "name_ja": "沖縄県", "slug": "okinawa", "municipality_count": 41, "total_transactions": 47965, "avg_price": 17796184.611849323, "median_price": 14826304.38413361, "yoy_price_change_pct": 34.71896202580665}, {"code": "30", "name_ja": "和歌山県", "slug": "wakayama", "municipality_count": 30, "total_transactions": 45732, "avg_price": 9521522.030070739, "median_price": 9377024.555488408, "yoy_price_change_pct": 29.35920632930884}, {"code": "01", "name_ja": "北海道", "slug": "hokkaido", "municipality_count": 195, "total_transactions": 304872, "avg_price": 6540326.781941663, "median_price": 4182921.7102438314, "yoy_price_change_pct": 19.099037077678396}, {"code": "03", "name_ja": "岩手県", "slug": "iwate", "municipality_count": 33, "total_transactions": 62789, "avg_price": 6437546.200044966, "median_price": 5522764.3678160915, "yoy_price_change_pct": 19.091619394752165}, {"code": "09", "name_ja": "栃木県", "slug": "tochigi", "municipality_count": 26, "total_transactions": 101306, "avg_price": 11557359.906184511, "median_price": 11908969.822485207, "yoy_price_change_pct": 18.075991117912626}, {"code": "08", "name_ja": "茨城県", "slug": "ibaraki", "municipality_count": 44, "total_transactions": 133182, "avg_price": 12358209.403554952, "median_price": 11213463.488881689, "yoy_price_change_pct": 17.269834817725695}, {"code": "02", "name_ja": "青森県", "slug": "aomori", "municipality_count": 40, "total_transactions": 76643, "avg_price": 4204712.254599874, "median_price": 3018607.029722809, "yoy_price_change_pct": 16.66382324711142}, {"code": "15", "name_ja": "新潟県", "slug": "niigata", "municipality_count": 38, "total_transactions": 125595, "avg_price": 8735610.240558174, "median_price": 6801223.911541119, "yoy_price_change_pct": 16.37377423789307}, {"code": "20", "name_ja": "長野県", "slug": "nagano", "municipality_count": 77, "total_transactions": 102296, "avg_price": 8108254.8095803335, "median_price": 6661440.251572327, "yoy_price_change_pct": 14.268039001347518}]});
+    }
+  });
+</script>
+
+  </main>
+
+  <footer class="bg-ink-900 text-slate-300 text-sm mt-auto" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 py-10">
+      <div class="grid sm:grid-cols-3 gap-8 mb-8">
+        <div>
+          <p class="font-bold text-white mb-3">不動産相場ナビ</p>
+          <p class="text-slate-400 leading-relaxed">国土交通省データに基づく地域別不動産取引価格の検索・分析サービス</p>
+        </div>
+        <nav aria-label="フッターナビゲーション">
+          <p class="font-medium text-white mb-3">機能</p>
+          <ul class="space-y-2 text-slate-400">
+            <li><a href="/" class="hover:text-white transition">エリア検索</a></li>
+            <li><a href="/rankings" class="hover:text-white transition">ランキング</a></li>
+            <li><a href="/news" class="hover:text-white transition">ニュース</a></li>
+            <li><a href="/compare" class="hover:text-white transition">エリア比較</a></li>
+            <li><a href="/search" class="hover:text-white transition">市区町村検索</a></li>
+            <li><a href="/report/new" class="hover:text-white transition">レポート作成</a></li>
+          </ul>
+        </nav>
+        <div>
+          <p class="font-medium text-white mb-3">データ出典</p>
+          <p class="text-slate-400">
+            <a href="https://www.reinfolib.mlit.go.jp/" rel="noopener noreferrer" class="hover:text-white transition">
+              国土交通省 不動産情報ライブラリ
+            </a><br>
+            （取引価格情報・地価公示）
+          </p>
+        </div>
+      </div>
+      <p class="text-slate-500 text-xs border-t border-slate-700 pt-6">© reinfolib-report — 参考情報です。取引判断は専門家にご相談ください。</p>
+    </div>
+  </footer>
+
+  <nav class="mobile-bottom-nav md:hidden" aria-label="モバイル下部ナビ">
+    <a href="/" class="mobile-nav-item" data-nav="home">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>ホーム</span>
+    </a>
+    <a href="/search" class="mobile-nav-item" data-nav="search">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span>検索</span>
+    </a>
+    <a href="/rankings" class="mobile-nav-item" data-nav="rankings">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      <span>ランキング</span>
+    </a>
+    <a href="/news" class="mobile-nav-item" data-nav="news">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+      <span>ニュース</span>
+    </a>
+    <a href="/compare" class="mobile-nav-item" data-nav="compare">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      <span>比較</span>
+    </a>
+  </nav>
+</body>
+</html>

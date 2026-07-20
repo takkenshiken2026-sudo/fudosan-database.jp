@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /report/
+
+Sitemap: https://fudosan-database.jp/sitemap.xml

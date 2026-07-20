@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>不動産・地価ニュース | 不動産相場ナビ</title>
+  <meta name="description" content="地価公示・不動産取引・住宅市場・政策などカテゴリ別の最新ニュースを収集・表示。">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://fudosan-database.jp/news">
+  <link rel="alternate" hreflang="ja" href="https://fudosan-database.jp/news">
+  <link rel="alternate" hreflang="x-default" href="https://fudosan-database.jp/news">
+
+  
+
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:site_name" content="不動産相場ナビ">
+  <meta property="og:title" content="不動産・地価ニュース | 不動産相場ナビ">
+  <meta property="og:description" content="地価公示・不動産取引・住宅市場・政策などカテゴリ別の最新ニュースを収集・表示。">
+  <meta property="og:url" content="https://fudosan-database.jp/news">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://fudosan-database.jp/static/og-default.svg">
+  <meta name="twitter:image" content="https://fudosan-database.jp/static/og-default.svg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="不動産・地価ニュース | 不動産相場ナビ">
+  <meta name="twitter:description" content="地価公示・不動産取引・住宅市場・政策などカテゴリ別の最新ニュースを収集・表示。">
+
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/og-default.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://fudosan-database.jp/#organization", "name": "不動産相場ナビ", "url": "https://fudosan-database.jp", "logo": "https://fudosan-database.jp/static/og-default.svg"}, {"@type": "WebSite", "@id": "https://fudosan-database.jp/#website", "url": "https://fudosan-database.jp", "name": "不動産相場ナビ", "publisher": {"@id": "https://fudosan-database.jp/#organization"}, "inLanguage": "ja-JP", "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": "https://fudosan-database.jp/search?q={search_term_string}"}, "query-input": "required name=search_term_string"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "不動産相場ナビ", "item": "https://fudosan-database.jp"}, {"@type": "ListItem", "position": 2, "name": "ニュース", "item": "https://fudosan-database.jp/news"}]}]}</script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+            ink: { 700: '#334155', 900: '#0f172a' }
+          },
+          fontFamily: { sans: ['"Noto Sans JP"', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/static/site.css?v=12">
+  <script src="/static/site.js?v=11" defer></script>
+  
+</head>
+<body class="font-sans bg-slate-50 text-ink-900 min-h-screen flex flex-col has-mobile-nav">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm" role="banner">
+    <div class="max-w-6xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between gap-3">
+        <a href="/" class="flex items-center gap-2 font-bold text-lg text-brand-700 hover:text-brand-600 shrink-0" aria-label="不動産相場ナビ トップ">
+          <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white text-sm font-bold" aria-hidden="true">相</span>
+          <span class="hidden sm:inline">不動産相場ナビ</span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-1 text-sm shrink-0 ml-auto" aria-label="メインナビゲーション">
+          <a href="/rankings" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">ランキング</a>
+          <a href="/estimate" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">相場シミュレーター</a>
+          <a href="/news" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">ニュース</a>
+          <a href="/compare" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">比較</a>
+          <a href="/report/new" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-600 transition">レポート</a>
+          <a href="/for-agents" class="ml-1 rounded-full bg-brand-600 px-4 py-2 text-white font-medium hover:bg-brand-700 transition">仲介店向け</a>
+        </nav>
+
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-slate-100" aria-label="メニューを開く" aria-expanded="false">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+      <nav id="mobile-menu" class="hidden md:hidden pt-3 pb-1 flex flex-wrap gap-2 border-t border-slate-100 mt-3" aria-label="モバイルナビゲーション">
+        <a href="/rankings" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">ランキング</a>
+        <a href="/estimate" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">シミュレーター</a>
+        <a href="/news" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">ニュース</a>
+        <a href="/compare" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">エリア比較</a>
+        <a href="/report/new" class="px-3 py-1.5 rounded-lg text-sm text-slate-600 bg-slate-100">レポート作成</a>
+        <a href="/for-agents" class="px-3 py-1.5 rounded-lg text-sm text-white bg-brand-600">仲介店向け</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1 pb-16 md:pb-0" id="main-content" role="main">
+    
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    
+<nav class="text-sm text-slate-500 mb-4 flex flex-wrap items-center gap-1" aria-label="パンくず">
+  
+    
+      <a href="/" class="hover:text-brand-600 transition">トップ</a>
+      <span class="text-slate-300">/</span>
+    
+  
+    
+      <span class="text-ink-900 font-medium">ニュース</span>
+    
+  
+</nav>
+
+    <h1 class="text-2xl md:text-3xl font-bold">不動産・地価ニュース</h1>
+    <p class="mt-2 text-slate-600">Googleニュースから地価・不動産関連の記事をカテゴリ別に収集しています。</p>
+    
+    <p class="mt-1 text-xs text-slate-400">最終更新: 2026/07/18 21:42</p>
+    
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-6">
+  <nav class="flex flex-wrap gap-2 mb-8" aria-label="ニュースカテゴリ">
+    <a href="/news"
+       class="news-cat-pill news-cat-pill--active">
+      すべて
+    </a>
+    
+    <a href="/news?category=land_price"
+       class="news-cat-pill ">
+      地価・公示
+    </a>
+    
+    <a href="/news?category=market"
+       class="news-cat-pill ">
+      取引・相場
+    </a>
+    
+    <a href="/news?category=housing"
+       class="news-cat-pill ">
+      住宅・マンション
+    </a>
+    
+    <a href="/news?category=policy"
+       class="news-cat-pill ">
+      政策・税制
+    </a>
+    
+    <a href="/news?category=development"
+       class="news-cat-pill ">
+      再開発・都市
+    </a>
+    
+  </nav>
+
+  
+
+  
+    
+    
+    <div class="mb-12">
+      
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-ink-900">最新ヘッドライン</h2>
+  <p class="mt-1 text-sm text-slate-500">全カテゴリから新しい順</p>
+</div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiR0FVX3lxTFAyVktBakREbFQySV9rcEMwRDhnczFreXhUdXBxNTFOTHNtblcyd0FybzBYMksyTzJnQWFPd3hqRXF1SEp6NjlJ?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--violet">住宅・マンション</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">墨田区が映し出す東京都中古マンション市場の未来 - newscast.jp</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>newscast.jp</span>
+        <time datetime="2026-07-18T01:00:00+00:00">2026/07/18 01:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTE9NY1Q2dm5vU2FFY294dGo4OGV5TTl5NDZicXR3cVFfMGEtOEQyM3dmTlNZelFnZ0FKZndjZHNaRkRyX3FOR283RGVvVHRSb0FObmxWTHhrbDk?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--violet">住宅・マンション</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">中古マンションの最適な売りどきは築何年か？ 築年帯が1つ違うだけで1000万円の差額になるケースも！ - ダイヤモンド不動産研究所</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ダイヤモンド不動産研究所</span>
+        <time datetime="2026-07-17T23:00:00+00:00">2026/07/17 23:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMijgFBVV95cUxOQlp2WVBPZzNfcW5HcENHNDM1bklzbFhOUnhoOTNzVmxNeFJDRHFmckU5eWp4WnZzTjg2RUJUcElzUEZaZWhPWkFvYXowV0g2T3N5Rl9qeW5xUWxaR3k3V3pjTkMtaVBObFJ4M3NmRHNjZEdEVVFPMG92TjZERERfeHE0ck82d1VaalEtN0pR?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--violet">住宅・マンション</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【横浜駅30分以内】中古マンション価格相場が安い駅ランキング2026年。ファミリー向け1位は1990万円！ (SUUMOジャーナル) - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-17T15:25:16+00:00">2026/07/17 15:25</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMie0FVX3lxTE5TeHVsQUFOSjVFZGx3YmVWVk05YmdnMHpQMWUtRE40SjRTbGJIOGFUeEtQUzROcGNxQTFfaDFHNTJZSl85UWJhNVNvd2VJdkJWQmZ1TmRwZEppTjgxRmZzZks5YmduRm1GQkU0YUdSaWFfNGlGVE5LOUJ6cw?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--brand">取引・相場</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【三菱地所リアルエステートサービス】「エリアマーケットレポート／東京」2026年7月号を公開 - ニコニコニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ニコニコニュース</span>
+        <time datetime="2026-07-17T12:18:17+00:00">2026/07/17 12:18</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiakFVX3lxTFB5S0I1R3hnVkY3OUlsd0JjQTNOVDBObTNPeUNFemhLRlpIMVNJYUZJbDFFUHFNWklEd21fb0dvSEs1ZkdHeEtoWXVlelJDZWl0QU80TGNsNnBWSHM5X0pYY0pkemwxRHZyd0E?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--violet">住宅・マンション</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">首都圏中古マンション価格は本当に下落局面なのか - PR TIMES</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>PR TIMES</span>
+        <time datetime="2026-07-17T10:00:01+00:00">2026/07/17 10:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiUkFVX3lxTFBYQ0ZWME8ydnlWcGhfeVhjY3dCWGpuWjRqdkJkSGt6blFObnVFX2R3SmtHUDlwVnQ0dGZQSjFyMWR1WDYyR2F5R1FUZnlaRDhrZlHSAVRBVV95cUxNY3lGci1KME9YYjN3OG1XbnBQRlZvTWxJdFNFbXFLd25pWGE5TmlJc0JYUjJWU3RhMlJpRjdEMFQyM3piRzRjRDVpRC1KZm5pc1ZmeW8?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--amber">政策・税制</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">韓国・不動産政策討論会が「陳情の場」と化した致命的な理由 [韓国記者コラム] - AFPBB News</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>AFPBB News</span>
+        <time datetime="2026-07-17T06:44:06+00:00">2026/07/17 06:44</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMif0FVX3lxTFB5alZZTkJNT3A0U0RGQ0VOblItdTBJZTN5VG8zdkxRSWJOSm9RRVVwekhyLXl2U1hSM1JuQ0hIa2lMQUFMQ2dULUVlMDMtanlTcVd4VTVjQ2NnOEdXVDI3VXRpbVllYlFQLWtCd0dTa2pabUUzcXFlNWtiUXU5Yzg?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--amber">政策・税制</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">韓国・不動産政策討論会が「陳情の場」と化した致命的な理由 [韓国記者コラム]（KOREA WAVE） - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-17T06:42:16+00:00">2026/07/17 06:42</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxQVS13bXFsYjJVWXRqVXdmeGpnMUVTWVRRY0pTYVQwSUk2U0JhUHk1Tkk0VTJyVjFmZ3BiUXYwR0s3bzRIVnk0Ti1JYkpLZ1liUmdEbnBGb0stMmY2REV1NjlZOTZRMkUyZFZhck83ZTNBd0NrRVBtNFFua0x5dF9kZERUbHN4d2Jt?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--violet">住宅・マンション</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【横浜駅30分以内】中古マンション価格相場が安い駅ランキング2026年。ファミリー向け1位は1990万円！（SUUMOジャーナル） - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-16T23:30:02+00:00">2026/07/16 23:30</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE1MNVBNblFLSC1TVmFIUmlBMTlrQ1JEbEoxdTRpNHo1Q0RuUjZUYXpmN2laUUJWNVNqTlJyRzhqZkctRk15blYwdkFxcmxGSHZabDE2UUxkS0w3b3huQWs2OUctSE15U0tWSUJDbXM1X2ZlbktlSFRBZFlEVFhBSzA?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      
+<span class="news-badge news-badge--violet">住宅・マンション</span>
+
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">マンションがどんどん狭くなっている！？ 首都圏を中心に不動産の“小分け”が進む、切実なワケ（ITmedia ビジネスオンライン） - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-16T20:15:11+00:00">2026/07/16 20:15</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+      </div>
+    </div>
+    
+
+    
+    
+    <section class="mb-12" id="cat-land_price">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            
+<span class="news-badge news-badge--emerald">地価・公示</span>
+
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">地価公示・地価調査・公示地価に関するニュース</p>
+        </div>
+        <a href="/news?category=land_price" class="text-sm text-brand-600 font-medium hover:underline shrink-0">
+          すべて見る →
+        </a>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-4">
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTE1HNHpwU05iaVVVUnhHU0JjQTdJNldrZkdvN0xjTGh0OTJ6N0ZrZTBzYVNKM3pISENGTGllU2FaTHJ3MXRBV3NiMnZRWlJINjIwMkdaZHhRWG9aSmNWYnFZ?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【令和8年3月18日】 令和8年地価公示を公表しました - mlit.go.jp</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>mlit.go.jp</span>
+        <time datetime="2026-03-18T07:00:00+00:00">2026/03/18 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiZEFVX3lxTE5GU1B4ZHk2Zmd2dE8wOWk0ZUpwVTlfemxGZXkzc2ljQWVnUVBrRG5KR29WbVN6enBnNVBxRmVIOXduel9aSTlxNkpVTUVncVZyTmZ1a1VrYlhkRlhhMHN5NjdNM2U?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">令和8年地価公示結果の概要を発表します。 - pref.niigata.lg.jp</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>pref.niigata.lg.jp</span>
+        <time datetime="2026-03-18T07:00:00+00:00">2026/03/18 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMidkFVX3lxTE40OVl3Wks2d2JUNU0ydG95VmpySnpoV21EQ2gxanR2dXZZV016VlpGN2FaYmtUbnNKSnRxNWtDQ0dTNTRZWFdKTkNGYmsxd0M3aUozN2lUdmVnNzJmV05DSkstQklVMk5lX3VBcE42MGhoR1VScVE?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">福島県の地価公示2026｜進む二極化の実態とは？売り時・買い時の見極め方｜佐藤昌徳 - mbp-japan.com</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>mbp-japan.com</span>
+        <time datetime="2026-07-10T01:36:36+00:00">2026/07/10 01:36</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiUkFVX3lxTFBLZUlEMmdJanN0ZjZ0bUxlRGxZVUs4amtDQm16UEFoNlp4RGhKbzBSNUJORDFFWG91Z0lKMjdST2pIWEJROWZTbm5wT1poLWJTTlE?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">「どこを買っても上がる」は終了か…2026年公示地価が示す「超一等地」と「取り残されるエリア」の残酷な二極化 - ゴールドオンライン</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ゴールドオンライン</span>
+        <time datetime="2026-07-07T07:00:00+00:00">2026/07/07 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxNQnZHQk1leVg2NVRuNTU5UE9ncVlDMGszbTRWdEJSdnNyMGtEQ3NtM3NjWm02cGZDTGpEYV9kRngxOFJwdENKa0ZFMWRRcGEwMHZwTUw2WWxOc01LakRSY3prTlNRLWp5NE1iNk1ETWJpWFNBRWUwZWREb1FsdEhCaVhtY1A0QTdi?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">「どこを買っても上がる」は終了か…2026年公示地価が示す「超一等地」と「取り残されるエリア」の残酷な二極化 - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-07T07:00:00+00:00">2026/07/07 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMibEFVX3lxTE9YWFpyRWRFbHpOZjVsLUFKbVhOOXhaUjVaUnQ2emFyYTcxREVNRFBaUkFITElwZTJYSU5mNXNZUzZFSUd6ZEhjcHU5RkY4UHAtNnViUGhTNk5GSjVNYk9jNTFvQm1IbUdpMEtpZg?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">公示地価2.8%上昇、バブル後最大の伸び 投資マネーが押し上げ - 日本経済新聞</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>日本経済新聞</span>
+        <time datetime="2026-03-17T07:00:00+00:00">2026/03/17 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+      </div>
+      
+    </section>
+    
+    <section class="mb-12" id="cat-market">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            
+<span class="news-badge news-badge--brand">取引・相場</span>
+
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">不動産取引価格・市場動向・相場情報</p>
+        </div>
+        <a href="/news?category=market" class="text-sm text-brand-600 font-medium hover:underline shrink-0">
+          すべて見る →
+        </a>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-4">
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTE5QOHM1MFkxd3lBTy1mVGgxNlAzd3NlZm0xS1ZvQlFUVF83R0kxWm5wZ01NMzdWVWgyTzNxNWlrVlNuYk9hQXh5SW5nTnd6X0hpRURHRWpscks?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【東京都中古マンション価格推移】都心3区は成約価格が回復するも、売出価格との差（ワニの口）は依然として大きい！【完全版】 - ダイヤモンド不動産研究所</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ダイヤモンド不動産研究所</span>
+        <time datetime="2026-07-14T07:00:00+00:00">2026/07/14 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE9UQ2dvR1d4Q1FjQ2JIMGpoa0VQdjRCdV9jRGIyYTZHNy1XaGIwdGw4elZibExkbk5XQTItVVZ4WXBfOVBLT2JDLW9wdEotY1JDN2pHUnJIRk56TGtMLW4xUTVMQlB5WVBJNGdUWWk2Rk83bVFITHowamlXX3VFS1E?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【2026年5月版】東京都の中古マンション価格は都心3区は2カ月連続プラスも、在庫が大幅増で下落圧力強まる！ - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-05-20T07:00:00+00:00">2026/05/20 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMie0FVX3lxTE5TeHVsQUFOSjVFZGx3YmVWVk05YmdnMHpQMWUtRE40SjRTbGJIOGFUeEtQUzROcGNxQTFfaDFHNTJZSl85UWJhNVNvd2VJdkJWQmZ1TmRwZEppTjgxRmZzZks5YmduRm1GQkU0YUdSaWFfNGlGVE5LOUJ6cw?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【三菱地所リアルエステートサービス】「エリアマーケットレポート／東京」2026年7月号を公開 - ニコニコニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ニコニコニュース</span>
+        <time datetime="2026-07-17T12:18:17+00:00">2026/07/17 12:18</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTFA5LWhQanN1aG5TMnhNd1FMSjZQeUtEc01pYmJybExnZzVRbGxMLTBuVl9Sb0VLMjdMNHhzYkdTQmpYaVcxOUx2ZXAxM3FxRVNPaDFBMWh4a28?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">AIが予測する実勢価格の地価ランキング【福岡県】3位福岡市城南区、2位福岡市博多区、1位はどこ？ 10年後の価格も予想 - ダイヤモンド不動産研究所</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ダイヤモンド不動産研究所</span>
+        <time datetime="2026-01-03T08:00:00+00:00">2026/01/03 08:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE1EWXJIczRfNDVVa2ZwaTlwdTJlUjQ4NGdCYzBZc19RbkhDdDZXZU1tX3g1Um9JWDZzZXF5QzZvZEMyMkg3WC1NMVRrdFZRRlJWd1BQRXN1Rm1sS1pVWWlxVDJNbXVpb0tORU9yekNzODVlV3N6c0NGVmYwNEZLWlE?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【栃木県】AIが予測する10年後の地価上昇率ランキング・トップ5！ 2位は高根沢町、1位はどこ？（ダイヤモンド不動産研究所） - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-03-28T07:00:00+00:00">2026/03/28 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTFBXU1FUYTR5SEZpc013QkZhLWJ1SXFCQV9UOU5XeGphMDg3SXExbDZ0SjA5TDRJY1doMGYtV19rUExxTHpfWWc4S0VTZUxjdUV4Rk5BeWZVQ2k?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">AIが予測する実勢価格の地価ランキング【京都府】3位京都市下京区、2位京都市中京区、1位はどこ？ 10年後の価格も予想 - ダイヤモンド不動産研究所</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ダイヤモンド不動産研究所</span>
+        <time datetime="2026-03-29T07:00:00+00:00">2026/03/29 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+      </div>
+      
+    </section>
+    
+    <section class="mb-12" id="cat-housing">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            
+<span class="news-badge news-badge--violet">住宅・マンション</span>
+
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">分譲マンション・新築・中古住宅の市場</p>
+        </div>
+        <a href="/news?category=housing" class="text-sm text-brand-600 font-medium hover:underline shrink-0">
+          すべて見る →
+        </a>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-4">
+        
+        
+<a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE13dDR6VV9iOEZ1N1JDSXZlaW9vOXd2VmhfUFV2XzZCcG5XOVdPak1icnVFcDJpVlpJNjc1dTV2dC1mcFJQSWxZcDVQR1ZmcVRyb1hGdVowSC0tck41c201dEEtMGRSTTMwdk5yLTNZMnhTSFJiUno5Zkt0WlNMVWc?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">2026年6月の東京都の中古マンション価格は都心3区は成約価格が回復するも、売出価格との差（ワニの口）は依然として大きい！（ダイヤモンド不動産研究所） - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-15T08:12:15+00:00">2026/07/15 08:12</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiakFVX3lxTFB5S0I1R3hnVkY3OUlsd0JjQTNOVDBObTNPeUNFemhLRlpIMVNJYUZJbDFFUHFNWklEd21fb0dvSEs1ZkdHeEtoWXVlelJDZWl0QU80TGNsNnBWSHM5X0pYY0pkemwxRHZyd0E?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">首都圏中古マンション価格は本当に下落局面なのか - PR TIMES</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>PR TIMES</span>
+        <time datetime="2026-07-17T10:00:01+00:00">2026/07/17 10:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiTEFVX3lxTFBnQ0NSb0Y1SWFSOVYzSE5tSzlkSUYxMWlRWE9UcURXREFRMDB1MFBnRGZKNnFRM3RTb3NjVUY2cm53QjZMdDRrNlJBWG7SAU9BVV95cUxNQk5YM3NCNzFhbWUxNVZZb2xOQk4wdVkwM3NmSUdyV3dMeksyR1gxc0xlekJJT2Q3S180SkhhWXU0dmVXcm15X3Awd1BrWnBR?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">「マンション暴落」に予兆はある？不動産のプロが教える「逃げ切り」のサイン - ダイヤモンド・オンライン</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ダイヤモンド・オンライン</span>
+        <time datetime="2026-07-16T11:00:00+00:00">2026/07/16 11:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE5Mcms4R0pCVktSMk5MNjhOUUtIeHN4ckJjSVkxb1NDVVFCRGx4ZDA4TmhZUXlSdFpfOFRVenBNVVpyUFVoY09QaEt5bUNXQy1fcUNtYnpR?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">中古マンションの成約価格が首都圏で下落、強気な売り手と慎重な買い手のギャップが招く「都心部在庫のダブつき」(1/4) - JBpress</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>JBpress</span>
+        <time datetime="2026-06-28T07:00:00+00:00">2026/06/28 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTE1zQ3lnNHdPeGJDLW9fQkc1N3dZM0JSRFlDNVFRWWg3aWpZYmtOTVFHVl93aHgtcGdBT2pzSG5TOVkzYnpkV3h2bEpHbzEyV0JVeW1JS1JWTi0?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">【大阪府の中古マンション価格推移】市内中心の成約価格は急落、売出価格は上昇でワニの口は広がる【完全版】 - ダイヤモンド不動産研究所</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>ダイヤモンド不動産研究所</span>
+        <time datetime="2026-07-14T07:00:00+00:00">2026/07/14 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE1MNVBNblFLSC1TVmFIUmlBMTlrQ1JEbEoxdTRpNHo1Q0RuUjZUYXpmN2laUUJWNVNqTlJyRzhqZkctRk15blYwdkFxcmxGSHZabDE2UUxkS0w3b3huQWs2OUctSE15U0tWSUJDbXM1X2ZlbktlSFRBZFlEVFhBSzA?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">マンションがどんどん狭くなっている！？ 首都圏を中心に不動産の“小分け”が進む、切実なワケ（ITmedia ビジネスオンライン） - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-16T20:15:11+00:00">2026/07/16 20:15</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+      </div>
+      
+    </section>
+    
+    <section class="mb-12" id="cat-policy">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            
+<span class="news-badge news-badge--amber">政策・税制</span>
+
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">不動産関連の法改正・税制・規制</p>
+        </div>
+        <a href="/news?category=policy" class="text-sm text-brand-600 font-medium hover:underline shrink-0">
+          すべて見る →
+        </a>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-4">
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTFAzTnAwS3I2MW5hMC00akNYb1F4TnUzOEFseVNxM2k0cHpnUmhQU3I3ZmtfZ0lCdlVHNzJCanJWNUMyMGlaM3F4X1FzOWlaZDdqTVNRakNUTnpFZGFITGc?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">自民提言が示す国土管理の転換点。外国人規制は「土地購入禁止」では終わらない。不動産投資市場で増す透明性のコスト - 健美家</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>健美家</span>
+        <time datetime="2026-07-14T21:02:59+00:00">2026/07/14 21:02</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMif0FVX3lxTFB5alZZTkJNT3A0U0RGQ0VOblItdTBJZTN5VG8zdkxRSWJOSm9RRVVwekhyLXl2U1hSM1JuQ0hIa2lMQUFMQ2dULUVlMDMtanlTcVd4VTVjQ2NnOEdXVDI3VXRpbVllYlFQLWtCd0dTa2pabUUzcXFlNWtiUXU5Yzg?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">韓国・不動産政策討論会が「陳情の場」と化した致命的な理由 [韓国記者コラム]（KOREA WAVE） - Yahoo!ニュース</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Yahoo!ニュース</span>
+        <time datetime="2026-07-17T06:42:16+00:00">2026/07/17 06:42</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiW0FVX3lxTFBFNGpua3Iyelp1YWU3c3dOVzF6eTNTRHg5NEc4b1RDRjd3aVdwbUxYTXRMaEVZbjZlZUlLa0l3bGc5RXZ4RVNTOGhCejlZUGtzOVhaQXdReGZiOTg?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">不動産政策に関する国民意見収集…政府、供給・金融・税制別の討論会を開催 - jp.ajunews.com</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>jp.ajunews.com</span>
+        <time datetime="2026-07-14T07:36:00+00:00">2026/07/14 07:36</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMidEFVX3lxTE5Wby1JTkY4VWhRak9fNHdEa0o1RFhWeUE3OG91VU1kQzdLZVpyNDVaTzlCVVI2YlE1TmZYeWk2NURFR1pMM0N1Y0RtbC12cTJZakFmZ2VnLTdTeWRreFFYdGNMUU5MN2RVZ2lpR2szUDRtRkVT?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">「融資限度3億ウォンに制限され残金はどうすれば」…韓国金融委員会の討論会、無住宅者の訴え殺到 - BigGo ファイナンス</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>BigGo ファイナンス</span>
+        <time datetime="2026-07-16T10:05:00+00:00">2026/07/16 10:05</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiUkFVX3lxTFBYQ0ZWME8ydnlWcGhfeVhjY3dCWGpuWjRqdkJkSGt6blFObnVFX2R3SmtHUDlwVnQ0dGZQSjFyMWR1WDYyR2F5R1FUZnlaRDhrZlHSAVRBVV95cUxNY3lGci1KME9YYjN3OG1XbnBQRlZvTWxJdFNFbXFLd25pWGE5TmlJc0JYUjJWU3RhMlJpRjdEMFQyM3piRzRjRDVpRC1KZm5pc1ZmeW8?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">韓国・不動産政策討論会が「陳情の場」と化した致命的な理由 [韓国記者コラム] - AFPBB News</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>AFPBB News</span>
+        <time datetime="2026-07-17T06:44:06+00:00">2026/07/17 06:44</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiUkFVX3lxTFBTcFJNU25mdlBKNHkzWmlXX2dkQ1piNkNwQV8xamZyQzl3SUxLWGFLWWxleFRPN29rTFpXSHI1SHVpWmNvelVsaXRPd3dXdlJibVE?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">金融当局の過度な融資規制で実需要者の被害が大きくなっているとし、規制緩和を要求する声が政府の不動産政策世論の収斂過程で殺到した。 一方、当局は融資規制の扉を外せば、不動産価格を刺激しかねないだけに、直.. - 매일경제</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>매일경제</span>
+        <time datetime="2026-07-15T10:43:11+00:00">2026/07/15 10:43</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+      </div>
+      
+    </section>
+    
+    <section class="mb-12" id="cat-development">
+      <div class="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            
+<span class="news-badge news-badge--rose">再開発・都市</span>
+
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">再開発・駅前開発・都市計画</p>
+        </div>
+        <a href="/news?category=development" class="text-sm text-brand-600 font-medium hover:underline shrink-0">
+          すべて見る →
+        </a>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-4">
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE40bVBaY3pMWXNWbFJ3WkVNNDZuUGc4NThuTG9sQ1BqOUU4dFNlalBNV3FTcHFMSmxuTExNZFlpSkc1NXhuc1I0akNsRWs5d3Z0MG1udjdNaDVweVRzOGRsRHloeE85WElaaVE?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">「SAPPORO ONE（大通西４南地区第一種市街地再開発事業）」においてCASBEE建築 最高評価「Sランク」を取得 - PR TIMES</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>PR TIMES</span>
+        <time datetime="2026-07-14T05:00:02+00:00">2026/07/14 05:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiaEFVX3lxTE0zRnZucE5zNU81ZGlwYnJCSVNxMFI3VEhJV290QXg0WVRXS0pzN3dBdE5VeWRmUFFEWHNtcFd0N3dPandnWXhKbmdvQW9qN2J5NHB0UVpkWkdsMjFQd0RTMWpaazlTVmww?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">日本橋一丁目中地区第一種市街地再開発事業 街区名称を「東京ミッドタウン日本橋」に決定 - mitsuifudosan.co.jp</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>mitsuifudosan.co.jp</span>
+        <time datetime="2026-04-21T07:00:00+00:00">2026/04/21 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMibEFVX3lxTE5oWWUyMGZ0VGJYcWN4akV4SnFjaXM4OW1uMEFGZF9OR0Z4WWZQMUVNZG5ocTVNQWpfTkl3anZ5QVN3SFNBWXJ4blo4dWNhV1JVTExxclhPQnAtZDBCVzUtOGozcGxHaHNDZWZ5ZQ?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">三井不動産、欧州に初の賃貸ラボ 大英図書館の再開発で9月着工 - 日本経済新聞</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>日本経済新聞</span>
+        <time datetime="2026-07-10T07:00:00+00:00">2026/07/10 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMijwFBVV95cUxPUkZmYkI1cXVhdlpBdjRGMUhCVm04ME02czR2MTFyNl9KU2xfRUdjLXRPTi12enZpV2wwOEtWNXgxMklDMVd4UmJELTBmeThkM3A3RW1yWVFwdUxFTHNMY3ZON0NTUTNwSkQzVmNnbjFHNEpneDdYRlI3NWxoSURaR0puQ1c2cTh1Tk16cmctVQ?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">ハノイとホーチミン市の都市計画：不動産地図はどのように形成されるのか？ - Vietnam.vn</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>Vietnam.vn</span>
+        <time datetime="2026-07-16T16:54:52+00:00">2026/07/16 16:54</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiU0FVX3lxTE5HNTVUaG9DX25kRy1lcWl3a1RreVVBZ25QakVOTHI0c2lUdmwzQjlaV3k0TkVpeWpHc3ZuazVuWFMtSDgtWXFuWGNQZjZDeG9KUkVB?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">中野サンプラザ「再開発」なぜ白紙になったのか 急騰する工費にひるむ中野区、野村不動産との話し合いは… - 東京新聞デジタル</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>東京新聞デジタル</span>
+        <time datetime="2026-05-29T07:00:00+00:00">2026/05/29 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+        
+<a href="https://news.google.com/rss/articles/CBMiZEFVX3lxTE90MXVpLTRLQXZHYXl3SlBjbDVQYWNrd1hmYTUza0xSZk5LVzFkbWVRMzNvUk5fN05VU1hsZ2xtb1JIelMwRDlDVEZSNGxBdkxyQ3RFS1IwQklkZDFRUFFaNDdFaFU?oc=5" target="_blank" rel="noopener noreferrer"
+   class="news-item group block rounded-xl border border-slate-200 bg-white p-4 hover:border-brand-400 hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      
+      <h3 class="mt-2 font-medium text-ink-900 group-hover:text-brand-700 line-clamp-2 leading-snug">「登戸駅前地区第一種市街地再開発事業」権利変換計画認可・着工のお知らせ ～登戸駅前の機能性と賑わいを高める歩行者デッキと新たな駅前拠点の創出～ - tokyu.co.jp</h3>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span>tokyu.co.jp</span>
+        <time datetime="2026-03-30T07:00:00+00:00">2026/03/30 07:00</time>
+      </div>
+    </div>
+    <svg class="w-4 h-4 text-slate-300 group-hover:text-brand-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+  </div>
+</a>
+
+        
+      </div>
+      
+    </section>
+    
+  
+
+  
+  
+  <section class="mb-12 border-t border-slate-200 pt-10">
+    
+<div class="mb-6">
+  <h2 class="text-xl font-bold text-ink-900">都道府県別ニュース</h2>
+  <p class="mt-1 text-sm text-slate-500">エリアごとの不動産・地価関連記事</p>
+</div>
+
+    <div class="flex flex-wrap gap-2">
+      
+      <a href="/news/area/hokkaido"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        北海道
+      </a>
+      
+      <a href="/news/area/aomori"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        青森県
+      </a>
+      
+      <a href="/news/area/iwate"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        岩手県
+      </a>
+      
+      <a href="/news/area/miyagi"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        宮城県
+      </a>
+      
+      <a href="/news/area/akita"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        秋田県
+      </a>
+      
+      <a href="/news/area/yamagata"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        山形県
+      </a>
+      
+      <a href="/news/area/fukushima"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        福島県
+      </a>
+      
+      <a href="/news/area/ibaraki"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        茨城県
+      </a>
+      
+      <a href="/news/area/tochigi"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        栃木県
+      </a>
+      
+      <a href="/news/area/gunma"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        群馬県
+      </a>
+      
+      <a href="/news/area/saitama"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        埼玉県
+      </a>
+      
+      <a href="/news/area/chiba"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        千葉県
+      </a>
+      
+      <a href="/news/area/tokyo"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        東京都
+      </a>
+      
+      <a href="/news/area/kanagawa"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        神奈川県
+      </a>
+      
+      <a href="/news/area/niigata"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        新潟県
+      </a>
+      
+      <a href="/news/area/toyama"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        富山県
+      </a>
+      
+      <a href="/news/area/ishikawa"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        石川県
+      </a>
+      
+      <a href="/news/area/fukui"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        福井県
+      </a>
+      
+      <a href="/news/area/yamanashi"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        山梨県
+      </a>
+      
+      <a href="/news/area/nagano"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        長野県
+      </a>
+      
+      <a href="/news/area/gifu"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        岐阜県
+      </a>
+      
+      <a href="/news/area/shizuoka"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        静岡県
+      </a>
+      
+      <a href="/news/area/aichi"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        愛知県
+      </a>
+      
+      <a href="/news/area/mie"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        三重県
+      </a>
+      
+      <a href="/news/area/shiga"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        滋賀県
+      </a>
+      
+      <a href="/news/area/kyoto"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        京都府
+      </a>
+      
+      <a href="/news/area/osaka"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        大阪府
+      </a>
+      
+      <a href="/news/area/hyogo"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        兵庫県
+      </a>
+      
+      <a href="/news/area/nara"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        奈良県
+      </a>
+      
+      <a href="/news/area/wakayama"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        和歌山県
+      </a>
+      
+      <a href="/news/area/tottori"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        鳥取県
+      </a>
+      
+      <a href="/news/area/shimane"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        島根県
+      </a>
+      
+      <a href="/news/area/okayama"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        岡山県
+      </a>
+      
+      <a href="/news/area/hiroshima"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        広島県
+      </a>
+      
+      <a href="/news/area/yamaguchi"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        山口県
+      </a>
+      
+      <a href="/news/area/tokushima"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        徳島県
+      </a>
+      
+      <a href="/news/area/kagawa"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        香川県
+      </a>
+      
+      <a href="/news/area/ehime"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        愛媛県
+      </a>
+      
+      <a href="/news/area/kochi"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        高知県
+      </a>
+      
+      <a href="/news/area/fukuoka"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        福岡県
+      </a>
+      
+      <a href="/news/area/saga"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        佐賀県
+      </a>
+      
+      <a href="/news/area/nagasaki"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        長崎県
+      </a>
+      
+      <a href="/news/area/kumamoto"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        熊本県
+      </a>
+      
+      <a href="/news/area/oita"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        大分県
+      </a>
+      
+      <a href="/news/area/miyazaki"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        宮崎県
+      </a>
+      
+      <a href="/news/area/kagoshima"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        鹿児島県
+      </a>
+      
+      <a href="/news/area/okinawa"
+         class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition">
+        沖縄県
+      </a>
+      
+    </div>
+  </section>
+  
+
+  <p class="text-xs text-slate-400 mt-10 border-t border-slate-200 pt-6">
+    記事は Google ニュースのRSSを通じて提供されています。各記事の著作権は配信元メディアに帰属します。
+  </p>
+</section>
+
+  </main>
+
+  <footer class="bg-ink-900 text-slate-300 text-sm mt-auto" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 py-10">
+      <div class="grid sm:grid-cols-3 gap-8 mb-8">
+        <div>
+          <p class="font-bold text-white mb-3">不動産相場ナビ</p>
+          <p class="text-slate-400 leading-relaxed">国土交通省データに基づく地域別不動産取引価格の検索・分析サービス</p>
+        </div>
+        <nav aria-label="フッターナビゲーション">
+          <p class="font-medium text-white mb-3">機能</p>
+          <ul class="space-y-2 text-slate-400">
+            <li><a href="/" class="hover:text-white transition">エリア検索</a></li>
+            <li><a href="/rankings" class="hover:text-white transition">ランキング</a></li>
+            <li><a href="/news" class="hover:text-white transition">ニュース</a></li>
+            <li><a href="/compare" class="hover:text-white transition">エリア比較</a></li>
+            <li><a href="/search" class="hover:text-white transition">市区町村検索</a></li>
+            <li><a href="/report/new" class="hover:text-white transition">レポート作成</a></li>
+          </ul>
+        </nav>
+        <div>
+          <p class="font-medium text-white mb-3">データ出典</p>
+          <p class="text-slate-400">
+            <a href="https://www.reinfolib.mlit.go.jp/" rel="noopener noreferrer" class="hover:text-white transition">
+              国土交通省 不動産情報ライブラリ
+            </a><br>
+            （取引価格情報・地価公示）
+          </p>
+        </div>
+      </div>
+      <p class="text-slate-500 text-xs border-t border-slate-700 pt-6">© reinfolib-report — 参考情報です。取引判断は専門家にご相談ください。</p>
+    </div>
+  </footer>
+
+  <nav class="mobile-bottom-nav md:hidden" aria-label="モバイル下部ナビ">
+    <a href="/" class="mobile-nav-item" data-nav="home">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>ホーム</span>
+    </a>
+    <a href="/search" class="mobile-nav-item" data-nav="search">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span>検索</span>
+    </a>
+    <a href="/rankings" class="mobile-nav-item" data-nav="rankings">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      <span>ランキング</span>
+    </a>
+    <a href="/news" class="mobile-nav-item" data-nav="news">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+      <span>ニュース</span>
+    </a>
+    <a href="/compare" class="mobile-nav-item" data-nav="compare">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      <span>比較</span>
+    </a>
+  </nav>
+</body>
+</html>
