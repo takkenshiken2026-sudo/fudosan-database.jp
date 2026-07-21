@@ -20,8 +20,11 @@
     {{ breadcrumb([('トップ', '/'), (detail.prefecture_name, '/price/' ~ detail.prefecture_slug), (detail.name_ja, '')]) }}
     <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold">{{ detail.prefecture_name }}{{ detail.name_ja }}の不動産取引価格</h1>
-        <p class="mt-2 text-slate-600">不動産取引価格・相場データ</p>
+        <h1 class="text-2xl md:text-3xl font-bold">{{ detail.prefecture_name }}{{ detail.name_ja }}の不動産相場・土地価格</h1>
+        <p class="mt-2 text-slate-600">取引価格・地価公示・価格推移データ</p>
+        {% if intro_text %}
+        <p class="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">{{ intro_text }}</p>
+        {% endif %}
         {% if detail.stats_updated_at %}
         <p class="mt-1 text-xs text-slate-400">
           最終更新:
@@ -718,6 +721,23 @@
       </table>
     </div>
   </div>
+  {% endif %}
+
+  {% if faq %}
+  <section class="mt-12" aria-labelledby="faq-heading">
+    <h2 id="faq-heading" class="text-lg font-bold mb-4">{{ detail.prefecture_name }}{{ detail.name_ja }}の不動産相場に関するよくある質問</h2>
+    <div class="space-y-3">
+      {% for question, answer in faq %}
+      <details class="group rounded-xl border border-slate-200 bg-white shadow-sm">
+        <summary class="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 font-medium text-ink-900">
+          <span>{{ question }}</span>
+          <svg class="w-4 h-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-sm leading-relaxed text-slate-700">{{ answer }}</div>
+      </details>
+      {% endfor %}
+    </div>
+  </section>
   {% endif %}
 
   <div class="mt-10 no-print">

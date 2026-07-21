@@ -14,6 +14,13 @@ from app.config import settings
 from app.db import get_db
 from app.news.regional import get_regional_news
 from app.news.service import get_news_feed
+from app.reinfolib.prefectures import PREFECTURES
+from app.web.content import (
+    build_municipality_faq,
+    build_municipality_intro,
+    build_prefecture_faq,
+    build_prefecture_intro,
+)
 from app.web.formatters import (
     format_count,
     format_man_yen,
@@ -24,6 +31,7 @@ from app.web.formatters import (
     quarter_label,
 )
 from app.web.seo import (
+    seo_about,
     seo_compare,
     seo_for_agents,
     seo_home,
@@ -58,6 +66,8 @@ templates.env.globals.update(
         "format_passengers_daily": format_passengers_daily,
         "quarter_label": quarter_label,
         "google_site_verification": settings.google_site_verification,
+        # 全ページ共通フッターで都道府県ハブへ内部リンクを張るための静的マスタ。
+        "all_prefectures": PREFECTURES,
     }
 )
 
@@ -339,7 +349,12 @@ def prefecture_page(
         raise HTTPException(status_code=404, detail="都道府県が見つかりません")
     municipalities = services.list_municipalities_for_prefecture(db, prefecture)
     chart_data = services.get_prefecture_chart_data(db, prefecture, municipalities)
+    chart_dict = chart_data.model_dump()
     regional_news = get_regional_news(prefecture.name_ja, prefecture.slug, limit=6)
+    intro = build_prefecture_intro(
+        prefecture.name_ja, len(municipalities), chart_dict
+    )
+    faq = build_prefecture_faq(prefecture.name_ja, len(municipalities), chart_dict)
     return _render(
         request,
         "prefecture.html",
@@ -348,11 +363,14 @@ def prefecture_page(
             prefecture.name_ja,
             prefecture.slug,
             len(municipalities),
+            faq_items=faq,
         ),
         prefecture=prefecture,
         municipalities=municipalities,
-        chart_data=chart_data.model_dump(),
+        chart_data=chart_dict,
         regional_news=regional_news,
+        intro_text=intro,
+        faq=faq,
     )
 
 
@@ -384,6 +402,9 @@ def municipality_page(
         detail.slug,
         limit=6,
     )
+    intro = build_municipality_intro(detail)
+    faq = build_municipality_faq(detail)
+    land = detail.land_prices
     return _render(
         request,
         "municipality.html",
@@ -397,9 +418,14 @@ def municipality_page(
             recent_avg_price=detail.recent_avg_price,
             latest_year=detail.latest_year,
             stats_updated_at=detail.stats_updated_at,
+            land_avg_unit_price=land.avg_unit_price if land else None,
+            land_yoy=land.yoy_change_avg if land else None,
+            faq_items=faq,
         ),
         detail=detail,
         regional_news=regional_news,
+        intro_text=intro,
+        faq=faq,
         stations=services.list_stations_for_municipality(
             db, municipality.code, prefecture.code, limit=12
         ),
@@ -450,3 +476,8 @@ def compare_page(
 @router.get("/for-agents", response_class=HTMLResponse)
 def for_agents(request: Request) -> HTMLResponse:
     return _render(request, "for_agents.html", seo_for_agents(_base(request)))
+
+
+@router.get("/about", response_class=HTMLResponse)
+def about_page(request: Request) -> HTMLResponse:
+    return _render(request, "about.html", seo_about(_base(request)))
