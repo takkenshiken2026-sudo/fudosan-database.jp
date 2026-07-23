@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import section_title, report_cta, ranking_rows, prefecture_rows, land_change_rows, hero_news_item %}
+{% from "macros.html" import section_title, report_cta, ranking_rows, prefecture_rows, land_change_rows, prefecture_land_change_rows, hero_news_item %}
 {% block description %}全国47都道府県・1,920市区町村の不動産取引価格データを検索。地域別の取引件数・平均価格を無料で閲覧。{% endblock %}
 
 {% block head %}
@@ -132,7 +132,7 @@
 <section class="bg-slate-100 border-y border-slate-200">
   <div class="max-w-6xl mx-auto px-4 py-14">
     {{ section_title('都道府県ランキング', 'クリックで市区町村一覧へ') }}
-    <div class="grid lg:grid-cols-2 gap-8">
+    <div class="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
       <div>
         <h3 class="text-sm font-semibold text-slate-600 mb-3">取引件数トップ10</h3>
         <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -169,6 +169,26 @@
           </table>
         </div>
       </div>
+      {% if highlights.prefecture_land_price_losers %}
+      <div>
+        <h3 class="text-sm font-semibold text-slate-600 mb-3">値下がり率トップ10</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-slate-600 text-left">
+              <tr>
+                <th class="px-4 py-2.5 w-12">順位</th>
+                <th class="px-4 py-2.5">都道府県</th>
+                <th class="px-4 py-2.5 text-right hidden sm:table-cell">地点数</th>
+                <th class="px-4 py-2.5 text-right hidden md:table-cell">平均地価</th>
+                <th class="px-4 py-2.5 text-right">前年比</th>
+              </tr>
+            </thead>
+            {{ prefecture_land_change_rows(highlights.prefecture_land_price_losers) }}
+          </table>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">地価公示{{ (' ' ~ highlights.land_price_year ~ '年') if highlights.land_price_year else '' }}の都道府県別平均前年比（10地点以上）</p>
+      </div>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -183,7 +203,7 @@
       <a href="/rankings?sort=price" class="text-sm text-brand-600 font-medium hover:underline">価格順 全50件 →</a>
     </div>
   </div>
-  <div class="grid lg:grid-cols-2 gap-8">
+  <div class="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
     <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
       <div class="px-4 py-3 border-b border-slate-100 bg-slate-50">
         <h3 class="text-sm font-semibold text-slate-700">取引件数トップ10</h3>
@@ -220,6 +240,27 @@
         {{ ranking_rows(highlights.top_by_price) }}
       </table>
     </div>
+    {% if highlights.land_price_losers %}
+    <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="px-4 py-3 border-b border-slate-100 bg-blue-50 flex items-center gap-2">
+        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+        <h3 class="text-sm font-semibold text-blue-900">値下がり率トップ10</h3>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-white text-slate-500 text-left border-b border-slate-100">
+          <tr>
+            <th class="px-4 py-2 w-12">#</th>
+            <th class="px-4 py-2">市区町村</th>
+            <th class="px-4 py-2 hidden sm:table-cell">都道府県</th>
+            <th class="px-4 py-2 text-right hidden md:table-cell">平均地価</th>
+            <th class="px-4 py-2 text-right">前年比</th>
+          </tr>
+        </thead>
+        {{ land_change_rows(highlights.land_price_losers) }}
+      </table>
+      <p class="px-4 py-2 text-xs text-slate-500 border-t border-slate-100">地価公示{{ (' ' ~ highlights.land_price_year ~ '年') if highlights.land_price_year else '' }}・3地点以上の平均前年比</p>
+    </div>
+    {% endif %}
   </div>
 </section>
 

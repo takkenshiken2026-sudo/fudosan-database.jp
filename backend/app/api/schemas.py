@@ -92,11 +92,23 @@ class LandPriceChangeItem(BaseModel):
     yoy_change_avg: Optional[float] = None
 
 
+class PrefectureLandPriceChangeItem(BaseModel):
+    rank: int
+    code: str
+    name_ja: str
+    slug: str
+    survey_year: Optional[int] = None
+    point_count: int = 0
+    avg_unit_price: Optional[float] = None
+    yoy_change_avg: Optional[float] = None
+
+
 class HomeHighlights(BaseModel):
     top_by_volume: list[RankingItem] = []
     top_by_price: list[RankingItem] = []
     land_price_gainers: list[LandPriceChangeItem] = []
     land_price_losers: list[LandPriceChangeItem] = []
+    prefecture_land_price_losers: list[PrefectureLandPriceChangeItem] = []
     land_price_year: Optional[int] = None
     total_transactions: int = 0
     municipality_count: int = 0
