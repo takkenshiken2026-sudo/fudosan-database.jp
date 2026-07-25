@@ -33,6 +33,7 @@ from app.web.formatters import (
 from app.web.seo import (
     seo_about,
     seo_compare,
+    seo_contact,
     seo_for_agents,
     seo_home,
     seo_market,
@@ -40,6 +41,7 @@ from app.web.seo import (
     seo_news,
     seo_not_found,
     seo_prefecture,
+    seo_privacy,
     seo_rankings,
     seo_regional_news,
     seo_report_new,
@@ -491,3 +493,13 @@ def for_agents(request: Request) -> HTMLResponse:
 @router.get("/about", response_class=HTMLResponse)
 def about_page(request: Request) -> HTMLResponse:
     return _render(request, "about.html", seo_about(_base(request)))
+
+
+@router.get("/privacy", response_class=HTMLResponse)
+def privacy_page(request: Request) -> HTMLResponse:
+    return _render(request, "privacy.html", seo_privacy(_base(request)))
+
+
+@router.get("/contact", response_class=HTMLResponse)
+def contact_page(request: Request) -> HTMLResponse:
+    return _render(request, "contact.html", seo_contact(_base(request)))

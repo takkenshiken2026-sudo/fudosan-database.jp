@@ -477,6 +477,65 @@ def seo_for_agents(base: str) -> SeoMeta:
     return finalize_seo(seo, base)
 
 
+def seo_privacy(base: str) -> SeoMeta:
+    path = "/privacy"
+    url = absolute_url(base, path)
+    seo = SeoMeta(
+        page_title=f"プライバシーポリシー | {SITE_NAME}",
+        meta_description=(
+            "不動産相場ナビのプライバシーポリシー。アクセス解析・Cookie の利用、"
+            "Google AdSense など第三者配信事業者による広告配信と Cookie の取り扱い、"
+            "パーソナライズド広告の無効化方法、免責事項について記載しています。"
+        ),
+        canonical_path=path,
+        breadcrumbs=[
+            (SITE_NAME, base),
+            ("プライバシーポリシー", url),
+        ],
+        extra_graph=[
+            {
+                "@type": "WebPage",
+                "@id": f"{url}#webpage",
+                "url": url,
+                "name": f"プライバシーポリシー | {SITE_NAME}",
+                "isPartOf": {"@id": f"{base}/#website"},
+                "about": {"@id": f"{base}/#organization"},
+                "inLanguage": "ja-JP",
+            }
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
+def seo_contact(base: str) -> SeoMeta:
+    path = "/contact"
+    url = absolute_url(base, path)
+    seo = SeoMeta(
+        page_title=f"お問い合わせ | {SITE_NAME}",
+        meta_description=(
+            "不動産相場ナビへのお問い合わせ窓口。データの内容・掲載・その他の"
+            "ご連絡方法についてご案内しています。"
+        ),
+        canonical_path=path,
+        breadcrumbs=[
+            (SITE_NAME, base),
+            ("お問い合わせ", url),
+        ],
+        extra_graph=[
+            {
+                "@type": "ContactPage",
+                "@id": f"{url}#webpage",
+                "url": url,
+                "name": f"お問い合わせ | {SITE_NAME}",
+                "isPartOf": {"@id": f"{base}/#website"},
+                "about": {"@id": f"{base}/#organization"},
+                "inLanguage": "ja-JP",
+            }
+        ],
+    )
+    return finalize_seo(seo, base)
+
+
 def seo_about(base: str) -> SeoMeta:
     path = "/about"
     url = absolute_url(base, path)

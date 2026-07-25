@@ -83,6 +83,9 @@ def _collect_paths(full: bool) -> list[str]:
             "/news",
             "/compare",
             "/for-agents",
+            "/about",
+            "/privacy",
+            "/contact",
             "/search",
             "/report/new",
         }
