@@ -138,6 +138,18 @@ def _write_sitemap() -> int:
         db.close()
 
 
+def _write_ads_txt() -> None:
+    # Google AdSense の ads.txt。未設定なら「不明」ステータスが解消しないため必ず出力する。
+    client = os.environ.get("ADSENSE_CLIENT", "ca-pub-7927260139193410").strip()
+    client = client.removeprefix("ca-")
+    if not client:
+        return
+    (OUT / "ads.txt").write_text(
+        f"google.com, {client}, DIRECT, f08c47fec0942fa0\n",
+        encoding="utf-8",
+    )
+
+
 def _write_cname() -> None:
     if CNAME_DOMAIN and "." in CNAME_DOMAIN:
         (OUT / "CNAME").write_text(f"{CNAME_DOMAIN}\n", encoding="utf-8")
@@ -242,6 +254,7 @@ def build(*, full: bool = False, db_path: Path | None = None, jobs: int = 1) -> 
 
     sitemap_count = _write_sitemap()
     _write_robots()
+    _write_ads_txt()
     _write_cname()
     _write_google_verification_html()
 

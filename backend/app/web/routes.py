@@ -66,6 +66,7 @@ templates.env.globals.update(
         "format_passengers_daily": format_passengers_daily,
         "quarter_label": quarter_label,
         "google_site_verification": settings.google_site_verification,
+        "adsense_client": settings.adsense_client,
         # 全ページ共通フッターで都道府県ハブへ内部リンクを張るための静的マスタ。
         "all_prefectures": PREFECTURES,
     }
@@ -96,6 +97,15 @@ Disallow: /report/
 
 Sitemap: {base}/sitemap.xml
 """
+
+
+@router.get("/ads.txt", response_class=PlainTextResponse)
+def ads_txt() -> str:
+    # Google AdSense の所有権確認用。パブリッシャー ID を DIRECT で宣言する。
+    client = settings.adsense_client.removeprefix("ca-")
+    if not client:
+        raise HTTPException(status_code=404, detail="Not found")
+    return f"google.com, {client}, DIRECT, f08c47fec0942fa0\n"
 
 
 @router.get("/google{token}.html", response_class=PlainTextResponse)

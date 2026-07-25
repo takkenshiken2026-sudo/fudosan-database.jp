@@ -276,6 +276,9 @@ def seo_municipality(
     ]
     if faq_items:
         extra_graph.append(_faq_page(url, faq_items))
+    # 取引データも地価データも無い市区町村は「有用性の低いコンテンツ」となるため
+    # noindex にし、検索インデックスと（robots 連動で）広告掲載の対象から外す。
+    has_content = bool(total_transactions) or bool(land_avg_unit_price)
     seo = SeoMeta(
         page_title=f"{pref_name}{name}の不動産相場・土地価格{year_prefix} | {SITE_NAME}",
         meta_description=(
@@ -285,6 +288,7 @@ def seo_municipality(
             f"累計{total_transactions:,}件の実データ、地価公示を掲載。"
         ),
         canonical_path=path,
+        robots="index,follow" if has_content else "noindex,follow",
         og_type="article",
         breadcrumbs=[
             (SITE_NAME, base),
@@ -406,10 +410,13 @@ def seo_station(base: str, station) -> SeoMeta:
     )
     if station.latest_year and station.latest_passengers:
         desc += f"最新{station.latest_year}年: 約{station.latest_passengers:,}人/日。"
+    # 乗降客数データの無い駅ページは薄いコンテンツのため noindex（広告も非掲載）。
+    has_content = bool(station.latest_passengers)
     seo = SeoMeta(
         page_title=f"{title_name}の乗降客数 | {SITE_NAME}",
         meta_description=desc,
         canonical_path=path,
+        robots="index,follow" if has_content else "noindex,follow",
         breadcrumbs=[
             (SITE_NAME, base),
             (title_name, absolute_url(base, path)),

@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     google_site_verification: str = ""
     # HTMLファイル方式（例: google1234abcd.html）
     google_site_verification_file: str = ""
+    # Google AdSense パブリッシャー ID（例: ca-pub-7927260139193410）
+    adsense_client: str = "ca-pub-7927260139193410"
 
 
 settings = Settings()

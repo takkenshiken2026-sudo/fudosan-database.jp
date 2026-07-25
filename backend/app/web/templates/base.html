@@ -14,8 +14,12 @@
   <meta name="google-site-verification" content="{{ google_site_verification }}">
   {% endif %}
 
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7927260139193410"
+  {# AdSense はコンテンツのある index 対象ページのみで読み込む。
+     検索結果・レポート生成・404 などの noindex ページ（有用性の低いページ）には広告を出さない。 #}
+  {% if adsense_client and 'noindex' not in seo.robots %}
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client }}"
        crossorigin="anonymous"></script>
+  {% endif %}
 
   <meta property="og:locale" content="ja_JP">
   <meta property="og:site_name" content="不動産相場ナビ">
