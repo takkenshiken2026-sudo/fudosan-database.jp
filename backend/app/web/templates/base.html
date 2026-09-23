@@ -14,6 +14,17 @@
   <meta name="google-site-verification" content="{{ google_site_verification }}">
   {% endif %}
 
+  {# Google Analytics 4（gtag.js）。測定 ID が設定されている時のみ読み込む。 #}
+  {% if ga_measurement_id %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_measurement_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ ga_measurement_id }}');
+  </script>
+  {% endif %}
+
   {# AdSense はコンテンツのある index 対象ページのみで読み込む。
      検索結果・レポート生成・404 などの noindex ページ（有用性の低いページ）には広告を出さない。 #}
   {% if adsense_client and 'noindex' not in seo.robots %}

@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     google_site_verification_file: str = ""
     # Google AdSense パブリッシャー ID（例: ca-pub-7927260139193410）
     adsense_client: str = "ca-pub-7927260139193410"
+    # Google Analytics 4 測定 ID（例: G-XXXXXXXXXX）。空にすると計測タグを出力しない。
+    ga_measurement_id: str = "G-KT3F7RTLC2"
 
 
 settings = Settings()

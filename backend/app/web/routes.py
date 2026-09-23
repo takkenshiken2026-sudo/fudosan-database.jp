@@ -69,6 +69,7 @@ templates.env.globals.update(
         "quarter_label": quarter_label,
         "google_site_verification": settings.google_site_verification,
         "adsense_client": settings.adsense_client,
+        "ga_measurement_id": settings.ga_measurement_id,
         # 全ページ共通フッターで都道府県ハブへ内部リンクを張るための静的マスタ。
         "all_prefectures": PREFECTURES,
     }
